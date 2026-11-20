@@ -5,7 +5,7 @@ require_relative "lib/turborel/version"
 Gem::Specification.new do |spec|
   spec.name = "turborel"
   # The turborel release the driver is made for, the same number as the
-  # server's; the alpha, 0.0.0, speaks protocol version 1 (RULES.md D12).
+  # server's; the alpha, 0.0.0, speaks protocol version 1 (RULES.md D5).
   spec.version = Turborel::VERSION
   spec.authors = ["Turborel Inc."]
   spec.email = ["hello@turborel.com"]
@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir["lib/**/*.rb", "sig/**/*.rbs", "LICENSE", "README.md", "TRADEMARK.md"]
   spec.require_paths = ["lib"]
 
-  # RULES.md D4: bigdecimal is a bundled gem from Ruby 3.4, no longer a
+  # RULES.md D9: bigdecimal is a bundled gem from Ruby 3.4, no longer a
   # default one, so it must be declared to be required under Bundler.
   spec.add_dependency "bigdecimal", ">= 3.1", "< 5"
 end

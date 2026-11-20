@@ -4,140 +4,153 @@ How to work on turborel-ruby as a coding agent, with any tool. If this file
 disagrees with [RULES.md](RULES.md) or [CONTRIBUTING.md](CONTRIBUTING.md),
 follow those.
 
-turborel-ruby is the Ruby driver for turborel, a relational database
-system. It speaks turborel's native protocol, version 1, in Ruby alone,
-and is built to match turborel-client, turborel's own client library,
-feature for feature, with a plain API in the manner of the pg gem and an
-ActiveRecord adapter over it. See [README.md](README.md).
+turborel-ruby is the Ruby driver for Turborel, a relational
+database system. It speaks Turborel's native protocol, version 1,
+itself, in Ruby alone, with no native extension, and is built to do all turborel-client does. See
+[README.md](README.md).
 
 ## Before you change anything
 
-Read RULES.md §3 (code), §4 (tests), §7 (process) and the §1 decisions for
+Read RULES.md §3 (code), §4 (tests), §6 (process) and the decisions for
 your area. Read CONTRIBUTING.md for how a change is made and the extra
-checks for changes to the protocol's handling.
+checks for changes that touch the protocol. Read the section of the
+protocol, or of the client documents, that your change implements, and
+the rows of CONFORMANCE.md it marks done.
 
 ## Build and check
 
-Ruby 3.3 or later. Gems go into the clone, never system-wide. Every change
-must pass `bundle exec rake verify` and `bundle exec rake coverage` before
-it is handed back.
+Every change must pass `bundle exec rake verify` and `bundle exec rake coverage`
+before it is handed back.
 
 ```
-bundle config set --local path vendor/bundle   # once per clone
-bundle install
-bundle exec rake verify          # every check a change must pass
-bundle exec rake coverage        # the tests under SimpleCov, and its floors
-bundle exec rake install_hooks   # run verify before every commit (once per clone)
-bundle exec rake rubocop         # lint and format; `bundle exec rubocop -a` fixes the format
-bundle exec rake rules           # file length, printing and exits, open-work markers, links, test citations
-bundle exec rake steep           # types: lib/ against sig/
-bundle exec rake rbs             # the signatures themselves
-bundle exec rake doc             # the API reference, failing on anything undocumented
-bundle exec rake test            # the tests alone
-bundle exec rake build           # the gem, in pkg/
-TURBOREL_DOC=<turborel>/doc/client bundle exec rake rules
-                                 # and every [PROTOCOL ...] and [CLIENT ...] heading cited
+bundle config set --local path vendor/bundle   # gems in the clone, never system-wide
+bundle install                                 # the tools Gemfile.lock pins
+bundle exec rake install_hooks                 # run verify before each commit (once per clone)
+bundle exec rake verify                        # every check a change must pass
+bundle exec rake coverage                      # the tests under SimpleCov, held to the floor
+bundle exec rake rubocop                       # lint and format; `bundle exec rubocop -a` fixes the format
+bundle exec rake rules                         # lengths, printing, open-work markers, citations, the manual
+bundle exec rake steep                         # types: lib/ against sig/
+bundle exec rake rbs                           # the signatures themselves
+bundle exec rake doc                           # the API reference, nothing undocumented
+bundle exec rake test                          # the tests alone
+bundle exec ruby -Ilib -Itest test/turborel/protocol/frame_test.rb
+                                               # one test file alone
+bundle exec rake build                         # the gem, in pkg/
 ```
 
-`verify` stops at the first failure. CI runs it on Linux, macOS and
-Windows, on Ruby 3.3, 3.4 and 4.0, and coverage on Linux (D7). Coverage
-floors are in `.simplecov` and only rise (R-COV-2).
+`bundle exec rake verify` stops at the first failure (RULES.md D4). CI runs it
+on Linux, macOS and Windows, on each supported runtime, and coverage on
+Linux. The coverage floor only rises (D7, R-COV-2).
 
-Project automation is Ruby, in the Rakefile and `rakelib/`, never shell
-scripts (R-TOOL-1).
+Project automation is the language's own tooling, never shell scripts
+(R-PROC-5).
 
 ## Where things are
 
 | Path | What |
 |---|---|
+| `turborel.gemspec`, `Gemfile`, `Gemfile.lock` | the gem, and the development tools locked (D9, D10) |
+| `Rakefile`, `rakelib/` | the checks tool: `verify` and each check, `coverage`, `build` (D4) |
+| `rakelib/headings/` | the headings of Turborel's three documents tests cite, at e4f08f77 (D6) |
+| `Steepfile`, `.rubocop.yml`, `.simplecov`, `.yardopts` | the type checker, the linter and formatter, coverage, the API reference |
 | `lib/turborel.rb` | the gem's root module |
-| `lib/turborel/version.rb` | `Turborel::VERSION`, the turborel release it is made for (D12) |
+| `lib/turborel/version.rb` | `Turborel::VERSION` (D5) |
 | `lib/turborel/error.rb` | `Turborel::Error`, every failure (R-ERR-1) |
-| `lib/turborel/protocol/` | the codec, no I/O: so far the frame header (D1) |
-| `sig/` | RBS signatures, one file for each file of `lib/` (D6) |
-| `test/` | minitest, one `*_test.rb` for each file of `lib/` (D9) |
-| `rakelib/` | the `rules` and `doc` tasks |
-| `doc/` | the manual: `user/` the User's Guide, `client/` the API Reference, `appendix/` the appendices |
+| `lib/turborel/protocol/` | the `codec` layer, with no I/O (D1) |
+| `sig/` | RBS signatures, a file for each of `lib/` (D11) |
+| `test/` | minitest, a `*_test.rb` for each file of `lib/`, and `test_helper.rb` (D13) |
+| `doc/` | the manual |
 
-The spec and the reference are in turborel's repository:
-`doc/client/05-protocol.md` (the protocol), `doc/client/02-library.md` and
-`02-library-connections.md` (turborel-client's features), `client/src/`
-and `protocol/src/` (their code). Where the page and the code differ, the
-code is right.
+The protocol is Turborel's `doc/client/05-protocol.md`, the client's
+features `doc/client/02-library.md` and `02-library-connections.md`, and
+the reference code `protocol/src/` and `client/src/`, all in
+[turborel](https://github.com/turborel/turborel). Where the page and the
+code differ, the code is right; CONFORMANCE.md names each such place.
 
 ## Rules that are broken most often
 
-`verify` treats every RuboCop offense as an error. RULES.md §3 and §4 have
-the full list.
+`bundle exec rake verify` treats every warning as an error (R-LINT-1). RULES.md
+§3 and §4 have the full list.
 
-- Every failure is a `Turborel::Error` with SQLCODE and SQLSTATE; never
-  `ArgumentError`, `RuntimeError` or a bare `raise "..."`. An exception
-  from Ruby or the system is rescued where it arises and raised as one
-  (R-ERR-1, R-ERR-2).
-- No `puts`, `print`, `p`, `warn`, `exit` or `abort` in `lib/` (R-STYLE-5,
-  R-ERR-3).
-- Keep methods to 50 lines and 5 parameters, keywords counted, and files to
-  600 lines (R-SIZE).
-- No magic numbers or strings; every protocol tag, kind and capability
-  name is a named constant (R-CONST).
-- Every class, module, method and constant has a YARD comment (R-DOC-1).
-- Every method in `lib/` has its signature in `sig/`, and Steep passes
-  strictly (D6). A cast, `_ = ...`, says why in a comment (R-DEV-2).
-- Comments say why (R-DOC-2). No `TODO` comments or commented-out code
-  (R-DOC-5).
-- No `# rubocop:disable`; a deviation goes in `.rubocop.yml` with its
-  reason (R-DEV-1).
-- No runtime dependency without a decision in RULES.md (R-SAFE-2).
-- Check every length and count the server sends before using it
-  (R-SAFE-1), and never show a secret (R-SAFE-4).
-- Code of one platform is chosen at run time and refuses clearly
-  elsewhere (R-PLAT-2).
+- Every failure is the driver's error, with its SQLCODE and SQLSTATE
+  (R-ERR-1, R-ERR-2). No error of the language or a library beneath it
+  reaches a program; catch it, and give the driver's, keeping the cause
+  (R-ERR-3).
+- No printing, and no ending the process, in library code (R-STYLE-3,
+  R-ERR-1).
+- Check every length or count a server sends against its bound before
+  reading or reserving for it (R-SAFE-1).
+- No secret in a log, a failure's message or an object's display form
+  (R-SAFE-4).
+- Integers of the protocol are read and written at their width,
+  little-endian; exact numbers never pass through a float (R-NUM).
+- Keep functions to 50 lines of code and 5 parameters, and files to 600
+  lines (R-SIZE).
+- No magic numbers or strings: protocol tags, kinds, capability, status
+  and mechanism names are named constants, defined once (R-CONST).
+- Every public item has a doc comment (R-DOC-1). Comments say why
+  (R-DOC-2). No `TODO` comments or commented-out code (R-DOC-5).
+- A silenced warning names its rule and says why (R-LINT-3).
+- No dependency without a decision in RULES.md (R-DEP-1).
+- Code of one platform is chosen by the platform and refused elsewhere
+  with the driver's error (R-PLAT-2).
+- Every method of `lib/` has its signature in `sig/`, and Steep passes
+  with its strict diagnostics (R-TYPE-1, D11). A cast, `_ = ...`, says
+  in a comment why the value has the type it is given (R-TYPE-2).
+- No `# rubocop:disable`: a deviation is kept in `.rubocop.yml`, with
+  its rule and its reason (R-LINT-3, D8).
 
 ## Tests
 
-Every test's comment begins `# Verifies:` and a tag `rake rules` accepts
-(R-TRACE-1): `[PROTOCOL <heading>]` for `05-protocol.md`,
-`[CLIENT <heading>]` for `02-library.md` or `02-library-connections.md`,
-`[RFC <number> ...]`, or `[DESIGN]` and the decision.
+Every test cites what it verifies, by the comment above it, beginning `Verifies:`, beginning with a
+tag (R-TRACE-1, D6):
 
-Tests are deterministic, with no clock, randomness or network beyond
-loopback (R-TEST-3). Shared helpers go in `test/test_helper.rb` (R-TEST-6).
-A fixed defect gets a regression test (R-TEST-5).
+- `[PROTOCOL <heading>]`, a section of 05-protocol.md, as
+  `[PROTOCOL Frames]`;
+- `[CLIENT <heading>]`, a section of 02-library.md or
+  02-library-connections.md, as `[CLIENT Pipelines]`;
+- `[DESIGN] D<n>`, a decision of RULES.md;
+- `[TOOL] R-<id>`, a rule the checks tool holds.
+
+The checks tool refuses a heading, decision or rule that is not there
+(R-TRACE-2). Tests are deterministic, with no clock, randomness or
+network beyond loopback (R-TEST-5). A shared fixture is written once
+(R-TEST-7). A fixed defect gets a regression test that fails without the
+fix (R-TEST-6). A live test runs its own server on its own port and data
+directory, and stops it.
 
 ## Citing the spec
 
-Check every citation against the page before writing it: a heading cited
-must be a heading of the page. Never cite from memory. Run `rake rules`
-with `TURBOREL_DOC` pointing at turborel's `doc/client/` to check them.
-
-Code never cites TODO.md, and `rake rules` refuses it (R-DOC-5).
+Check every citation against the document before writing it, by its
+heading as printed. Never cite from memory. Code never cites TODO.md.
 
 ## Documents
 
 A finished feature updates these in the same change:
 
-- RULES.md, if it made a decision, including the row in §1's table
-- CONFORMANCE.md, for each row implemented or changed (R-TRACE-3)
-- TODO.md, which only holds open work
-- [doc/](doc/README.md), for anything a program sees (R-DOC-6): the
-  chapter of the User's Guide, the page of the API Reference and the
-  appendix that state it. turborel.com's docs site reads `doc/`, so keep
-  its layout: each chapter's `# Title`, then `[Contents](README.md)`, and
-  relative `.md` links only
-- README.md, if what it says the driver does changes
+- RULES.md, if it made a decision, including the row in §1's table;
+- CONFORMANCE.md, each row it implements (R-TRACE-4), marked done only
+  where its code exists and its tests pass;
+- TODO.md, which only holds open work;
+- [doc/](doc/README.md), for anything a program sees (R-DOC-7), every
+  example run: each page keeps its `# Title` and its
+  `[Contents](README.md)` line, links within `doc/` are relative `.md`
+  links, and a link out of `doc/` is a full URL, as the docs site reads
+  `doc/` alone;
+- README.md, if what the driver is or needs changes.
 
-Every claim in a document is checked against the code, and every example
-is run.
+No document gives timings or speedups; numbers go in a commit message.
 
 ## Commits
 
 - Commit only when the maintainer asks, and never push without approval.
 - Follow CONTRIBUTING.md's form, with one logical change per commit.
-- Add no AI or agent attribution to a commit or pull request. That means
-  no `Co-Authored-By` for an agent, no "Generated with" and no
-  `Signed-off-by`.
+- Add no AI or agent attribution to a commit, a pull request, a file or
+  the package's metadata. That means no `Co-Authored-By` for an agent,
+  no "Generated with" and no `Signed-off-by`.
 - Stage with an explicit path list, `git add -- <path> ...`. Never use
   `git add -A` or `git add .` on the whole tree.
-- Never stage `LICENSE` or scratch files.
-- Code for one platform only can't be verified locally on another. Say so
-  when handing it back.
+- Never stage scratch files, or a live test's data directory.
+- Code compiled for one platform only can't be verified locally on
+  another. Say so when handing it back (R-PLAT-4).

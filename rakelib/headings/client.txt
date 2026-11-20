@@ -1,0 +1,28 @@
+# The headings of Turborel's doc/client/02-library.md and
+# 02-library-connections.md at e4f08f77, one a line, as [CLIENT <heading>]
+# cites them (RULES.md D6).
+The Client Library
+Connecting
+Timeouts
+Running statements
+Prepared statements
+Large objects
+XML values
+UUIDs
+Importing
+What a connection asks for
+What the server tells
+Controlling the session
+Copying and exporting
+The SQL-agent
+Settings, Pipelines and Pools
+Connecting by settings
+Where settings come from
+The connection URI
+The service file
+The password file
+Several servers
+TLS by mode
+Pipelines
+Pools
+The SCRAM key cache

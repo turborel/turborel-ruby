@@ -1,4 +1,4 @@
-# RuboCop, strictly (RULES.md R-STYLE-1, R-STYLE-2): every offense fails
+# RuboCop, strictly (RULES.md R-STYLE-1, R-LINT-1, R-LINT-2): every offense fails
 # `rake verify`, and cops new in a later RuboCop are on as they come.
 plugins:
   - rubocop-minitest
@@ -18,12 +18,12 @@ AllCops:
     - "coverage/**/*"
     - ".claude/**/*"
 
-# Lines end with LF on every platform, as .gitattributes checks them out;
-# the cop's default, native, would ask for CRLF on Windows.
+# Lines end with LF on every platform, as .gitattributes checks them out
+# (R-PLAT-3); the cop's default, native, would ask for CRLF on Windows.
 Layout/EndOfLine:
   EnforcedStyle: lf
 
-# R-STYLE-3: one quoting, as the Ruby community's most common style has it.
+# R-STYLE-1: one quoting, as the Ruby community's most common style has it.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 Style/StringLiteralsInInterpolation:
@@ -50,11 +50,11 @@ Style/Documentation:
 Style/DocumentationMethod:
   Enabled: true
 
-# R-DEV-1: a cop is never disabled in source, only here, with its reason.
+# R-LINT-3, D8: a cop is never disabled in source, only here, with its reason.
 Style/DisableCopsWithinSourceCodeDirective:
   Enabled: true
 
-# R-ERR-5: an error raised names its class, never a bare RuntimeError.
+# R-ERR-1: an error raised names its class, never a bare RuntimeError.
 Style/ImplicitRuntimeError:
   Enabled: true
 

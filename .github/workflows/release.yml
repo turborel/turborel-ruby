@@ -1,5 +1,5 @@
 # Builds and checks the gem, run by hand only, and publishes nothing
-# (VERSIONING.md, RULES.md R-PROC-4). The gem is kept as the run's
+# (VERSIONING.md, RULES.md R-PROC-7). The gem is kept as the run's
 # artifact. Its publishing step is written but disabled: the owner
 # enables it once every turborel driver is done.
 name: release

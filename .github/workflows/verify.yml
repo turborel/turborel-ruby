@@ -1,7 +1,7 @@
 # Every check a change must pass (RULES.md R-PROC-1), on each platform the
 # driver claims to run on and each Ruby it supports (D3, R-PLAT-1), plus
 # coverage and its floors (R-COV). setup-ruby installs the gems
-# Gemfile.lock pins (D5), and caches them.
+# Gemfile.lock pins (D10), and caches them.
 name: verify
 
 # A pull request is checked once, through pull_request, and main again once

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # What every test file requires first: coverage, when asked for, then
-# minitest and the library (RULES.md R-TEST-1).
+# minitest and the library (RULES.md R-TEST-7).
 
 require "simplecov" if ENV["COVERAGE"]
 
@@ -9,7 +9,7 @@ require "minitest/autorun"
 require "turborel"
 
 # Ruby's warnings about lib/ fail the test that set them off, as a lint
-# warning fails `rake verify` (RULES.md R-STYLE-2).
+# warning fails `rake verify` (RULES.md R-LINT-1).
 module WarningsFail
   # A warning about lib/, raised.
   class Raised < StandardError; end

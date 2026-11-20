@@ -2,4 +2,8 @@
 
 [Contents](README.md)
 
-This appendix will map the SQLSTATE classes to the driver's errors, and list the SQLSTATEs the driver raises itself, such as 08006, a connection failure, with SQLCODE -919. It is filled by milestones M2 and M3.
+This appendix will list the SQLSTATE classes the driver reports, those
+it raises itself, such as SQLCODE -919 and SQLSTATE 08006 for a
+connection whose messages cannot be read, and those the server sends,
+how each reaches a program as the driver's error, and which end the
+connection. It is filled at milestone M3.

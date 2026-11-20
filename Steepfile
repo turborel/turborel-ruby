@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Steep checks lib/ against the signatures in sig/, strictly (RULES.md D6).
+# Steep checks lib/ against the signatures in sig/, strictly (RULES.md D11).
 target :lib do
   signature "sig"
   check "lib"

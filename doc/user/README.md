@@ -1,6 +1,6 @@
 # Volume I: User's Guide
 
-For anyone who writes a Ruby program against Turborel: connecting, running statements and moving data, chapter by chapter.
+For anyone who writes a Ruby program against Turborel: installing the driver, connecting, running statements and moving data, chapter by chapter, read in order.
 
 [The documentation set](../README.md)
 
@@ -15,4 +15,4 @@ For anyone who writes a Ruby program against Turborel: connecting, running state
 - [Copying, Importing and Exporting](07-copying.md)
 - [Pipelines and Pools](08-pipelines-and-pools.md)
 - [Settings](09-settings.md)
-- [Errors](10-errors.md)
+- [Errors and Diagnostics](10-errors.md)

@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 gemspec
 
-# The development tools (RULES.md D5), never needed at run time.
+# The development tools (RULES.md D10), never needed at run time.
 group :development do
   gem "minitest", ">= 5.20"
   gem "rake", ">= 13.1"

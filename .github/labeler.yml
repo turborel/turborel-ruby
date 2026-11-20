@@ -44,7 +44,7 @@ area/pool:
 
 area/api:
   - changed-files:
-      - any-glob-to-any-file: ["lib/turborel.rb", "lib/turborel/connection.rb", "lib/turborel/connection/**", "lib/turborel/result.rb", "lib/turborel/error.rb", "lib/active_record/**", "sig/turborel.rbs", "sig/turborel/error.rbs", "test/active_record/**"]
+      - any-glob-to-any-file: ["lib/turborel.rb", "lib/turborel/connection.rb", "lib/turborel/connection/**", "lib/turborel/result.rb", "lib/turborel/error.rb", "sig/turborel.rbs", "sig/turborel/error.rbs"]
 
 area/doc:
   - changed-files:
@@ -52,11 +52,15 @@ area/doc:
 
 area/ci:
   - changed-files:
-      - any-glob-to-any-file: [".github/**", ".githooks/**"]
+      - any-glob-to-any-file: [".github/**"]
 
 area/build:
   - changed-files:
-      - any-glob-to-any-file: ["turborel.gemspec", "Gemfile", "Rakefile", "rakelib/**", "Steepfile", ".rubocop.yml", ".simplecov", ".yardopts", ".gitattributes", ".gitignore", "lib/turborel/version.rb"]
+      - any-glob-to-any-file: ["turborel.gemspec", "Gemfile", "Gemfile.lock", ".githooks/**", "Rakefile", "rakelib/**", "Steepfile", ".rubocop.yml", ".simplecov", ".yardopts", ".gitattributes", ".gitignore", "lib/turborel/version.rb"]
+
+area/activerecord:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/active_record/**", "sig/active_record/**", "test/active_record/**"]
 
 dependencies:
   - changed-files:

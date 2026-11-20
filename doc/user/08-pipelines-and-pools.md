@@ -2,4 +2,7 @@
 
 [Contents](README.md)
 
-This chapter will tell how a program sends many requests in one round trip by a pipeline, shares connections among its threads by a pool, and keeps named connections by the SQL-agent. It is filled by milestone M6.
+This chapter will tell how a program sends a batch of requests in one
+round trip by a pipeline, stopping at its first failure if asked; shares
+a bounded set of connections by a pool; and holds several named
+connections by the SQL-agent. It is filled at milestone M6.

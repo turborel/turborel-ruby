@@ -39,8 +39,8 @@ Otherwise "none claimed". -->
 
 - [ ] One logical change per commit, each passing `bundle exec rake verify`
 - [ ] The protocol or turborel-client cited in the code (R-DOC-4) and in the tests (`# Verifies:`, R-TRACE-1)
-- [ ] Normal, edge and robustness tests (R-TEST-2), a failing-first test for a fix (R-TEST-5)
+- [ ] Normal, edge and robustness tests (R-TEST-2), a failing-first test for a fix (R-TEST-6)
 - [ ] Every failure a `Turborel::Error`, no secret shown, nothing held without bound (R-ERR-1, R-SAFE-4, R-SAFE-1)
-- [ ] Signatures in `sig/` for what changed in `lib/`, Steep passing (D6)
-- [ ] No new dependency without a decision (R-SAFE-2)
+- [ ] Signatures in `sig/` for what changed in `lib/`, Steep passing (D11, R-TYPE-1)
+- [ ] No new dependency without a decision (R-DEP-1)
 - [ ] CONFORMANCE.md, RULES.md, TODO.md and `doc/` updated where they change

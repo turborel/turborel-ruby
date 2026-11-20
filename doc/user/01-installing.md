@@ -2,4 +2,11 @@
 
 [Contents](README.md)
 
-This chapter will tell which Rubies and platforms the driver runs on, and how to install the gem, from RubyGems once it is published and from source until then. It is filled by milestone M7, with the manual; until then, README.md tells how to build the gem from source.
+This chapter will tell what the driver needs, Ruby 3.3 or later on Linux,
+macOS or Windows, and how a program takes the gem `turborel` in from
+RubyGems. No package is published until every Turborel driver is
+done; until then the driver is built from its source, as the
+repository's
+[README](https://github.com/turborel/turborel-ruby/blob/main/README.md)
+says. The chapter is written with the standard API, at milestone M7, and
+again when the packages are published.

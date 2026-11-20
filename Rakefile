@@ -2,23 +2,23 @@
 
 # The project's checks, each a task, and `verify`, every check a change
 # must pass (RULES.md R-PROC-1). Tasks are Ruby, never shell scripts
-# (R-TOOL-1), so each runs alike on Linux, macOS and Windows.
+# (R-PROC-5), so each runs alike on Linux, macOS and Windows.
 
 require "minitest/test_task"
 require "rubocop/rake_task"
 
 # The tests (R-TEST-1), with Ruby's warnings on; test_helper.rb makes a
-# warning about lib/ fail its test (R-STYLE-2).
+# warning about lib/ fail its test (R-LINT-1).
 Minitest::TestTask.create(:test) do |t|
   t.libs << "lib"
   t.warning = true
   t.test_globs = ["test/**/*_test.rb"]
 end
 
-# Lint and format, in one (R-STYLE-1, R-STYLE-2).
+# Lint and format, in one (R-STYLE-1, R-LINT-1).
 RuboCop::RakeTask.new(:rubocop)
 
-desc "Type-check lib/ against sig/ with Steep, strictly (D6)"
+desc "Type-check lib/ against sig/ with Steep, strictly (D11)"
 task :steep do
   require "steep"
   require "steep/cli"
@@ -26,7 +26,7 @@ task :steep do
   abort "steep found type errors" unless status.zero?
 end
 
-desc "Validate the RBS signatures in sig/ (D6)"
+desc "Validate the RBS signatures in sig/ (D11)"
 task :rbs do
   require "rbs"
   require "rbs/cli"
@@ -54,7 +54,7 @@ task :build do
   puts "pkg/#{file}"
 end
 
-desc "Run `rake verify` before every commit, from .githooks/ (D7)"
+desc "Run `rake verify` before every commit, from .githooks/ (D4)"
 task :install_hooks do
   sh "git", "config", "core.hooksPath", ".githooks"
 end

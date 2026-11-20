@@ -2,4 +2,9 @@
 
 [Contents](README.md)
 
-This chapter will tell how a program connects to a server: over TCP, a Unix socket or a Windows named pipe, with or without TLS, as a user proved by a password, SCRAM, a certificate or trust, and within what timeouts. It is filled by milestone M2, when the driver first connects.
+This chapter will tell how a program connects to a server: over TCP, a
+Unix socket or a Windows named pipe; as which user, proved by trust, a
+password, a certificate or SCRAM-SHA-256; over TLS; within which
+timeouts; and how a connection ends, or its statement is cancelled. It
+is filled at milestone M2, and the standard API's way of connecting at
+M7.
