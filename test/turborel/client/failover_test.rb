@@ -180,6 +180,37 @@ module Turborel
         unused.instance_variable_get(:@listener).close
         assert_raises(IOError) { unused.join }
       end
+
+      # Verifies: [CLIENT Connecting by settings] the user proved by SCRAM of
+      # the password, else by the certificate named, else by trust.
+      def test_the_proof_chosen
+        tcp = Targets.tcp("127.0.0.1", 1)
+        proof = ->(uri) { settings(uri).send(:proof, Host.tcp("127.0.0.1", 1), tcp) }
+
+        assert_instance_of Scram, proof.call("turborel://ann:pw@127.0.0.1:1/?tls_mode=disable")
+        assert_instance_of Certificate, proof.call("turborel://ann@127.0.0.1:1/?tls_certificate=/c.pem&tls_key=/k.pem")
+        assert_instance_of Trust, proof.call("turborel://ann@127.0.0.1:1/")
+      end
+
+      # Verifies: [CLIENT TLS by mode] channel_binding disable and prefer
+      # given to SCRAM as its binding.
+      def test_channel_binding_given_to_scram
+        bound = lambda do |mode|
+          settings("turborel://ann:pw@127.0.0.1:1/?channel_binding=#{mode}")
+            .send(:proof, Host.tcp("127.0.0.1", 1), Targets.tcp("127.0.0.1", 1)).instance_variable_get(:@binding)
+        end
+
+        assert_equal %i[disable prefer], %w[disable prefer].map(&bound)
+      end
+
+      # Verifies: [CLIENT Several servers] a server whose role cannot be
+      # read passed over, its connection closed at once, with no Terminate.
+      def test_a_role_unread_closes_the_connection
+        failing = server(failure: [-301, "22000", "the role cannot be read"])
+
+        assert_fails([-301, "22000"]) { settings(at(failing, "read-write")).connect }
+        assert_equal [nil, ""], failing.join
+      end
     end
   end
 end

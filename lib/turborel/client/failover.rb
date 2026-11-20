@@ -168,7 +168,7 @@ module Turborel
         of_role(connection)
         connection
       rescue Error
-        stream&.close unless connection
+        connection ? connection.abandon : stream&.close
         raise
       end
 

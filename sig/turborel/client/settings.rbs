@@ -27,6 +27,7 @@ module Turborel
       DEFAULT_SERVICE_FILE: String
       DEFAULT_PASSFILE: String
       UNABLE_TO_CONNECT: String
+      MAX_SECONDS: Integer
       WORDS: Hash[String, Array[String]]
       DEFAULTS: Hash[String, String]
 
@@ -67,6 +68,7 @@ module Turborel
       def self.host: (String name, Integer fallback) -> Host
       def self.bracketed: (String name, Integer fallback) -> Host
       def self.port: (String key, String text) -> Integer
+      def self.unsigned: (String text, Integer most) -> Integer?
       def self.seconds: (String? text) -> Integer?
       def self.none_kept: (Array[[String, Failure]] tried) -> Error
       def initialize: (Options options) -> void

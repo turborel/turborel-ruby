@@ -192,6 +192,59 @@ module Turborel
         assert_nil resolve(Options.new.set("user", "u").set("connect_timeout", "0")).connect_timeout
         assert_kind_of KeyCache, settings.key_cache
       end
+
+      # Verifies: [CLIENT Where settings come from] a host list that is
+      # empty refused as it is read, as a list with an empty host is; a port
+      # or a timeout read as Rust reads an unsigned number, digits after an
+      # optional plus sign, so 7_422 and -1 are refused (08001).
+      def test_numbers_and_hosts_read_strictly
+        given = ->(pairs) { resolve(Options.new(pairs.merge("user" => "u"))) }
+
+        ["", " "].each { |host| assert_fails(UNABLE) { given.call("host" => host) } }
+        %w[7_422 -1 65536 0x10].each { |port| assert_fails(UNABLE) { given.call("port" => port) } }
+        %w[3_0 -5].each { |seconds| assert_fails(UNABLE) { given.call("connect_timeout" => seconds) } }
+        assert_equal [[Host.tcp("localhost", 7422)], 5],
+                     [given.call("port" => "+7422").hosts, given.call("connect_timeout" => " +5 ").connect_timeout]
+      end
+
+      # Verifies: [CLIENT Where settings come from] the service file
+      # ~/.turborel_service.conf where none is named.
+      def test_the_default_service_file
+        Dir.mktmpdir("turborel-ruby-home") do |home|
+          File.write(File.join(home, ".turborel_service.conf"), "[s]\nhost=from-home\n")
+          before = ENV.slice("HOME")
+          begin
+            ENV["HOME"] = home
+
+            assert_equal [Host.tcp("from-home", 7422)], resolve(Options.new("user" => "u", "service" => "s")).hosts
+          ensure
+            ENV.delete("HOME")
+            ENV.update(before)
+          end
+        end
+      end
+
+      # Verifies: [CLIENT The password file] a password file read only if a
+      # regular file, or a link to one: a directory of the name passed over.
+      def test_a_password_file_must_be_a_regular_file
+        Dir.mktmpdir("turborel-ruby-pass") do |dir|
+          file = File.join(dir, "pass")
+          File.write(file, "*:*:ann:secret\n")
+          password = lambda { |passfile|
+            resolve(Options.new("user" => "ann", "passfile" => passfile)).password_for(Host.tcp("h", 1))
+          }
+
+          assert_equal ["secret", nil], [password.call(file), password.call(dir)]
+          linked = File.join(dir, "link")
+          begin
+            File.symlink(file, linked)
+          rescue NotImplementedError, SystemCallError
+            next
+          end
+
+          assert_equal "secret", password.call(linked)
+        end
+      end
     end
   end
 end

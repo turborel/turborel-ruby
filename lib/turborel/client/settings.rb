@@ -42,6 +42,8 @@ module Turborel
       # SQLSTATE of settings no connection can be made by: the client
       # unable to establish one.
       UNABLE_TO_CONNECT = "08001"
+      # The most seconds connect_timeout gives, a u64's, as Rust reads it.
+      MAX_SECONDS = 18_446_744_073_709_551_615
       # The words each setting of a few takes, by its name.
       WORDS = {
         "tls_mode" => %w[disable prefer require verify-ca verify-full],
@@ -186,7 +188,8 @@ module Turborel
       # @return [Array<Host>]
       def self.hosts(text, ports)
         numbers = ports.split(",").reject { |part| part.strip.empty? }.map { |part| port("port", part) }
-        text.split(",", -1).each_with_index.map { |name, i| host(name.strip, port_at(numbers, i)) }
+        names = text.split(",", -1)
+        (names.empty? ? [""] : names).each_with_index.map { |name, i| host(name.strip, port_at(numbers, i)) }
       end
 
       # The port of the +index+th host: of the same place in +numbers+, or
@@ -233,12 +236,19 @@ module Turborel
       #
       # @api private
       def self.port(key, text)
-        number = Integer(text.strip, 10)
-        raise ArgumentError unless number.between?(0, 65_535)
+        unsigned(text, 65_535) || raise(invalid("#{key} is #{text}, no port"))
+      end
 
-        number
-      rescue ArgumentError
-        raise invalid("#{key} is #{text}, no port")
+      # The unsigned whole number +text+ is, digits after an optional plus
+      # sign, as Rust reads one, if it is at most +most+.
+      #
+      # @api private
+      def self.unsigned(text, most)
+        digits = text.strip
+        return nil unless digits.match?(/\A\+?[0-9]+\z/)
+
+        number = Integer(digits.delete_prefix("+"), 10)
+        number if number <= most
       end
 
       # The seconds +text+ is, whole; +nil+ for 0, no limit; 30 if unset.
@@ -247,12 +257,10 @@ module Turborel
       def self.seconds(text)
         return CONNECT_WITHIN if text.nil?
 
-        number = Integer(text.strip, 10)
-        raise ArgumentError if number.negative?
+        number = unsigned(text, MAX_SECONDS)
+        raise invalid("connect_timeout is #{text}, not a whole number of seconds") unless number
 
         number.zero? ? nil : number
-      rescue ArgumentError
-        raise invalid("connect_timeout is #{text}, not a whole number of seconds")
       end
 
       private
