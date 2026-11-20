@@ -1,5 +1,5 @@
 # The headings of Turborel's doc/client/02-library.md and
-# 02-library-connections.md at e4f08f77, one a line, as [CLIENT <heading>]
+# 02-library-connections.md at 1c4187e4, one a line, as [CLIENT <heading>]
 # cites them (RULES.md D6).
 The Client Library
 Connecting

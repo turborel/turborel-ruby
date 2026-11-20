@@ -11,7 +11,7 @@ protocol, `doc/client/05-protocol.md`; the client library,
 `doc/client/02-library.md`; and its settings, pipelines and pools,
 `doc/client/02-library-connections.md`. Each section here is one of
 theirs, and each row cites its heading as the tests cite it (RULES.md
-D6). The headings are those of Turborel's main at e4f08f77. Last come
+D6). The headings are those of Turborel's main at 1c4187e4. Last come
 the rows of this driver's standard API (RULES.md D2).
 
 **Done** means the driver's code for the row exists and is tested by
@@ -39,12 +39,12 @@ Contents: [Where the page and the code differ](#where-the-page-and-the-code-diff
 ## Where the page and the code differ
 
 Where The Native Protocol and turborel-protocol's code differ, the code
-is right, and the rows follow it. At e4f08f77 the page leaves out three
+is right, and the rows follow it. At e4f08f77 the page left out three
 things the code does:
 
 | Gap | The code | Rows |
 |---|---|---|
-| G1 | UUID is type tag 27, with no parameters, and value tag 27, whose body is bytes: a `u32` count of 16, then the 16 octets (Turborel's RULES.md D184, `protocol/src/fields.rs`) | P-TYPE-27, P-VAL-27 |
+| G1 | UUID is type tag 27, with no parameters, and value tag 27, whose body is bytes: a `u32` count of 16, then the 16 octets (Turborel's RULES.md D184, `protocol/src/fields.rs`) | P-TYPE-27, P-VAL-27; resolved at 1c4187e4, whose page lists UUID in both tables |
 | G2 | Besides AUTHORIZATION, SCHEMA, READ_ONLY and SERVER_VERSION, the server tells SERVER_READ_ONLY (YES or NO, how a client tells a replica from a primary), CATALOG and OWNER (YES or NO) (`server/src/native/status.rs`) | P-STATUS-7 to P-STATUS-9 |
 | G3 | A JSON value, tag 25, carries the binary tree of Turborel's RULES.md D89 (`src/json/binary.rs`, `src/json/binary/write.rs`) | P-VAL-25, the P-JSON rows |
 

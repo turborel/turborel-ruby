@@ -45,7 +45,9 @@ The bounds of each:
   at scale 1, the same number; one whose units at that scale do not fit
   an `i128`, or that is NaN or infinite, fails with SQLSTATE 22003.
 - **Datetimes**: `moment` is `:date`, `:time` or `:timestamp`; `utc` the
-  instant in microseconds of UTC, an `i64`; `zone` the displacement in
+  instant, an `i64`: of a timestamp, microseconds in UTC from
+  0001-01-01 00:00:00; of a date, the instant of its midnight; of a time,
+  microseconds from midnight UTC, within a day; `zone` the displacement in
   minutes, an `i16`, from -12:59 to +14:00 as the server writes it;
   `zoned` whether the type is WITH TIME ZONE; `precision` the seconds'
   fractional digits, a `u8`. Without a zone, the displacement is the one

@@ -67,7 +67,7 @@ Each is told in full in [§7](#7-the-decisions).
 |---|---|
 | `turborel.gemspec`, `Gemfile`, `Gemfile.lock` | the gem, and the development tools locked (D9, D10) |
 | `Rakefile`, `rakelib/` | the checks tool: `verify` and each check, `coverage`, `build` (D4) |
-| `rakelib/headings/` | the headings of Turborel's three documents tests cite, at e4f08f77 (D6) |
+| `rakelib/headings/` | the headings of Turborel's three documents tests cite, at 1c4187e4 (D6) |
 | `Steepfile`, `.rubocop.yml`, `.simplecov`, `.yardopts` | the type checker, the linter and formatter, coverage, the API reference |
 | `lib/turborel.rb` | the gem's root module |
 | `lib/turborel/version.rb` | `Turborel::VERSION` (D5) |
