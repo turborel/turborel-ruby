@@ -181,7 +181,11 @@ module Turborel
       # @return [Symbol] an interval's field, by its number
       def self.field(reader)
         number = reader.u32
-        FIELDS.fetch(number) { raise reader.corrupt("an interval's field #{number} is out of range") }
+        # Compared before it indexes, as Array#fetch takes a C long, which
+        # on Windows does not hold every u32.
+        raise reader.corrupt("an interval's field #{number} is out of range") unless number < FIELDS.size
+
+        FIELDS.fetch(number)
       end
 
       # @param reader [Reader]

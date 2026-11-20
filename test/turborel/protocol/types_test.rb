@@ -48,13 +48,16 @@ module Turborel
 
       # Verifies: [PROTOCOL Data types] tag 13, INTERVAL: start field, end
       # field, leading precision, fractional precision, the fields numbered 0
-      # YEAR to 5 SECOND.
+      # YEAR to 5 SECOND. Regression: a field of u32's largest raised a
+      # RangeError on Windows, whose C long does not hold it, not the
+      # connection failure.
       def test_interval_type_and_its_fields
         assert_equal({ start: :year, finish: :month, leading: 4, fraction: 0 },
                      type(hex("0D 00000000 01000000 04000000 00000000")).params)
         assert_equal({ start: :day, finish: :second, leading: 2, fraction: 6 },
                      type(hex("0D 02000000 05000000 02000000 06000000")).params)
         assert_fails { type(hex("0D 06000000 05000000 02000000 06000000")) }
+        assert_fails { type(hex("0D 00000000 FFFFFFFF 02000000 06000000")) }
       end
 
       # Verifies: [PROTOCOL Data types] tags 14, 25 and 27, BOOLEAN, JSON
