@@ -96,11 +96,13 @@ Turborel::Error: the user or the password is wrong
 
 `TLS.context` makes what a TLS connection trusts: the certificate
 authorities of the PEM file `roots:`, the platform's if `platform: true`
-(those of the files SSL_CERT_FILE and SSL_CERT_DIR name, where either is
-set), or both; and, for the mechanism `certificate`, the certificate
-chain of the PEM file `certificate:` and the private key of `key:`. A
-server whose certificate is not trusted, or not of the name connected
-to, fails the handshake, SQLSTATE 08006.
+(OpenSSL's: those of the files SSL_CERT_FILE and SSL_CERT_DIR name,
+where either is set, else of its own default file and directory, where
+one must be), or both; and, for the mechanism `certificate`, the
+certificate chain of the PEM file `certificate:` and the private key of
+the PEM file `key:`, both named. It speaks TLS 1.2 and 1.3 alone, as
+turborel-client does. A server whose certificate is not trusted, or not
+of the name connected to, fails the handshake, SQLSTATE 08006.
 
 ## Timeouts
 

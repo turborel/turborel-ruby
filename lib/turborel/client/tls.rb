@@ -38,6 +38,7 @@ module Turborel
       #   authority is trusted
       def self.context(roots: nil, platform: false, certificate: nil, key: nil)
         context = OpenSSL::SSL::SSLContext.new
+        context.min_version = OpenSSL::SSL::TLS1_2_VERSION
         context.verify_mode = OpenSSL::SSL::VERIFY_PEER
         context.verify_hostname = true
         context.cert_store = store(roots, platform)
@@ -56,9 +57,29 @@ module Turborel
         end
 
         store = OpenSSL::X509::Store.new
-        store.set_default_paths if platform
+        platform_authorities(store) if platform
         authorities(roots).each { |authority| store.add_cert(authority) } if roots
         store
+      end
+
+      # Adds the platform's authorities to +store+: OpenSSL's, of the files
+      # SSL_CERT_FILE and SSL_CERT_DIR name where either is set, else of its
+      # own default file and directory; one there at least.
+      #
+      # @api private
+      # @return [void]
+      def self.platform_authorities(store)
+        file = ENV.fetch(OpenSSL::X509::DEFAULT_CERT_FILE_ENV, nil)
+        directory = ENV.fetch(OpenSSL::X509::DEFAULT_CERT_DIR_ENV, nil)
+        unless file || directory
+          file = OpenSSL::X509::DEFAULT_CERT_FILE
+          directory = OpenSSL::X509::DEFAULT_CERT_DIR
+        end
+        unless File.file?(file.to_s) || (File.directory?(directory.to_s) && !Dir.empty?(directory.to_s))
+          raise Error.connection_failure("cannot trust the platform's certificate authorities: it holds none")
+        end
+
+        store.set_default_paths
       end
 
       # The certificates of the PEM file +path+: one at least.
@@ -71,14 +92,17 @@ module Turborel
         found.map { |pem| OpenSSL::X509::Certificate.new(String(pem)) }
       end
 
-      # Sets +context+ to present the chain of +certificate+ and +key+.
+      # Sets +context+ to present the chain of +certificate+ and +key+, which
+      # must be named.
       #
       # @return [void]
       def self.present(context, certificate, key)
         chain = authorities(certificate)
         context.cert = chain.first
         context.extra_chain_cert = chain.drop(1)
-        context.key = OpenSSL::PKey.read(File.read(key || certificate))
+        raise Error.connection_failure("the client certificate #{certificate} is named without its key") unless key
+
+        context.key = OpenSSL::PKey.read(File.read(key))
       end
 
       # The context of TLS by +mode+ [CLIENT TLS by mode], trusting and

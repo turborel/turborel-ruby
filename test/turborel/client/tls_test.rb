@@ -28,7 +28,7 @@ module Turborel
       end
 
       # Verifies: [CLIENT Connecting] certificate: a context presenting the
-      # chain of one PEM file and the key of another.
+      # chain of one PEM file and the key of another, both named.
       def test_presenting
         Dir.mktmpdir do |dir|
           files = LiveServer::Certificates.write(dir)
@@ -37,7 +37,34 @@ module Turborel
           assert_equal "/CN=ANN", context.cert.subject.to_s
           assert_kind_of OpenSSL::PKey::EC, context.key
           assert_fails { TLS.context(roots: files[:ca], certificate: files[:client], key: files[:ca]) }
+          assert_fails { TLS.context(roots: files[:ca], certificate: files[:client]) }
         end
+      end
+
+      # Verifies: [CLIENT Connecting] the platform's authorities those of
+      # SSL_CERT_FILE or SSL_CERT_DIR where set, and one there at least,
+      # else refused.
+      def test_platform_authorities
+        Dir.mktmpdir do |dir|
+          files = LiveServer::Certificates.write(dir)
+          empty = File.join(dir, "empty")
+          Dir.mkdir(empty)
+          refused = with_environment(OpenSSL::X509::DEFAULT_CERT_DIR_ENV => empty) { assert_fails { TLS.context(platform: true) } }
+
+          assert_match(/platform's certificate authorities/, refused.message)
+          with_environment(OpenSSL::X509::DEFAULT_CERT_FILE_ENV => files[:ca]) { TLS.context(platform: true) }
+        end
+      end
+
+      # Runs the block with +pairs+ in ENV, put back after.
+      def with_environment(pairs)
+        before = ENV.slice(*pairs.keys)
+        pairs.each_key { |name| ENV.delete(name) }
+        ENV.update(pairs)
+        yield
+      ensure
+        pairs.each_key { |name| ENV.delete(name) }
+        ENV.update(before)
       end
     end
   end
