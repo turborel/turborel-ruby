@@ -19,6 +19,27 @@ module Turborel
   # no trailing zero.
   DecFloat = Data.define(:coefficient, :exponent)
 
+  # An exact number that keeps the scale it was written with [PROTOCOL JSON
+  # values]: +units+ divided by ten to the +scale+, so 1.50 is units 150
+  # and scale 2. A JSON value's decimal is read as one, and one is written
+  # at its own scale; a BigDecimal keeps no scale.
+  Decimal = Data.define(:units, :scale)
+
+  # An exact number's forms.
+  class Decimal
+    # @return [BigDecimal] the number
+    def to_d = BigDecimal("#{units}e-#{scale}")
+
+    # @return [String] the number as SQL writes it, with its scale's
+    #   digits after the point, as 1.50
+    def to_s
+      return units.to_s if scale.zero?
+
+      digits = units.abs.to_s.rjust(scale + 1, "0").insert(-scale - 1, ".")
+      units.negative? ? "-#{digits}" : digits
+    end
+  end
+
   # A large object [PROTOCOL Values]: its +kind+ (+:character+ or
   # +:binary+), and either its octets whole (+data+), or its +locator+
   # with its lengths in octets and characters. A locator lasts until its

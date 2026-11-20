@@ -33,8 +33,8 @@ module Turborel
       def node: (Integer at, Integer depth) -> [json, Integer]
       def integer: (Integer at, Integer _depth) -> [Integer, Integer]
       def approximate: (Integer at, Integer _depth) -> [Float, Integer]
-      def decimal: (Integer at, Integer _depth) -> [Integer | BigDecimal, Integer]
-      def wide: (Integer at, Integer _depth) -> [Integer | BigDecimal, Integer]
+      def decimal: (Integer at, Integer _depth) -> [Integer | Decimal, Integer]
+      def wide: (Integer at, Integer _depth) -> [Integer | Decimal, Integer]
       def decfloat: (Integer at, Integer _depth) -> [DecFloat, Integer]
       def string: (Integer at, Integer _depth) -> [String, Integer]
       def datetime: (Integer at, Integer _depth) -> [Datetime, Integer]
@@ -47,7 +47,7 @@ module Turborel
       def offset: (Integer at, Integer index) -> Integer
       def head: (Integer at) -> [Integer, Integer, Integer]
       def text_at: (Integer at) -> [String, Integer]
-      def exact: (Integer units, Integer scale) -> (Integer | BigDecimal)
+      def exact: (Integer units, Integer scale) -> (Integer | Decimal)
       def i128: (Integer at) -> Integer
       def word: (Integer at) -> Integer
       def byte: (Integer at) -> Integer

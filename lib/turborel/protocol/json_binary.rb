@@ -59,24 +59,24 @@ module Turborel
       # How a value of each class is written: the method of this module.
       ENCODERS = {
         NilClass => :null, TrueClass => :truth, FalseClass => :truth, Integer => :integer,
-        BigDecimal => :big_decimal, Float => :float, String => :string, Symbol => :string,
+        BigDecimal => :big_decimal, Turborel::Decimal => :decimal, Float => :float, String => :string,
+        Symbol => :string,
         Turborel::DecFloat => :decfloat, Turborel::Datetime => :datetime, Array => :array, Hash => :object
       }.freeze
 
       # The stored form of +value+.
       #
       # @param value [Object] a Ruby value of JSON
+      # @param most [Integer] the longest form taken, 256 MiB but in tests
       # @return [String] binary
       # @raise [Error] SQLSTATE 07006 of a value no JSON item holds, or
       #   one nested too deep; 22003 of a number out of range, or a form
       #   longer than 256 MiB
-      def self.encode(value)
+      def self.encode(value, most: MAX_DOCUMENT_OCTETS)
         document = Writer.new.u8(FORMAT_VERSION)
         node(document, value, 0)
         bytes = document.to_s
-        if bytes.bytesize > MAX_DOCUMENT_OCTETS
-          raise Error.out_of_range("a JSON value's stored form is longer than 256 MiB")
-        end
+        raise Error.out_of_range("a JSON value's stored form is longer than #{most} octets") if bytes.bytesize > most
 
         bytes
       end
@@ -121,6 +121,11 @@ module Turborel
         units, scale = ValueWriter.exact_parts(value)
         exact(writer, units, scale)
       end
+
+      # A decimal at the scale it was written with.
+      #
+      # @return [void]
+      def self.decimal(writer, value, _depth) = exact(writer, value.units, value.scale)
 
       # An exact number of +units+ and +scale+, in the narrowest of its
       # three encodings.

@@ -23,13 +23,14 @@ module Turborel
       WORD: Integer
       ENCODERS: Hash[Module, Symbol]
 
-      def self.encode: (untyped value) -> String
+      def self.encode: (untyped value, ?most: Integer) -> String
       def self.decode: (String bytes) -> json
       def self.node: (Writer writer, untyped value, Integer depth) -> void
       def self.null: (Writer writer, nil _value, Integer _depth) -> void
       def self.truth: (Writer writer, bool value, Integer _depth) -> void
       def self.integer: (Writer writer, Integer value, Integer _depth) -> void
       def self.big_decimal: (Writer writer, BigDecimal value, Integer _depth) -> void
+      def self.decimal: (Writer writer, Decimal value, Integer _depth) -> void
       def self.exact: (Writer writer, Integer units, Integer scale) -> void
       def self.float: (Writer writer, Float value, Integer _depth) -> void
       def self.string: (Writer writer, String | Symbol value, Integer _depth) -> void

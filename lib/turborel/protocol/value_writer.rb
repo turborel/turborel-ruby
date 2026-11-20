@@ -17,6 +17,7 @@ module Turborel
       # How a value of each class is written: the method of this module.
       WRITERS = {
         NilClass => :null, String => :string, Integer => :integer, BigDecimal => :big_decimal,
+        Turborel::Decimal => :decimal,
         Float => :float, TrueClass => :boolean, FalseClass => :boolean, Array => :array,
         Turborel::Datetime => :datetime, Turborel::Interval => :interval, Turborel::DecFloat => :decfloat,
         Turborel::Lob => :lob, Turborel::Row => :row, Turborel::Multiset => :multiset,
@@ -65,6 +66,11 @@ module Turborel
 
       # @return [void]
       def self.integer(writer, value, _depth) = writer.u8(Values::EXACT).i128(value).u32(0)
+
+      # A decimal at its own scale.
+      #
+      # @return [void]
+      def self.decimal(writer, value, _depth) = writer.u8(Values::EXACT).i128(value.units).u32(value.scale)
 
       # The least scale that holds +value+, and its units at that scale.
       #

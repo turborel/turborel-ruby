@@ -10,6 +10,7 @@ module Turborel
       def self.string: (Writer writer, String value, Integer _depth) -> void
       def self.integer: (Writer writer, Integer value, Integer _depth) -> void
       def self.big_decimal: (Writer writer, BigDecimal value, Integer _depth) -> void
+      def self.decimal: (Writer writer, Decimal value, Integer _depth) -> void
       def self.exact_parts: (BigDecimal value) -> [Integer, Integer]
       def self.float: (Writer writer, Float value, Integer _depth) -> void
       def self.boolean: (Writer writer, bool value, Integer _depth) -> void

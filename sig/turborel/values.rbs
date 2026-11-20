@@ -1,10 +1,10 @@
 module Turborel
   # A Ruby value the protocol carries.
-  type value = nil | String | Integer | BigDecimal | Float | bool | Array[value] | Datetime | Interval | DecFloat
+  type value = nil | String | Integer | BigDecimal | Decimal | Float | bool | Array[value] | Datetime | Interval | DecFloat
              | Lob | Row | Multiset | Structured | Reference | Json | Xml | Uuid | Extension
 
   # A Ruby value of a JSON item.
-  type json = nil | bool | Integer | BigDecimal | Float | String | Symbol | DecFloat | Datetime | Array[json]
+  type json = nil | bool | Integer | BigDecimal | Decimal | Float | String | Symbol | DecFloat | Datetime | Array[json]
             | Hash[String | Symbol, json]
 
   # A date, a time or a timestamp.
@@ -25,6 +25,15 @@ module Turborel
     attr_reader fraction: Integer
     attr_reader units: Integer
     def self.new: (start: Symbol, finish: Symbol, leading: Integer, fraction: Integer, units: Integer) -> instance
+  end
+
+  # An exact number keeping its scale.
+  class Decimal < Data
+    attr_reader units: Integer
+    attr_reader scale: Integer
+    def self.new: (units: Integer, scale: Integer) -> instance
+    def to_d: () -> BigDecimal
+    def to_s: () -> String
   end
 
   # A decimal floating point number.

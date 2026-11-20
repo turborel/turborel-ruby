@@ -36,6 +36,7 @@ module Turborel
         end
         assert_equal hex("02 39300000#{"00" * 12} 02000000"), bytes(BigDecimal("123.45"))
         assert_equal hex("02 #{"00" * 16} 00000000"), bytes(BigDecimal("-0"))
+        assert_equal hex("02 96#{"00" * 15} 02000000"), bytes(Decimal.new(units: 150, scale: 2))
       end
 
       # Verifies: [DESIGN] D8 a number no exact number holds is refused with
@@ -68,7 +69,7 @@ module Turborel
          Interval.new(start: :day, finish: :second, leading: 2, fraction: 6, units: 2**100),
          DecFloat.new(coefficient: -15, exponent: -3), [1, [nil, "a"]], Row.new(values: [true]),
          Multiset.new(values: [nil]), Structured.new(schema: "S", name: "T", attributes: [1]),
-         Reference.new(octets: "\x01".b), Json.new(value: { "k" => [1, BigDecimal("1.5"), nil] }),
+         Reference.new(octets: "\x01".b), Json.new(value: { "k" => [1, Decimal.new(units: 15, scale: 1), nil] }),
          Xml.new(text: "<a/>"),
          Uuid.new(octets: "\x00".b * 16), Extension.new(name: "P", text: "t", bytes: "\x02".b),
          Lob.new(kind: :character, data: "é", locator: nil, octets: 2, characters: 1),

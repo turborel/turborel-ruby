@@ -196,8 +196,8 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-JSON-11 | Node 11 object: count `u32`, size `u32`, an offset `u32` of each member in key order, the members in written order, each key and value | `[PROTOCOL Values]` | done |
 | P-JSON-100 | A document: a version octet, 1, then its root node; another version refused | `[PROTOCOL Values]` | done |
 | P-JSON-101 | An object's directory sorted by key octets, members of one key in written order; written order kept | `[PROTOCOL Values]` | done |
-| P-JSON-102 | Limits: arrays and objects nest at most 128 deep, a document is at most 256 MiB; a damaged document or another version refused (SQLCODE -916 at the server) | `[PROTOCOL Values]` | not yet |
-| P-JSON-103 | An exact number written in the narrowest of its three nodes, and a decimal keeping the scale it was written with: 1.50 is units 150, scale 2 | `[PROTOCOL Values]` | not yet |
+| P-JSON-102 | Limits: arrays and objects nest at most 128 deep, a document is at most 256 MiB; a damaged document or another version refused (SQLCODE -916 at the server) | `[PROTOCOL Values]` | done |
+| P-JSON-103 | An exact number written in the narrowest of its three nodes, and a decimal keeping the scale it was written with: 1.50 is units 150, scale 2 | `[PROTOCOL Values]` | done |
 
 ### Composite fields
 

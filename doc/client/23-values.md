@@ -12,6 +12,7 @@ written from.
 ```ruby
 Turborel::Datetime.new(moment:, utc:, zone:, zoned:, precision:)
 Turborel::Interval.new(start:, finish:, leading:, fraction:, units:)
+Turborel::Decimal.new(units:, scale:)
 Turborel::DecFloat.new(coefficient:, exponent:)
 Turborel::Lob.new(kind:, data:, locator:, octets:, characters:)
 Turborel::Row.new(values:)
@@ -40,7 +41,9 @@ bounds of each field.
 A value given as a parameter, or as a field of a row copied in, is
 written from the same classes. An exact number comes as an `Integer`
 where its scale is 0 and as a `BigDecimal` otherwise, exactly in both
-cases.
+cases. Within a JSON value a decimal is read as a `Turborel::Decimal`,
+its `units` and `scale` as written, so 1.50 stays 1.50; one is written
+at its own scale wherever it is given.
 
 What the server describes of a result's columns and a statement's
 parameters is a `Column` and a `Parameter`, each with its `DataType`.

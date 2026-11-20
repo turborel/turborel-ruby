@@ -233,7 +233,7 @@ module Turborel
       end
 
       # The exact number of +units+ and +scale+: an Integer of scale 0.
-      def exact(units, scale) = scale.zero? ? units : BigDecimal("#{units}e-#{scale}")
+      def exact(units, scale) = scale.zero? ? units : Decimal.new(units:, scale:)
 
       # The i128 at +at+.
       def i128(at) = (unpack(at + LONG, LONG, I64) << HALF_BITS) | unpack(at, LONG, U64)

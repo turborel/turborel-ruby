@@ -14,7 +14,7 @@ and parameters, are in the second table.
 |---|---|---|---|
 | 0 | null | `nil` | `nil` |
 | 1 | character string | `String`, UTF-8 | `String` of any encoding but binary, written as UTF-8 |
-| 2 | exact number | `Integer` of scale 0; `BigDecimal` of a scale above 0 | `Integer`, or a finite `BigDecimal` |
+| 2 | exact number | `Integer` of scale 0; `BigDecimal` of a scale above 0 | `Integer`, a finite `BigDecimal`, or a `Turborel::Decimal` |
 | 3 | approximate number | `Float`, NaN and -0.0 as they came | `Float` |
 | 4 | a plug-in's value | `Turborel::Extension`: name, text, bytes | `Turborel::Extension`, as it came |
 | 6 | binary string | `String`, binary | `String` of binary encoding |
@@ -43,7 +43,8 @@ The bounds of each:
   read exactly, the whole of the `i128` and every scale. A `BigDecimal`
   is written at the least scale that holds it, so 1.50 is written as 15
   at scale 1, the same number; one whose units at that scale do not fit
-  an `i128`, or that is NaN or infinite, fails with SQLSTATE 22003.
+  an `i128`, or that is NaN or infinite, fails with SQLSTATE 22003. A
+  `Turborel::Decimal` is written at its own `units` and `scale`.
 - **Datetimes**: `moment` is `:date`, `:time` or `:timestamp`; `utc` the
   instant, an `i64`: of a timestamp, microseconds in UTC from
   0001-01-01 00:00:00; of a date, the instant of its midnight; of a time,
@@ -69,12 +70,16 @@ The bounds of each:
 - **JSON**: a JSON value's item is read as Ruby values: an object as a
   `Hash` in written order, keeping the first member written of a key, as
   a member accessor takes it; an array as an `Array`; a string as a
-  `String`; a number as an `Integer`, a `BigDecimal`, a
+  `String`; a number as an `Integer`, a `Turborel::Decimal`, a
   `Turborel::DecFloat` or a `Float`, as it is stored; a datetime as a
   `Turborel::Datetime`; `true`, `false`, and `nil` for the JSON null. Any
   of these is written back, a `Symbol` as a string, a `Hash`'s keys
-  being `String`s or `Symbol`s; an exact number is stored in the
-  narrowest of its forms. Arrays and objects nest at most 128 deep, and a
+  being `String`s or `Symbol`s, a `BigDecimal` too. An exact number is
+  stored in the narrowest of its forms. A decimal keeps the scale it was
+  written with: a `Turborel::Decimal` of `units` 150 and `scale` 2 is
+  1.50, read and written so, its `to_s` "1.50" and its `to_d` the
+  `BigDecimal`; a `BigDecimal`, which keeps no scale, is written at the
+  least scale that holds it. Arrays and objects nest at most 128 deep, and a
   stored form is at most 256 MiB. Damaged octets fail the connection.
 - **UUIDs** are 16 octets, no more and no fewer.
 

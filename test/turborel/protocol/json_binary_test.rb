@@ -28,6 +28,40 @@ module Turborel
         assert_fails(OUT_OF_RANGE) { JsonBinary.encode(BigDecimal("NaN")) }
       end
 
+      # Verifies: [PROTOCOL JSON values] a decimal keeps the scale it was
+      # written with, so 1.50 is units 150 and scale 2, in the narrowest
+      # node that holds it.
+      def test_a_decimal_keeps_its_scale
+        assert_equal hex("01 04 9600000000000000 02"), JsonBinary.encode(Decimal.new(units: 150, scale: 2))
+        assert_equal hex("01 03 0700000000000000"), JsonBinary.encode(Decimal.new(units: 7, scale: 0))
+        assert_equal hex("01 05 9600000000000000 0000000000000000 00010000"),
+                     JsonBinary.encode(Decimal.new(units: 150, scale: 256))
+      end
+
+      # Verifies: [PROTOCOL JSON values] a document is at most 256 MiB: one
+      # longer is refused, the bound taken lower here.
+      def test_a_document_is_bounded
+        assert_equal 14, JsonBinary.encode("x" * 8, most: 14).bytesize
+        assert_fails(OUT_OF_RANGE) { JsonBinary.encode("x" * 9, most: 14) }
+        assert_equal 1 << 28, JsonBinary::MAX_DOCUMENT_OCTETS
+      end
+
+      # Verifies: [PROTOCOL JSON values] the page's examples: {"a":[1,"x"]}
+      # is its 51 octets, and in {"b":1,"a":2} the members keep their order
+      # while the directory puts a first, at 14, then b, at 0.
+      def test_the_pages_examples
+        example = hex("01 0B 01000000 25000000 00000000 01000000 61 0A 02000000 0F000000 00000000 09000000 " \
+                      "03 0100000000000000 08 01000000 78")
+
+        assert_equal 51, example.bytesize
+        assert_equal example, JsonBinary.encode({ "a" => [1, "x"] })
+        assert_equal({ "a" => [1, "x"] }, JsonBinary.decode(example))
+        both = JsonBinary.encode({ "b" => 1, "a" => 2 })
+
+        assert_equal hex("0E000000 00000000"), both.byteslice(10, 8)
+        assert_equal %w[b a], JsonBinary.decode(both).keys
+      end
+
       # Verifies: [PROTOCOL Values] 6 a DECFLOAT, coefficient i128 and
       # exponent i32; 7 an approximate number, f64 bits; 8 a string, octets
       # u32 then UTF-8; 9 a datetime, moment u8, UTC i64, zone i16, zoned u8,
