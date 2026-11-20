@@ -264,6 +264,28 @@ module Turborel
           assert_equal [-301, "22005"], [wrong.sqlcode, wrong.sqlstate]
         end
       end
+
+      # Verifies: [CLIENT Importing] through an INSERT, a table with a large
+      # object column: a bad row stopping the import, its batch rolled back;
+      # a record the source cannot read; a commit that fails.
+      def test_an_import_by_insert_stops
+        connect do |c|
+          c.query("CREATE TABLE NOTE2 (ID INTEGER PRIMARY KEY, BODY CLOB(1M))")
+          c.query("CREATE TABLE NOTE3 (ID INTEGER UNIQUE DEFERRABLE INITIALLY DEFERRED, BODY CLOB(1M))")
+          c.query("COMMIT")
+          bad, = csv(c, "1,a\n2,b\nx,c\n", Dialect.csv, into("NOTE2", batch: 1))
+
+          assert_equal [Position.new(record: 3, line: 3), "22018", 2, 0],
+                       [bad.position, bad.sqlstate, bad.committed, bad.rolled_back]
+          unread, = csv(c, "3,a\n\"4,b\n", Dialect.csv, into("NOTE2", batch: 0))
+
+          assert_equal [Position.new(record: 2, line: 2), true, 1], [unread.position, unread.input, unread.rolled_back]
+          commit, = csv(c, "1,a\n1,b\n", Dialect.csv, into("NOTE3", batch: 0))
+
+          assert_equal ["40002", nil], [commit.sqlstate, commit.position]
+          refute_predicate c, :in_transaction?
+        end
+      end
     end
   end
 end
