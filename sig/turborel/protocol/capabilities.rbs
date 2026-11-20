@@ -1,0 +1,28 @@
+module Turborel
+  module Protocol
+    # The capabilities of version 1.
+    module Capabilities
+      NOTICES: String
+      STATUS: String
+      DIAGNOSTICS: String
+      DESCRIBE: String
+      CURSORS: String
+      PING: String
+      RESET: String
+      CHANGE_USER: String
+      QUERY_ATTRIBUTES: String
+      CONNECTION_ATTRIBUTES: String
+      MULTI_STATEMENT: String
+      COMPRESSION: String
+      COMMIT_POSITION: String
+      COPY: String
+      ROW_COUNTS: String
+      GENERATED_VALUES: String
+      FETCH_ENDS: String
+      CONDITIONS: String
+      ALL: Array[String]
+
+      def self.known: (Array[String] names) -> Array[String]
+    end
+  end
+end

@@ -42,7 +42,8 @@ desc "Validate the RBS signatures in sig/ (D11)"
 task :rbs do
   require "rbs"
   require "rbs/cli"
-  status = RBS::CLI.new(stdout: $stdout, stderr: $stderr).run(%w[-r bigdecimal -r zlib -I sig validate])
+  libraries = %w[bigdecimal openssl securerandom socket zlib].flat_map { |library| ["-r", library] }
+  status = RBS::CLI.new(stdout: $stdout, stderr: $stderr).run([*libraries, "-I", "sig", "validate"])
   abort "rbs found invalid signatures" unless status.nil? || status.zero?
 end
 

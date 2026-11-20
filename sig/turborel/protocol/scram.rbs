@@ -1,0 +1,65 @@
+module Turborel
+  module Protocol
+    # The client's side of SCRAM-SHA-256.
+    class Scram
+      MECHANISM: String
+      MECHANISM_PLUS: String
+      NONCE_BYTES: Integer
+      KEY_BYTES: Integer
+      DIGEST: String
+      CLIENT_KEY: String
+      SERVER_KEY: String
+      HEADERS: Hash[Symbol, String]
+      MAX_ITERATIONS: Integer
+      NONCE: Regexp
+
+      class Derived < Data
+        attr_reader client: String
+        attr_reader server: String
+        def self.new: (client: String, server: String) -> instance
+      end
+
+      class ServerFirst < Data
+        attr_reader message: String
+        attr_reader both: String
+        attr_reader salt: String
+        attr_reader iterations: Integer
+        def self.new: (message: String, both: String, salt: String, iterations: Integer) -> instance
+      end
+
+      @user: String
+      @binding: Symbol
+      @data: String
+      @stage: Symbol
+      @bare: String
+      @nonce: String
+      @expected: String
+
+      attr_reader binding: Symbol
+
+      def initialize: (?String user, ?binding: Symbol, ?data: String) -> void
+      def bound?: () -> bool
+      def verified?: () -> bool
+      def first: (String nonce) -> String
+      def read: (String server_first) -> ServerFirst
+      def prove: (ServerFirst first, Derived keys) -> String
+      def verify: (String server_final) -> void
+      def self.derived: (String password, String salt, Integer iterations) -> Derived
+      def self.nonce: () -> String
+      def self.encode: (String bytes) -> String
+      def self.decode: (String text, String what) -> String
+      def self.fields: (String message, Array[String] names) -> Array[String]
+      def self.xor: (String first, String second) -> String
+      def self.sha256: (String data) -> String
+      def self.attribute: (String? field, String name) -> String
+      def self.iterations: (String text) -> Integer
+      def self.text: (String bytes) -> String
+      def self.refused: (String why) -> Error
+
+      private
+
+      def check_nonce: (String both) -> void
+      def saslname: (String user) -> String
+    end
+  end
+end

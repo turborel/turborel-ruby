@@ -1,0 +1,20 @@
+module Turborel
+  module Protocol
+    # The channel binding tls-server-end-point.
+    module EndPoint
+      SIGNATURES: Hash[String, String]
+      RSA_PSS: String
+      MGF1: String
+      SHA1: String
+      HASHES: Hash[String, String]
+      PSS_HASH: Integer
+      PSS_MASK: Integer
+
+      def self.of: (String certificate) -> String?
+      def self.pss: (untyped parameters) -> String?
+      def self.hash_of: (untyped field) -> String
+      def self.mask_hash: (untyped mask) -> String?
+      def self.tagged: (Array[untyped] fields, Integer tag) -> untyped
+    end
+  end
+end

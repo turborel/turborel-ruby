@@ -8,6 +8,9 @@ module Turborel
     CONNECTION_FAILURE_SQLCODE = -919
     # SQLSTATE of a connection failure [PROTOCOL Errors and notices].
     CONNECTION_FAILURE_SQLSTATE = "08006"
+    # SQLSTATE of credentials refused: invalid authorization
+    # specification.
+    INVALID_AUTHORIZATION_SQLSTATE = "28000"
     # SQLCODE of a data exception, as turborel numbers its exceptions.
     DATA_EXCEPTION_SQLCODE = -301
     # SQLSTATE of a number out of the range of its type or field.

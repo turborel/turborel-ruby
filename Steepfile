@@ -4,6 +4,6 @@
 target :lib do
   signature "sig"
   check "lib"
-  library "bigdecimal", "openssl", "socket", "zlib"
+  library "bigdecimal", "openssl", "securerandom", "socket", "zlib"
   configure_code_diagnostics(Steep::Diagnostic::Ruby.strict)
 end

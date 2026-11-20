@@ -20,9 +20,12 @@ require_relative "turborel/protocol/json_decoder"
 require_relative "turborel/protocol/value_reader"
 require_relative "turborel/protocol/value_writer"
 
+require_relative "turborel/protocol/capabilities"
 require_relative "turborel/protocol/compression"
+require_relative "turborel/protocol/end_point"
 require_relative "turborel/protocol/replies"
 require_relative "turborel/protocol/requests"
+require_relative "turborel/protocol/scram"
 
 # The Ruby driver for turborel, a relational database system. It speaks
 # turborel's native protocol, version 1, itself, in Ruby alone, with no
