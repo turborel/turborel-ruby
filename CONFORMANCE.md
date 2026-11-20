@@ -56,10 +56,10 @@ The same in every driver; the status of each row is in its table.
 
 | Part | Rows |
 |---|---|
-| The protocol | 241 |
+| The protocol | 246 |
 | The client library | 92 |
 | Settings, pipelines and pools | 82 |
-| All but the standard API | 415 |
+| All but the standard API | 420 |
 
 ---
 
@@ -440,7 +440,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-PREPD-1 | Prepared: statement, parameters in the order of their `?` marks, columns (none of a statement not a query) | `[PROTOCOL Prepared 'P']` | done |
+| P-PREPD-1 | Prepared: statement, its input parameters in the order of their `?` marks, columns (a query's, or a CALL's output parameters', P-PREPD-2; none of another statement) | `[PROTOCOL Prepared 'P']` | done |
 | P-PREPD-2 | Parameters are a statement's inputs alone; a CALL's columns are one for each `?` of an OUT or INOUT parameter, in the procedure's parameter order, named and typed as each; an INOUT `?` is both a parameter and a column | `[PROTOCOL Prepared 'P']` | done |
 
 ### Description 'D'

@@ -412,7 +412,7 @@ least 90 % of lines, and of branches where the tool measures them. It
 only rises: a change that raises coverage well above it raises it. A
 floor below 100 % says why.
 
-The floor is 98 % of lines and 95 % of branches of `lib/`, kept in
+The floor is 99 % of lines and 96 % of branches of `lib/`, kept in
 `.simplecov` (D14). It is below 100 % because code of one platform,
 Unix sockets and Windows named pipes, runs only where its platform
 does, and coverage is measured on Linux.
@@ -440,8 +440,25 @@ rule here, the rule is kept:
   a class the protocol does not carry, the driver gives the codes every
   Turborel driver gives: SQLSTATE 22000, SQLCODE -301, for a value the
   protocol cannot carry; 0A000, -900, for what is past Turborel's
-  limits; TB910, -910, for an argument none of those a method takes
+  limits; TB910, -910, for a misuse it has no case for, as an argument
+  none of those a method takes. The plain API's `exec_prepared` or
+  `deallocate` of a name no statement is prepared under gives SQLCODE
+  -921, SQLSTATE 26000, as Turborel's own EXECUTE does
   ([Appendix B](doc/appendix/b-errors.md)).
+- Where turborel-client reads a reply's value with the decoder of a
+  stored one, it fails a malformed value as a stored one: a truth value
+  or a string's units byte other than 0 or 1, a JSON value damaged, or a
+  condition of a Complete that cannot be read, with SQLCODE -916, and a
+  JSON value nested past 128 with -900, the connection kept, though the
+  replies after it then come out of turn. The page fails a connection on
+  a malformed message ([PROTOCOL Frames], [PROTOCOL Errors and
+  notices]), and the driver follows it: each is SQLCODE -919, SQLSTATE
+  08006, the connection lost. So too a value of a tag the page's table
+  does not list, as 5, 7, 10, 12, 18 and 19, which turborel-client reads
+  by its type's decoder and the server never sends.
+- During a copy the driver refuses, before sending it, every request
+  but CopyData, CopyEnd and Ping, Terminate among them (TB910), where
+  turborel-client's copy borrows the connection and so sends none.
 
 ### This driver's own
 

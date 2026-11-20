@@ -29,14 +29,14 @@ large objects, bulk copy, import and export, settings from a URI, the
 environment and service and password files, several servers, pipelines
 and pools.
 
-The driver is built in milestones, M0 to M8. Its low-level client
-connects, logs in, runs statements, prepared statements and cursors,
-reads and writes large objects, copies, imports and exports, and
-connects by settings to one of several servers, pipelines requests,
-pools connections and holds named connections as an SQL-agent, today,
-and the plain API and the ActiveRecord adapter stand on it.
-[CONFORMANCE.md](CONFORMANCE.md) shows what is done, row by row, and
-[TODO.md](TODO.md) what is open.
+The driver was built in milestones, M0 to M8, and every row of its
+parity matrix, [CONFORMANCE.md](CONFORMANCE.md), is done, checked
+against turborel-client at M8: its low-level client connects, logs in,
+runs statements, prepared statements and cursors, reads and writes
+large objects, copies, imports and exports, connects by settings to one
+of several servers, pipelines requests, pools connections and holds
+named connections as an SQL-agent, and the plain API and the
+ActiveRecord adapter stand on it. [TODO.md](TODO.md) says what waits.
 
 ## Requirements
 
@@ -66,8 +66,7 @@ A program's Gemfile may name the clone instead:
 
 ## A first query
 
-This is the standard API as milestone M7 built it; M8's audit checks
-it, and its names may change until then.
+The standard API, the plain API in the manner of the pg gem:
 
 ```ruby
 require "turborel"
