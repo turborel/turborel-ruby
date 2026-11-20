@@ -55,6 +55,19 @@ Metrics/BlockLength:
   Exclude:
     - "*.gemspec"
 
+# ActiveRecord's and Arel's visitors call a node's method by its class's
+# name, visit_Arel_Nodes_Limit and the rest, so the adapter's own are named
+# so (RULES.md D2).
+Naming/MethodName:
+  AllowedPatterns:
+    - '\Avisit_'
+
+# ActiveRecord asks an adapter for the server's version by
+# get_database_version, a name of its own choosing (RULES.md D2).
+Naming/AccessorMethodName:
+  Exclude:
+    - "lib/active_record/connection_adapters/turborel_adapter.rb"
+
 # R-DOC-1: every public class, module and method is documented.
 Style/Documentation:
   Enabled: true

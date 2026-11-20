@@ -58,6 +58,7 @@ Each is told in full in [§7](#7-the-decisions).
 | D13 | Tests are minitest |
 | D14 | Coverage by SimpleCov |
 | D15 | The API reference is YARD's, with nothing undocumented |
+| D16 | ActiveRecord is a tool of the adapter's tests, never a dependency of the gem |
 
 ---
 
@@ -76,11 +77,12 @@ Each is told in full in [§7](#7-the-decisions).
 | `lib/turborel/protocol/` | the `codec` layer, with no I/O (D1): `reader.rb` and `writer.rb`, the fields; `frame.rb` and `compression.rb`, frames; `tail.rb`; `types.rb`; `values.rb`, `value_reader.rb` and `value_writer.rb`; `json_binary.rb` and `json_decoder.rb`, JSON's binary tree; `fields.rb`, the composite fields; `requests.rb` and `replies.rb`, every message |
 | `lib/turborel/client.rb`, `lib/turborel/client/` | the low-level client: the `transport` layer (`target.rb`, `transport.rb`, `stream.rb`, `timeouts.rb`), `auth` and `tls` (`mechanisms.rb`, `scram.rb`, `key_cache.rb`, `tls.rb`), and the `session` (`connection.rb`, `wire.rb`, `statements.rb`, `session.rb`, `outcomes.rb`, `offer.rb`, `canceller.rb`), its large objects, copies and exports (`lobs.rb`, `lob_streams.rb`, `copy.rb`, `export.rb`), connecting by settings (`settings.rb`, `settings/`, `failover.rb`), and throughput (`pipeline.rb`, `pool.rb`, `agent.rb`, `connection_statement.rb`) |
 | `lib/turborel/api/` | the standard API's plain API (D2): `Turborel.connect` and `Turborel::Connection` (`connection.rb`), `Turborel::Result` (`result.rb`) |
+| `lib/active_record/connection_adapters/turborel_adapter.rb`, `turborel/`, `lib/turborel/registration.rb` | the ActiveRecord adapter (D2, D16): the adapter, its quoting, statements, schema statements, values, defaults, failures and Arel visitor; its registration as `turborel` |
 | `lib/turborel/import.rb`, `lib/turborel/import/` | imports: the source's records, delimited text, SQL names, string assignment, the run by INSERT or by copy |
 | `lib/turborel/text.rb`, `lib/turborel/text/` | values written as Turborel shows them, and a JSON value's text |
 | `lib/turborel/xml/` | an XML value's nodes, parsed from its text |
-| `sig/` | RBS signatures, a file for each of `lib/` (D11) |
-| `test/` | minitest, a `*_test.rb` for each file of `lib/`, and `test_helper.rb` (D13); `test/support/` the fake server unit tests script; `test/server/` the live tests' server set-up (R-TEST-8) |
+| `sig/` | RBS signatures, a file for each of `lib/` but the ActiveRecord adapter's (D11, D16) |
+| `test/` | minitest, a `*_test.rb` for each file of `lib/`, and `test_helper.rb` (D13); `test/support/` the fake server unit tests script; `test/server/` the live tests' server set-up (R-TEST-8); `test/active_record/` the adapter's |
 | `doc/` | the manual |
 
 ---
@@ -190,7 +192,7 @@ The tools named by "the formatter", "the linters", "the type checker" and
 
 | ID | Rule | Checked by |
 |---|---|---|
-| R-TYPE-1 | Every class, module, method and constant of `lib/` **shall** have its signature in `sig/`, in RBS, and Steep **shall** pass with its strict diagnostics. | Steep |
+| R-TYPE-1 | Every class, module, method and constant of `lib/`, but the ActiveRecord adapter's, written to ActiveRecord's interfaces, which have no signatures (D16), **shall** have its signature in `sig/`, in RBS, and Steep **shall** pass with its strict diagnostics. | Steep |
 | R-TYPE-2 | A Steep annotation that casts a value (`_ = ...`) **shall** say in a comment why the value has the type it is given. | review |
 | R-TYPE-3 | The signatures **shall** pass `rbs validate`. | rbs |
 
@@ -463,7 +465,8 @@ gemspec declares `bigdecimal`, `>= 3.1` (Ruby 3.3's default is 3.1.5),
 The tools a contributor needs are in the Gemfile's `development` group,
 not in the gemspec, as Bundler's own gem template has them: rake,
 minitest, RuboCop with its minitest, performance and rake plug-ins, rbs,
-Steep, SimpleCov and YARD. Each is the Ruby community's standard tool
+Steep, SimpleCov and YARD, and ActiveRecord for the adapter's tests
+(D16). Each is the Ruby community's standard tool
 for its job, maintained as production software. `Gemfile.lock` is
 committed (R-DEP-3), with every platform CI runs on, so each run
 installs the same versions, and Dependabot proposes updates to it. Gems
@@ -473,7 +476,8 @@ are installed into the clone, by
 #### D11. Types in RBS, checked by Steep, strictly
 
 Every file of `lib/` has its signatures in `sig/`, in RBS, Ruby's own
-type language. Steep checks `lib/` against them with its strict
+type language, but the ActiveRecord adapter's and its registration's
+(D16). Steep checks `lib/` against them with its strict
 diagnostics (`Steepfile`), and `rbs validate` checks the signatures
 themselves. Steep, not rbs alone, because rbs checks only that the
 signatures are well formed, and Steep checks the code against them
@@ -510,6 +514,19 @@ Doc comments are YARD's, the format RubyGems' documentation sites read.
 or on any class, module, method or constant with no documentation
 (R-DOC-1, R-DOC-3). Classes and modules internal to the driver are
 marked `@api private` and left out of the reference (R-STYLE-4).
+
+#### D16. ActiveRecord is a tool of the adapter's tests, never a dependency of the gem
+
+The ActiveRecord adapter (D2) cannot be tested without ActiveRecord, so
+`activerecord`, 8.1 or later, is in the Gemfile's `development` group,
+locked as D10's tools are (R-DEP-3), with what it needs. It is never in
+the gemspec, so the gem depends on it at no time (R-DEP-1, D9): a
+program that uses the adapter has Rails, and ActiveRecord, already, and
+one that does not never loads it. ActiveRecord is the Rails project's,
+maintained as production software under the MIT License (R-DEP-2). The
+adapter is written to ActiveRecord's interfaces, which have no RBS of
+their own, so Steep passes over it (D11), and its tests, against a live
+server, check it.
 
 ---
 

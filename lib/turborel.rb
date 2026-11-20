@@ -88,3 +88,5 @@ require_relative "turborel/import/run"
 # low-level client, Turborel::Client.
 module Turborel
 end
+
+require_relative "turborel/registration"

@@ -61,11 +61,12 @@ Project automation is the language's own tooling, never shell scripts
 | `lib/turborel/protocol/` | the `codec` layer, with no I/O (D1): `reader.rb` and `writer.rb`, the fields; `frame.rb` and `compression.rb`, frames; `tail.rb`; `types.rb`; `values.rb`, `value_reader.rb` and `value_writer.rb`; `json_binary.rb` and `json_decoder.rb`, JSON's binary tree; `fields.rb`, the composite fields; `requests.rb` and `replies.rb`, every message |
 | `lib/turborel/client.rb`, `lib/turborel/client/` | the low-level client: the `transport` layer (`target.rb`, `transport.rb`, `stream.rb`, `timeouts.rb`), `auth` and `tls` (`mechanisms.rb`, `scram.rb`, `key_cache.rb`, `tls.rb`), and the `session` (`connection.rb`, `wire.rb`, `statements.rb`, `session.rb`, `outcomes.rb`, `offer.rb`, `canceller.rb`), its large objects, copies and exports (`lobs.rb`, `lob_streams.rb`, `copy.rb`, `export.rb`), connecting by settings (`settings.rb`, `settings/`, `failover.rb`), and throughput (`pipeline.rb`, `pool.rb`, `agent.rb`, `connection_statement.rb`) |
 | `lib/turborel/api/` | the standard API's plain API (D2): `Turborel.connect` and `Turborel::Connection` (`connection.rb`), `Turborel::Result` (`result.rb`) |
+| `lib/active_record/connection_adapters/turborel_adapter.rb`, `turborel/`, `lib/turborel/registration.rb` | the ActiveRecord adapter (D2, D16): the adapter, its quoting, statements, schema statements, values, defaults, failures and Arel visitor; its registration as `turborel` |
 | `lib/turborel/import.rb`, `lib/turborel/import/` | imports: the source's records, delimited text, SQL names, string assignment, the run by INSERT or by copy |
 | `lib/turborel/text.rb`, `lib/turborel/text/` | values written as Turborel shows them, and a JSON value's text |
 | `lib/turborel/xml/` | an XML value's nodes, parsed from its text |
-| `sig/` | RBS signatures, a file for each of `lib/` (D11) |
-| `test/` | minitest, a `*_test.rb` for each file of `lib/`, and `test_helper.rb` (D13); `test/support/` the fake server unit tests script; `test/server/` the live tests' server set-up (R-TEST-8) |
+| `sig/` | RBS signatures, a file for each of `lib/` but the ActiveRecord adapter's (D11, D16) |
+| `test/` | minitest, a `*_test.rb` for each file of `lib/`, and `test_helper.rb` (D13); `test/support/` the fake server unit tests script; `test/server/` the live tests' server set-up (R-TEST-8); `test/active_record/` the adapter's |
 | `doc/` | the manual |
 
 The protocol is Turborel's `doc/client/05-protocol.md`, the client's
@@ -101,7 +102,8 @@ code differ, the code is right; CONFORMANCE.md names each such place.
 - No dependency without a decision in RULES.md (R-DEP-1).
 - Code of one platform is chosen by the platform and refused elsewhere
   with the driver's error (R-PLAT-2).
-- Every method of `lib/` has its signature in `sig/`, and Steep passes
+- Every method of `lib/` but the ActiveRecord adapter's (D16) has its
+  signature in `sig/`, and Steep passes
   with its strict diagnostics (R-TYPE-1, D11). A cast, `_ = ...`, says
   in a comment why the value has the type it is given (R-TYPE-2).
 - No `# rubocop:disable`: a deviation is kept in `.rubocop.yml`, with

@@ -6,6 +6,9 @@ gemspec
 
 # The development tools (RULES.md D10), never needed at run time.
 group :development do
+  # The ActiveRecord adapter's tests (RULES.md D2); never a dependency of
+  # the gem.
+  gem "activerecord", ">= 8.1"
   gem "minitest", ">= 5.20"
   gem "rake", ">= 13.1"
   gem "rbs", ">= 3.4"
