@@ -23,7 +23,7 @@ module Turborel
     def active: () -> bool
     def diagnostics: () -> Diagnostics?
 
-    def self.of: (Integer sqlcode, String sqlstate, String message) -> Error
+    def self.of: (Integer sqlcode, String sqlstate, String message, ?rule: String?) -> Error
     def self.connection_failure: (String message) -> Error
     def self.out_of_range: (String message) -> Error
     def self.not_in_repertoire: (String message) -> Error

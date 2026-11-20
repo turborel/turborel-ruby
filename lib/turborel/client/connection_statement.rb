@@ -10,10 +10,21 @@ module Turborel
     #
     # @api private
     module ConnectionStatement
-      # A character string literal: quotes, a quote written twice in it.
+      # A character string literal's quoted part: quotes, a quote written
+      # twice in it.
       STRING = /\A'((?:[^']|'')*)'/
-      # A parameter, a variable, or a number: a value no literal string is.
-      OTHER_VALUE = /\A(?:\?|:[[:alpha:]]|[0-9.])/
+      # What begins a character string literal: a quote, N or n for a
+      # national one, or an introducer naming a character set.
+      CHARACTER_START = /\A(?:N(?=')|_[[:alpha:]][[:alnum:]_]*(?=\s*'))?/i
+      # A literal no character string is: a binary string's start, a
+      # signed number, or a truth value.
+      OTHER_LITERAL = /\A(?:X(?=')|[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[+-]?\d+)?|(?:TRUE|FALSE|UNKNOWN)\b|\?)/i
+      # The key words a datetime or interval literal begins with.
+      TYPED = %w[DATE TIME TIMESTAMP INTERVAL].freeze
+      # What opens and closes a bracketed comment.
+      COMMENT_MARKS = %w[/* */].freeze
+      # An interval qualifier's fields.
+      FIELDS = %w[YEAR MONTH DAY HOUR MINUTE SECOND].freeze
 
       # The statement +sql+ is, if a connection statement: its kind and
       # parts; +nil+ if it is another.
@@ -107,20 +118,27 @@ module Turborel
           raise Agent.syntax("expected #{word}, found #{shown}") unless took?(word)
         end
 
-        # A simple value specification: a literal's text, or :other of a
-        # value no character string is.
+        # A simple value specification: a character string literal's text,
+        # or :other of a parameter or another literal.
         def value
           skip
           if @rest.start_with?(":")
             raise Error.of(-900, "0A000",
                            "<variable specification> (embedded SQL) is not supported")
           end
+          return :other if typed?
 
-          literal = STRING.match(@rest)
-          return string(literal) if literal
-          return other if @rest.match?(OTHER_VALUE)
+          found = character
+          return found if found
+          return other if @rest.match?(OTHER_LITERAL)
 
           raise Agent.syntax("expected a <literal>, found #{shown}")
+        end
+
+        # A character string literal's text, if one is next.
+        def character
+          start = CHARACTER_START.match(@rest).to_s
+          characters(start) if @rest[start.size..].to_s.lstrip.start_with?("'")
         end
 
         # Fails unless nothing is left but a semicolon.
@@ -133,20 +151,113 @@ module Turborel
 
         private
 
-        # The literal's text, read.
-        def string(literal)
-          @rest = @rest[literal[0].to_s.size..].to_s
-          literal[1].to_s.gsub("''", "'")
+        # A character string literal's text, past its +start+: its quoted
+        # parts, one after another where a newline separates them.
+        def characters(start)
+          @rest = @rest[start.size..].to_s
+          skip
+          parts
         end
 
-        # A number or a parameter, read.
+        # Quoted parts, each after a separator with a newline, read.
+        def parts
+          text = +""
+          loop do
+            literal = STRING.match(@rest) || raise(Agent.syntax("a <character string literal> does not end"))
+            text << literal[1].to_s.gsub("''", "'")
+            @rest = @rest[literal[0].to_s.size..].to_s
+            break unless continued?
+          end
+          text
+        end
+
+        # Whether another quoted part follows after a separator with a
+        # newline, the separator read if so.
+        def continued?
+          before = @rest
+          skip
+          return true if before[0, before.size - @rest.size].to_s.include?("\n") && @rest.start_with?("'")
+
+          @rest = before
+          false
+        end
+
+        # Whether a datetime or interval literal is next, read if so.
+        def typed?
+          saved = @rest
+          word = self.word
+          if TYPED.include?(word) && (word != "INTERVAL" || @rest.sub!(/\A\s*[+-]/, "") || true) &&
+             @rest.lstrip.start_with?("'")
+            skip
+            parts
+            qualifier if word == "INTERVAL"
+            return true
+          end
+          @rest = saved
+          false
+        end
+
+        # An interval qualifier: a field, its precision, TO and another.
+        def qualifier
+          field
+          field if took?("TO")
+        end
+
+        # A field of an interval qualifier and its precision, if written.
+        def field
+          FIELDS.find { |name| took?(name) } || raise(Agent.syntax("expected an interval's field, found #{shown}"))
+          skip
+          @rest = @rest.sub(/\A\(\s*\d+\s*(?:,\s*\d+\s*)?\)/, "")
+        end
+
+        # A parameter or a literal no character string is, read.
         def other
-          @rest = @rest.sub(/\A(?:\?|:[[:alpha:]][[:alnum:]_]*|[0-9.]+(?:[Ee][+-]?[0-9]+)?)/, "")
+          if @rest.match?(/\AX'/i)
+            @rest = @rest[1..].to_s
+            parts
+          else
+            @rest = @rest.sub(OTHER_LITERAL, "")
+          end
           :other
         end
 
-        # Passes over spaces and line breaks.
-        def skip = @rest = @rest.sub(/\A\s+/, "")
+        # Passes over separators: spaces, line breaks and comments.
+        def skip
+          loop do
+            before = @rest
+            @rest = @rest.sub(/\A\s+/, "")
+            simple_comment
+            bracketed_comment
+            break if @rest == before
+          end
+        end
+
+        # A comment, -- to a newline, read.
+        def simple_comment
+          return unless @rest.start_with?("--")
+
+          ends = @rest.index("\n") || raise(Agent.lexical("a <comment> must end with a <newline>"))
+          @rest = @rest[(ends + 1)..].to_s
+        end
+
+        # A bracketed comment, each /* in it opening one nested, read.
+        def bracketed_comment
+          return unless @rest.start_with?("/*")
+
+          depth = 0
+          at = 0
+          while at < @rest.size
+            pair = @rest[at, 2]
+            depth += 1 if pair == "/*"
+            depth -= 1 if pair == "*/"
+            at += COMMENT_MARKS.include?(pair) ? 2 : 1
+            next unless depth.zero?
+
+            @rest = @rest[at..].to_s
+            return
+          end
+          raise Agent.lexical("a <bracketed comment> must end with */")
+        end
 
         # The next token, as an error shows it.
         def shown

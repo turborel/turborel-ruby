@@ -13,6 +13,8 @@ module Turborel
     class Agent
       # SQLSTATE of a syntax error or access rule violation.
       SYNTAX_ERROR = "2A000"
+      # The standard the agent's rules are of.
+      STANDARD = "ISO/IEC 9075:1992"
 
       # An agent with no connection, or whose default connection, current,
       # is +connection+.
@@ -30,7 +32,7 @@ module Turborel
       # @return [Connection]
       # @raise [Error] SQLSTATE 08003 if there is none
       def current
-        index = @current || raise(Agent.exception("08003", "there is no current connection"))
+        index = @current || raise(Agent.exception("08003", "there is no current connection", "§15.3 GR9"))
         @held.fetch(index).last
       end
 
@@ -107,18 +109,24 @@ module Turborel
       end
 
       # The connection exception of +state+, of +message+: of class 28 a
-      # privilege's SQLCODE, of 0A a feature's, else a connection's.
+      # privilege's SQLCODE, of 0A a feature's, else a connection's; the
+      # rule of ISO/IEC 9075:1992 it cites, +clause+, kept apart.
       #
       # @api private
-      def self.exception(state, message)
+      def self.exception(state, message, clause)
         sqlcode = { "28" => -104, "0A" => -900 }.fetch(state[0, 2], Error::CONNECTION_FAILURE_SQLCODE)
-        Error.of(sqlcode, state, message)
+        Error.of(sqlcode, state, message, rule: "#{STANDARD} #{clause}")
       end
 
       # A syntax error of a connection statement (SQLCODE -102).
       #
       # @api private
       def self.syntax(message) = Error.of(-102, SYNTAX_ERROR, message)
+
+      # A lexical error of a connection statement (SQLCODE -101).
+      #
+      # @api private
+      def self.lexical(message) = Error.of(-101, SYNTAX_ERROR, message)
 
       # A syntax rule broken by a connection statement (SQLCODE -103).
       #
@@ -133,7 +141,7 @@ module Turborel
         not_in_transaction
         user = ConnectionStatement.text(user)
         if user && !ConnectionStatement.identifier(user)
-          raise Agent.exception("28000", "'#{user}' is not an <authorization identifier>")
+          raise Agent.exception("28000", "'#{user}' is not an <authorization identifier>", "§15.1 GR3")
         end
 
         address = ConnectionStatement.text(server)
@@ -149,14 +157,16 @@ module Turborel
       def connection_name(named)
         return nil unless named
 
-        ConnectionStatement.identifier(named) || raise(Agent.exception("2E000", "'#{named}' is not an <identifier>"))
+        ConnectionStatement.identifier(named) || raise(Agent.exception("2E000", "'#{named}' is not an <identifier>",
+                                                                       "§15.1 GR6"))
       end
 
       # Refuses a name already in use.
       def established(name)
         return unless find(name)
 
-        raise Agent.exception("08002", "#{name ? "the connection #{name}" : "the default connection"} is established")
+        raise Agent.exception("08002", "#{name ? "the connection #{name}" : "the default connection"} is established",
+                              "§15.1 GR7")
       end
 
       # The connection the connector makes, its failure a connection
@@ -164,7 +174,8 @@ module Turborel
       def connected(address, user)
         @connector.call(address, user)
       rescue Error => e
-        raise Agent.exception(e.sqlstate == Error::CONNECTION_FAILURE_SQLSTATE ? "08001" : "08004", e.message)
+        raise Agent.exception(e.sqlstate == Error::CONNECTION_FAILURE_SQLSTATE ? "08001" : "08004", e.message,
+                              "§15.1 GR10, GR11")
       end
 
       # [§15.2] SET CONNECTION +name+, or DEFAULT for +nil+.
@@ -173,14 +184,16 @@ module Turborel
         text = ConnectionStatement.text(name)
         named = text ? ConnectionStatement.identifier(text) || text : nil
         what = named ? "no connection #{named}" : "no default connection"
-        @current = find(named) || raise(Agent.exception("08003", "there is #{what}"))
+        @current = find(named) || raise(Agent.exception("08003", "there is #{what}", "§15.2 GR2"))
         done
       end
 
       # [§15.3] DISCONNECT +object+: each connection it names ended.
       def disconnect(object)
         ended = ended_by(object)
-        raise Error.of(-917, "25000", "a connection's transaction is active") if active_among?(ended)
+        if active_among?(ended)
+          raise Error.of(-917, "25000", "a connection's transaction is active", rule: "#{STANDARD} §15.3 GR6")
+        end
 
         index = @current
         name = index && @held.fetch(index).first
@@ -226,13 +239,14 @@ module Turborel
       end
 
       # The failure of DISCONNECT naming +what+, which is not there.
-      def missing(what) = Agent.exception("08003", "there is #{what}")
+      def missing(what) = Agent.exception("08003", "there is #{what}", "§15.3 GR1-GR3")
 
       # Refuses to leave the current connection's active transaction.
       def not_in_transaction
         return unless current_connection&.in_transaction?
 
-        raise Agent.exception("0A001", "the current connection's transaction is active, and none spans servers")
+        raise Agent.exception("0A001", "the current connection's transaction is active, and none spans servers",
+                              "§15.1 GR1, §15.2 GR1")
       end
 
       # The place of the connection named +name+, +nil+ the default one.

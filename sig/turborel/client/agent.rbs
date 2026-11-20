@@ -3,6 +3,7 @@ module Turborel
     # An SQL-agent.
     class Agent
       SYNTAX_ERROR: String
+      STANDARD: String
 
       @connector: untyped
       @held: Array[[String?, Connection]]
@@ -19,7 +20,8 @@ module Turborel
       def query_into: (String sql, _Sink sink) -> (Integer | Completion)
       def connection_statement: (String sql) -> Completion?
       def terminate: () -> void
-      def self.exception: (String state, String message) -> Error
+      def self.exception: (String state, String message, String clause) -> Error
+      def self.lexical: (String message) -> Error
       def self.syntax: (String message) -> Error
       def self.syntax_rule: (String message) -> Error
 
@@ -45,7 +47,11 @@ module Turborel
     # SQL-92's connection statements.
     module ConnectionStatement
       STRING: Regexp
-      OTHER_VALUE: Regexp
+      CHARACTER_START: Regexp
+      OTHER_LITERAL: Regexp
+      TYPED: Array[String]
+      FIELDS: Array[String]
+      COMMENT_MARKS: Array[String]
 
       def self.parse: (String sql) -> Array[untyped]?
       def self.statement_of: (Reader reader) -> Array[untyped]
@@ -67,9 +73,17 @@ module Turborel
 
         private
 
-        def string: (MatchData literal) -> String
+        def character: () -> String?
+        def characters: (String start) -> String
+        def parts: () -> String
+        def continued?: () -> bool
+        def typed?: () -> bool
+        def qualifier: () -> void
+        def field: () -> void
         def other: () -> Symbol
-        def skip: () -> String
+        def skip: () -> void
+        def simple_comment: () -> void
+        def bracketed_comment: () -> void
         def shown: () -> String
       end
     end

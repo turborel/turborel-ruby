@@ -59,14 +59,16 @@ module Turborel
     # @return [Diagnostics, nil] what the server said beyond the message
     def diagnostics = failure.diagnostics
 
-    # An error the driver raises itself, of SQLCODE, SQLSTATE and message.
+    # An error the driver raises itself, of SQLCODE, SQLSTATE and message,
+    # and the rule of a standard it cites, if it cites one, kept apart.
     #
     # @param sqlcode [Integer] the SQLCODE
     # @param sqlstate [String] the SQLSTATE
     # @param message [String] what went wrong, in plain words
+    # @param rule [String, nil] the rule it cites
     # @return [Error]
-    def self.of(sqlcode, sqlstate, message)
-      new(Failure.new(sqlcode:, sqlstate:, message:, rule: nil, position: nil, active: false, diagnostics: nil))
+    def self.of(sqlcode, sqlstate, message, rule: nil)
+      new(Failure.new(sqlcode:, sqlstate:, message:, rule:, position: nil, active: false, diagnostics: nil))
     end
 
     # A failure that loses the connection (SQLCODE -919, SQLSTATE 08006),

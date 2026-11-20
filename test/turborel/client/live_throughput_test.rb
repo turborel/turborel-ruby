@@ -135,7 +135,9 @@ module Turborel
         connector = ->(_server, user) { Client.connect("127.0.0.1", port, user: user || "ann", mechanism: Trust.new) }
         agent = Agent.new(connector)
 
-        assert_fails([-919, "08003"]) { agent.query("VALUES 1") }
+        refused = assert_fails([-919, "08003"]) { agent.query("VALUES 1") }
+
+        assert_equal "ISO/IEC 9075:1992 §15.3 GR9", refused.rule
         agent.query("CONNECT TO 'live' AS 'one' USER 'bob'")
         agent.query("CONNECT TO 'live' AS 'two'")
 

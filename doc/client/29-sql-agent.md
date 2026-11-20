@@ -30,6 +30,13 @@ DEFAULT, current. DISCONNECT ends the named one, DEFAULT, CURRENT or
 ALL. An agent made with a connection holds it as the default
 connection, current. `terminate` ends every connection.
 
+A statement is read as Turborel reads it: after its comments, simple or
+bracketed; a name a character string literal, national, introduced by
+a character set, or in parts a newline separates. A connection exception
+the agent raises, or its refusal to end a connection whose transaction
+is active, cites its rule of ISO/IEC 9075:1992 §15, as `rule` gives it,
+apart from its message.
+
 ## ERRORS
 
 | SQLSTATE | SQLCODE | When |
@@ -42,7 +49,7 @@ connection, current. `terminate` ends every connection.
 | 25000 | -917 | DISCONNECT of a connection whose transaction is active |
 | 28000 | -104 | A user that is no authorization identifier |
 | 2E000 | -919 | A connection name that is no identifier |
-| 2A000 | -102, -103 | A connection statement malformed, or naming by no character string literal |
+| 2A000 | -101, -102, -103 | A connection statement with a comment that does not end, malformed, or naming by a literal no character string literal is |
 | 01002 | 0 | DISCONNECT that met an error ending a connection, a warning |
 
 ## EXAMPLES
