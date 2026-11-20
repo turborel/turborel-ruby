@@ -57,3 +57,23 @@ module Turborel
     def hex(text) = [text.delete(" \n")].pack("H*")
   end
 end
+
+# On GitHub's runners each failure is told as an annotation too, since a
+# job's log is not public and its annotations are.
+module GithubAnnotations
+  # The workflow command's limit of a message, in characters.
+  MAX_MESSAGE = 4000
+
+  # Tells each failure of the test just run.
+  def after_teardown
+    super
+    return unless ENV["GITHUB_ACTIONS"]
+
+    failures.each do |failure|
+      text = "#{self.class}##{name}: #{failure.message}"[0, MAX_MESSAGE].gsub("%", "%25").gsub(/\r?\n/, "%0A")
+      $stdout.puts "::error title=#{RUBY_PLATFORM} #{RUBY_VERSION}::#{text}"
+    end
+  end
+end
+
+Minitest::Test.prepend(GithubAnnotations)
