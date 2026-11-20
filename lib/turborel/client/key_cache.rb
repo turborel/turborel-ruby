@@ -86,9 +86,11 @@ module Turborel
         entry&.last
       end
 
-      # Keeps +keys+ under +index+, the oldest dropped past ENTRIES.
+      # Keeps +keys+ under +index+, the oldest dropped past ENTRIES; keys
+      # another login kept under it meanwhile left where they are.
       def keep(index, keys)
-        @entries.reject! { |held| held.first == index }
+        return if @entries.any? { |held| held.first == index }
+
         @entries.shift if @entries.size >= ENTRIES
         @entries << [index, keys]
       end

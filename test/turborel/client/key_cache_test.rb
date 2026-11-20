@@ -62,6 +62,22 @@ module Turborel
         assert_equal 1, cache.size
         assert_equal 4, cache.lookups.sum
       end
+
+      # Verifies: [CLIENT The SCRAM key cache] keys two logins derived at
+      # once kept once, where the first put them: the oldest still the first
+      # dropped.
+      def test_keys_derived_twice_kept_once
+        cache = KeyCache.new
+        first = cache.derived("pencil", "salt", 1)
+        (2..KeyCache::ENTRIES).each { |n| cache.derived("pencil", "salt", n) }
+        cache.send(:keep, cache.send(:index, "pencil", "salt", 1), Protocol::Scram.derived("pencil", "salt", 1))
+
+        assert_equal KeyCache::ENTRIES, cache.size
+        assert_same first, cache.derived("pencil", "salt", 1)
+        cache.derived("pencil", "salt", KeyCache::ENTRIES + 1)
+
+        refute_same first, cache.derived("pencil", "salt", 1)
+      end
     end
   end
 end
