@@ -44,10 +44,10 @@ module Turborel
             ["n", "v" * 1024]
           })
         }.to_s[1, 4].unpack1("V")
-        assert_fails(BEYOND) { Tail.put_attributes(writer, Array.new(33) { %w[n v] }) }
-        assert_fails(BEYOND) { Tail.put_attributes(writer, [["", "v"]]) }
-        assert_fails(BEYOND) { Tail.put_attributes(writer, [["n" * 65, "v"]]) }
-        assert_fails(BEYOND) { Tail.put_attributes(writer, [["n", "v" * 1025]]) }
+        assert_fails { Tail.put_attributes(writer, Array.new(33) { %w[n v] }) }
+        assert_fails { Tail.put_attributes(writer, [["", "v"]]) }
+        assert_fails { Tail.put_attributes(writer, [["n" * 65, "v"]]) }
+        assert_fails { Tail.put_attributes(writer, [["n", "v" * 1025]]) }
       end
     end
   end

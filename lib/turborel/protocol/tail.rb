@@ -74,12 +74,13 @@ module Turborel
       # @param writer [Writer]
       # @param attributes [Array<Array(String, String)>] each a name and a value
       # @return [void]
-      # @raise [Error] SQLSTATE 0A000 of more than 32 attributes, or a name
-      #   or value out of its bounds: the server would fail the connection
+      # @raise [Error] SQLSTATE 08006, the code the server would fail the
+      #   connection with, of more than 32 attributes, or a name or value
+      #   out of its bounds; refused before it is sent, the connection kept
       def self.put_attributes(writer, attributes)
         return if attributes.empty?
         if attributes.size > MAX_ATTRIBUTES
-          raise Error.beyond("#{attributes.size} attributes are more than the 32 taken")
+          raise Error.connection_failure("#{attributes.size} attributes are more than the 32 taken")
         end
 
         writer.u8(ATTRIBUTES).u32(attributes.size)
@@ -89,10 +90,10 @@ module Turborel
       # Writes an attribute's +name+ and +value+, each UTF-8.
       #
       # @return [void]
-      # @raise [Error] SQLSTATE 0A000 of a name or value out of its bounds
+      # @raise [Error] SQLSTATE 08006 of a name or value out of its bounds
       def self.put_attribute(writer, name, value)
         unless attribute?(name, value)
-          raise Error.beyond("an attribute's name is 1 to 64 bytes and its value at most 1024")
+          raise Error.connection_failure("an attribute's name is 1 to 64 bytes and its value at most 1024")
         end
 
         writer.str(name).str(value)

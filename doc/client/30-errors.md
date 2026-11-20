@@ -46,13 +46,13 @@ SQLSTATE turborel-client gives the same case:
 
 | SQLSTATE | SQLCODE | When |
 |---|---|---|
-| 08006 | -919 | A server that cannot be reached; a failed TLS handshake; a wait past its timeout; a reply malformed, too long or out of turn; a closed connection; a method needing a capability not granted, before anything is sent, the connection kept |
+| 08006 | -919 | A server that cannot be reached; a failed TLS handshake; a wait past its timeout; a reply malformed, too long or out of turn; a closed connection; a method needing a capability not granted, or attributes past their bounds, more than 32 or one too long, before anything is sent, the connection kept |
 | 28000 | -919 | A password or SCRAM over plain TCP, before anything is sent; a SCRAM server that does not prove it knows the verifier; a channel binding required and impossible |
 | 22003 | -301 | A number or a length out of the range of its field |
 | 22021 | -301 | A string that cannot be written as UTF-8 |
 | 22000 | -301 | A value the protocol cannot carry: of a class the driver does not send, or of a field none of the protocol's |
 | 2200N | -301 | An XML value's text that is not well-formed XML content, parsed by `nodes` |
-| 0A000 | -900 | Past Turborel's limits: values nested too deep, a JSON value's stored form past 256 MiB, more than 32 attributes or one too long |
+| 0A000 | -900 | Past Turborel's limits: values nested too deep, a JSON value's stored form past 256 MiB |
 | TB910 | -910 | An argument none of those a method takes, where turborel-client has no case: a channel binding, a large object's kind |
 
 [Appendix B](../appendix/b-errors.md) lists them with the server's.
