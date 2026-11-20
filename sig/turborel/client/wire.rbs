@@ -29,17 +29,21 @@ module Turborel
       def send_frame: (String frames) -> void
       def written: (String frames) -> void
       def copying!: (String frames) -> void
-      def expect: (*Class kinds) -> untyped
+      def expect: (*Class kinds, ?answer: Symbol) -> untyped
       def completion_reply: () -> Protocol::Replies::Complete
       def outcome: () -> [Rows | Protocol::Replies::Complete, bool]
       def rows_until_end: () -> [Array[Array[value]], Protocol::Replies::Complete?]
       def needs: (bool allowed, String name) -> void
       def carried_attributes: () -> Array[[String, String]]
-      def receive: () -> Protocol::Replies::reply
+      def receive: (?Symbol answer) -> Protocol::Replies::reply
+      def took: (Protocol::Replies::reply reply) -> Protocol::Replies::reply?
       def notice: (Protocol::Replies::Notice notice) -> void
       def noted: (Protocol::Replies::reply reply) -> Protocol::Replies::reply
       def completed: (Protocol::Replies::Complete complete) -> void
-      def next_reply: () -> Protocol::Replies::reply
+      def next_reply: (?Symbol answer) -> Protocol::Replies::reply
+      def next_frame: () -> [Integer, String]
+      def skipped: (Integer kind, String body, Error error) -> void
+      def drained: (Integer kind, String body) -> void
       def inflated: (String body) -> [Integer, String]
       def failed: (Failure failure) -> Error
       def lose: (String message) -> Error

@@ -21,8 +21,8 @@ module Turborel
       def statuses_of(connection)
         told = []
         connection.singleton_class.prepend(Module.new do
-          define_method(:next_reply) do
-            super().tap { |reply| told << reply.name if reply.is_a?(Protocol::Replies::Status) }
+          define_method(:next_reply) do |*answer|
+            super(*answer).tap { |reply| told << reply.name if reply.is_a?(Protocol::Replies::Status) }
           end
         end)
         told

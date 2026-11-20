@@ -36,6 +36,8 @@ module Turborel
   module TestSupport
     # SQLCODE and SQLSTATE of a connection failure.
     CONNECTION_FAILURE = [Error::CONNECTION_FAILURE_SQLCODE, Error::CONNECTION_FAILURE_SQLSTATE].freeze
+    # SQLCODE and SQLSTATE of a value whose body cannot be taken.
+    CORRUPT = [Error::CORRUPT_SQLCODE, Error::CORRUPT_SQLSTATE].freeze
     # SQLCODE and SQLSTATE of a number out of range.
     OUT_OF_RANGE = [Error::DATA_EXCEPTION_SQLCODE, Error::OUT_OF_RANGE_SQLSTATE].freeze
     # SQLCODE and SQLSTATE of a value the protocol cannot carry.

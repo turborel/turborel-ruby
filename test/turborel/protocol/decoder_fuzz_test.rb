@@ -42,13 +42,14 @@ module Turborel
         Replies.decode(kind, body)
         :decoded
       rescue Error => e
-        assert_equal CONNECTION_FAILURE, [e.sqlcode, e.sqlstate]
+        assert_includes [CONNECTION_FAILURE, CORRUPT, BEYOND], [e.sqlcode, e.sqlstate]
         :failed
       end
 
       # Verifies: [PROTOCOL Errors and notices] a malformed reply fails the
-      # connection with SQLCODE -919 and SQLSTATE 08006, never with another
-      # failure, whatever its bytes.
+      # connection with SQLCODE -919 and SQLSTATE 08006, and a value in it
+      # that cannot be taken with -916 or -900, never with another failure,
+      # whatever its bytes.
       def test_damaged_replies_fail_only_as_connection_failures
         random = Random.new(SEED)
         cases = corpus
@@ -62,8 +63,9 @@ module Turborel
         assert_includes outcomes, :failed
       end
 
-      # Verifies: [PROTOCOL Values] a damaged JSON value fails the connection,
-      # never with another failure.
+      # Verifies: [PROTOCOL Values] a damaged JSON value is one that cannot
+      # be taken, TB916, or past Turborel's limits, 0A000, never another
+      # failure.
       def test_damaged_json_fails_only_as_a_connection_failure
         random = Random.new(SEED)
         document = JsonBinary.encode({ "k" => [1, 2.5, "s", { "x" => nil, "a" => [true, false] }],
@@ -71,7 +73,7 @@ module Turborel
         CASES.times do
           JsonBinary.decode(damaged(document, random))
         rescue Error => e
-          assert_equal CONNECTION_FAILURE, [e.sqlcode, e.sqlstate]
+          assert_includes [CORRUPT, BEYOND], [e.sqlcode, e.sqlstate]
         end
       end
     end

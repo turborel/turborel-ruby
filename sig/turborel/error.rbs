@@ -10,6 +10,8 @@ module Turborel
     DATA_EXCEPTION_SQLSTATE: String
     BEYOND_SQLCODE: Integer
     FEATURE_NOT_SUPPORTED_SQLSTATE: String
+    CORRUPT_SQLCODE: Integer
+    CORRUPT_SQLSTATE: String
     MISUSED_SQLCODE: Integer
     MISUSED_SQLSTATE: String
 
@@ -30,5 +32,6 @@ module Turborel
     def self.data_exception: (String message) -> Error
     def self.beyond: (String message) -> Error
     def self.misused: (String message) -> Error
+    def self.corrupt_value: (String message) -> Error
   end
 end

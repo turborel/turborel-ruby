@@ -153,7 +153,8 @@ module Turborel
       def describe_cursor(statement, cursor = 0)
         needs(false, Protocol::Capabilities::DESCRIBE)
         send_frame(Protocol::Requests.describe_cursor(statement.number, cursor))
-        expect(Protocol::Replies::Description).columns
+        # Its Description is its last reply, as no rows follow it.
+        expect(Protocol::Replies::Description, answer: :one).columns
       end
 
       private

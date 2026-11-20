@@ -37,7 +37,9 @@ module Turborel
       # Opens a connection over +io+, any stream that reads and writes, as
       # +user+, proved by +mechanism+, asking for what +offer+ asks. Of a
       # stream given, the caller answers for whether it keeps a secret
-      # mechanism's bytes private.
+      # mechanism's bytes private. Its waits, Terminate's too, are as its
+      # maker set it, as by IO#timeout; open_within bounds a stream that
+      # bounds itself.
       #
       # @param io [IO, OpenSSL::SSL::SSLSocket]
       # @param user [String]
@@ -47,7 +49,26 @@ module Turborel
       # @raise [Error] the server's refusal: SQLSTATE 28000 for credentials
       #   refused, 08004 for a connection refused; a connection failure
       def self.open(io, user:, mechanism:, offer: Offers.default)
-        new(Stream.new(io), nil).tap { |connection| connection.log_in(user, mechanism, offer) }
+        new(Stream.new(io, bounded: false), nil).tap { |connection| connection.log_in(user, mechanism, offer) }
+      end
+
+      # Opens a connection over +io+, a stream of the program's own that
+      # bounds itself: a socket, a pipe or TLS over either, which waits for
+      # readiness [CLIENT Timeouts]. Its waits are bounded as +timeouts+ say:
+      # each step of the login by +connect+, each after by +read+, and
+      # Terminate's by +read+, else 60 seconds; read_timeout= changes it as
+      # it does a connection the driver makes.
+      #
+      # @param io [IO, OpenSSL::SSL::SSLSocket]
+      # @param user [String]
+      # @param mechanism [Mechanism]
+      # @param timeouts [Timeouts]
+      # @param offer [Offer]
+      # @return [Connection]
+      # @raise [Error] as open's; a connection failure if a wait runs out
+      def self.open_within(io, user:, mechanism:, timeouts: DEFAULT_TIMEOUTS, offer: Offers.default)
+        stream = Stream.new(io, timeout: timeouts.connect)
+        new(stream, nil, timeouts).tap { |connection| connection.log_in(user, mechanism, offer) }
       end
 
       # A connection over +stream+, not yet logged in.
@@ -142,7 +163,14 @@ module Turborel
       #   a connection failure if it does not close in time
       def terminate
         send_frame(Protocol::Requests.terminate)
-        terminated(final_bytes)
+        begin
+          timeouts = @timeouts
+          @stream.timeout = timeouts.read || TERMINATE_WITHIN if timeouts
+          terminated
+        ensure
+          @stream.close
+          @lost = Error.connection_failure("the connection was terminated")
+        end
       end
 
       # Leaves the connection with no Terminate: its stream closed, as a
@@ -187,36 +215,18 @@ module Turborel
         @stream.timeout = timeouts.read if timeouts
       end
 
-      # What the server sent after Terminate, until it closed; the stream
-      # closed and the connection lost whatever the read gave.
-      def final_bytes
-        timeouts = @timeouts
-        @stream.timeout = timeouts.read || TERMINATE_WITHIN if timeouts
-        @stream.read_to_end(@max_body + Protocol::Frame::HEADER_BYTES)
-      ensure
-        @stream.close
-        @lost = Error.connection_failure("the connection was terminated")
-      end
-
-      # The end of a terminated session: nothing, a notice, a status or a
-      # Pong before the close, or the failing commit's Error; any other
-      # reply a connection failure, as the server answers no Terminate.
-      def terminated(rest)
-        case final_reply(rest)
-        in nil | Protocol::Replies::Notice | Protocol::Replies::Status | Protocol::Replies::Pong then nil
-        in Protocol::Replies::ErrorReply => reply then raise Error, reply.failure
-        else raise Error.connection_failure("the server answered Terminate")
+      # The end of a terminated session, its replies read a frame at a time
+      # until the server closes: a Notice, a Status or a Pong read past, the
+      # failing commit's Error raised; any other reply a connection failure,
+      # as the server answers no Terminate.
+      def terminated
+        until @stream.at_end?
+          case next_reply(:one)
+          in Protocol::Replies::Notice | Protocol::Replies::Status | Protocol::Replies::Pong then nil
+          in Protocol::Replies::ErrorReply => reply then raise Error, reply.failure
+          else raise Error.connection_failure("the server answered Terminate")
+          end
         end
-      end
-
-      # The reply +rest+ begins with, if a whole header is there.
-      def final_reply(rest)
-        return nil if rest.bytesize < Protocol::Frame::HEADER_BYTES
-
-        kind, length = Protocol::Frame.decode_header(rest.byteslice(0, Protocol::Frame::HEADER_BYTES) || "", @max_body)
-        body = rest.byteslice(Protocol::Frame::HEADER_BYTES, length) || ""
-        kind, body = inflated(body) if kind == Protocol::Compression::COMPRESSED && @compress_from
-        Protocol::Replies.decode(kind, body)
       end
     end
   end

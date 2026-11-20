@@ -39,6 +39,7 @@ module Turborel
       attr_accessor max_body: Integer
 
       def self.open: (untyped io, user: String, mechanism: Mechanism, ?offer: Offer) -> Connection
+      def self.open_within: (untyped io, user: String, mechanism: Mechanism, ?timeouts: Timeouts, ?offer: Offer) -> Connection
       def initialize: (Stream stream, Target? target, ?Timeouts? timeouts) -> void
       def log_in: (String user, Mechanism mechanism, Offer offer) -> void
       def read_timeout=: (seconds? seconds) -> void
@@ -56,9 +57,7 @@ module Turborel
 
       def challenged: (Protocol::Replies::reply reply, Mechanism mechanism) -> void
       def ready: (Protocol::Replies::Ready reply, Mechanism mechanism, Offer offer) -> void
-      def final_bytes: () -> String
-      def terminated: (String rest) -> void
-      def final_reply: (String rest) -> Protocol::Replies::reply?
+      def terminated: () -> void
     end
   end
 end

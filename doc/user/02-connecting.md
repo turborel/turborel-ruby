@@ -132,7 +132,12 @@ CATALOG and OWNER among them.
 
 `terminate` ends the session, its transaction as SESSION.COMMIT_AT_END
 says, and waits for the server to close, at most the read timeout, else
-60 seconds; a commit that fails then raises its failure. `canceller`
+60 seconds, or over a stream given to `open` as its maker set it; a
+commit that fails then raises its failure, a Notice or a Status before
+it read past. `Connection.open_within` takes a stream of the program's
+own that bounds itself, a socket or TLS over one, and bounds it as its
+`Timeouts` say, `terminate` and `read_timeout=` as on a connection the
+driver makes. `canceller`
 gives what cancels the statement a connection runs, from another thread,
 over a connection of its own; its `cancel` gives up after 10 seconds, or
 a limit of the program's.

@@ -25,6 +25,11 @@ module Turborel
     BEYOND_SQLCODE = -900
     # SQLSTATE of what is past turborel's limits: feature not supported.
     FEATURE_NOT_SUPPORTED_SQLSTATE = "0A000"
+    # SQLCODE of a value whose body cannot be taken, turborel's corrupt
+    # data's.
+    CORRUPT_SQLCODE = -916
+    # SQLSTATE of a value whose body cannot be taken.
+    CORRUPT_SQLSTATE = "TB916"
     # SQLCODE of the program's misuse of the driver, turborel's API code.
     MISUSED_SQLCODE = -910
     # SQLSTATE of the program's misuse of the driver.
@@ -115,6 +120,16 @@ module Turborel
     # @return [Error]
     def self.beyond(message)
       of(BEYOND_SQLCODE, FEATURE_NOT_SUPPORTED_SQLSTATE, message)
+    end
+
+    # A value of a reply whose body the driver cannot take, in a frame read
+    # whole (SQLCODE -916, SQLSTATE TB916): it fails its request alone, the
+    # connection kept [PROTOCOL Values and fields].
+    #
+    # @param message [String] what went wrong, in plain words
+    # @return [Error]
+    def self.corrupt_value(message)
+      of(CORRUPT_SQLCODE, CORRUPT_SQLSTATE, message)
     end
 
     # The program's misuse of the driver, where turborel-client has no

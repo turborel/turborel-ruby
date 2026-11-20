@@ -45,15 +45,15 @@ module Turborel
       # root, or a node past the document fails the connection.
       def test_damaged_documents_fail
         ["02 00", "01", "", "01 00 00", "01 03 0100", "01 08 05000000 61", "01 0C"].each do |text|
-          assert_fails { decode(text) }
+          assert_fails(CORRUPT) { decode(text) }
         end
       end
 
       # Verifies: [PROTOCOL Values] an element not where its offset says, or
       # an array whose size is not its elements', fails the connection.
       def test_damaged_arrays_fail
-        assert_fails { decode("01 0A 01000000 01000000 01000000 00") }
-        assert_fails { decode("01 0A 01000000 02000000 00000000 00 00") }
+        assert_fails(CORRUPT) { decode("01 0A 01000000 01000000 01000000 00") }
+        assert_fails(CORRUPT) { decode("01 0A 01000000 02000000 00000000 00 00") }
       end
 
       # Verifies: [PROTOCOL Values] an object whose size is not its members',
@@ -63,20 +63,20 @@ module Turborel
         ordered = "01 0B 02000000 0C000000 00000000 06000000 01000000 61 02 01000000 62 01"
 
         assert_equal({ "a" => true, "b" => false }, decode(ordered))
-        assert_fails { decode(ordered.sub("06000000 01", "00000000 01")) }
-        assert_fails { decode("01 0B 02000000 0C000000 06000000 00000000 01000000 61 02 01000000 62 01") }
-        assert_fails { decode(ordered.sub("06000000 01", "05000000 01")) }
-        assert_fails { decode(ordered.sub("0C000000", "0D000000")) }
-        assert_fails { decode("01 0B 01000000 06000000 00000000 01000000 FF 02") }
+        assert_fails(CORRUPT) { decode(ordered.sub("06000000 01", "00000000 01")) }
+        assert_fails(CORRUPT) { decode("01 0B 02000000 0C000000 06000000 00000000 01000000 61 02 01000000 62 01") }
+        assert_fails(CORRUPT) { decode(ordered.sub("06000000 01", "05000000 01")) }
+        assert_fails(CORRUPT) { decode(ordered.sub("0C000000", "0D000000")) }
+        assert_fails(CORRUPT) { decode("01 0B 01000000 06000000 00000000 01000000 FF 02") }
       end
 
       # Verifies: [PROTOCOL Values] a datetime's moment must be one of the
       # three and its zoned flag 0 or 1; a DECFLOAT must be in range.
       def test_damaged_scalars_fail
-        assert_fails { decode("01 09 03 0000000000000000 0000 00 00") }
-        assert_fails { decode("01 09 00 0000000000000000 0000 02 00") }
-        assert_fails { decode("01 06 01#{"00" * 15} 01180000") }
-        assert_fails { decode("01 08 01000000 FF") }
+        assert_fails(CORRUPT) { decode("01 09 03 0000000000000000 0000 00 00") }
+        assert_fails(CORRUPT) { decode("01 09 00 0000000000000000 0000 02 00") }
+        assert_fails(CORRUPT) { decode("01 06 01#{"00" * 15} 01180000") }
+        assert_fails(CORRUPT) { decode("01 08 01000000 FF") }
       end
 
       # Verifies: [PROTOCOL Values] a DECFLOAT node is read as turborel's
@@ -95,8 +95,8 @@ module Turborel
 
       # Verifies: [PROTOCOL JSON values] arrays and objects nest at most 128
       # deep, and a document is at most 256 MiB, as turborel bounds them;
-      # one read past either a connection failure, as every Turborel driver
-      # fails it (RULES.md D8).
+      # one read past either a value past Turborel's limits (0A000), its
+      # request failed, not the connection [PROTOCOL Values and fields].
       def test_nesting_is_bounded
         deep = nil
         128.times { deep = [deep] }
@@ -105,10 +105,10 @@ module Turborel
         assert_fails(BEYOND) { JsonBinary.encode([deep]) }
         # A document one array deeper, built past the encoder's own bound.
         too_deep = [JsonBinary::FORMAT_VERSION].pack("C") + JsonBinary.encoded([deep], -1)
-        refused = assert_fails { JsonBinary.decode(too_deep) }
+        refused = assert_fails(BEYOND) { JsonBinary.decode(too_deep) }
 
         assert_match(/nest too deep/, refused.message)
-        assert_fails { JsonBinary.decode(JsonBinary.encode([1, 2]), most: 4) }
+        assert_fails(BEYOND) { JsonBinary.decode(JsonBinary.encode([1, 2]), most: 4) }
       end
     end
   end

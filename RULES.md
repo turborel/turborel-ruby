@@ -68,7 +68,7 @@ Each is told in full in [§7](#7-the-decisions).
 |---|---|
 | `turborel.gemspec`, `Gemfile`, `Gemfile.lock` | the gem, and the development tools locked (D9, D10) |
 | `Rakefile`, `rakelib/` | the checks tool: `verify` and each check, `coverage`, `build` (D4) |
-| `rakelib/headings/` | the headings of Turborel's three documents tests cite, at a413b841 (D6) |
+| `rakelib/headings/` | the headings of Turborel's three documents tests cite, at e97e0aa4 (D6) |
 | `Steepfile`, `.rubocop.yml`, `.simplecov`, `.yardopts` | the type checker, the linter and formatter, coverage, the API reference |
 | `lib/turborel.rb` | the gem's root module |
 | `lib/turborel/version.rb` | `Turborel::VERSION` (D5) |
@@ -447,20 +447,12 @@ rule here, the rule is kept:
   ([Appendix B](doc/appendix/b-errors.md)).
 - Where turborel-client is inconsistent, the driver keeps the rule
   every Turborel driver keeps, so all behave alike:
-  - A reply's value that cannot be decoded loses the connection,
-    SQLCODE -919, SQLSTATE 08006: a character's or a large object's
-    units byte other than 0 or 1, a truth byte other than 0 or 1, a
-    damaged JSON document, one nested past 128 or longer than 256 MiB,
-    and a malformed condition in Complete's tag 17. turborel-client
-    gives some of these -916 or -900 and keeps a connection whose reply
-    is left unread, out of step; the page fails a connection on a
-    malformed message ([PROTOCOL Frames], [PROTOCOL Errors and
-    notices]).
-  - Value tags 18 and 19, the large objects' stored form, never sent,
-    are refused as malformed, -919, 08006, though turborel-protocol's
-    reader takes them. Tags 5, 7, 10 and 12, of CHARACTER VARYING,
-    BINARY VARYING and the datetimes WITH TIME ZONE, are read as its
-    reader reads them, as tags 1, 6, 9 and 11.
+  - Value tags 18 and 19, the large objects' stored form, which the
+    server never sends, are refused as values that cannot be taken:
+    SQLCODE -916, SQLSTATE TB916, their request failed and its replies
+    read past, the connection kept, as any such value is
+    ([PROTOCOL Values and fields]), though turborel-protocol's reader
+    takes them.
   - Connection and query attributes past their bounds are refused
     before they are sent, -919, 08006, the connection kept, where
     turborel-client sends them and the server fails the connection.

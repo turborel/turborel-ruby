@@ -62,7 +62,9 @@ types, as [The ActiveRecord Adapter](03-api-active-record.md) tells.
 | 0A000 | -900 | Values nested deeper than 16, 128 within a JSON value, or a JSON value's stored form longer than 256 MiB |
 | 22003 | -301 | A number out of the range of its field: an `Integer` or `BigDecimal` whose units do not fit an `i128`, a NaN or infinite `BigDecimal`, a displacement that does not fit an `i16`, a DECFLOAT not in its one form, a UUID not of 16 octets |
 | 22021 | -301 | A string that cannot be written as UTF-8 |
-| 08006 | -919 | A value received that is malformed: a tag no value has, a body cut short, a DECFLOAT value not in its one form, damaged JSON |
+| 08006 | -919 | A value received that is malformed: a tag no value has, a body cut short, a DECFLOAT value not in its one form |
+| TB916 | -916 | A value received that cannot be taken: a truth byte other than 0 or 1, damaged JSON, a value of tag 18 or 19; its request fails, the connection kept |
+| 0A000 | -900 | A JSON value received nested past 128 or longer than 256 MiB, its request failing so |
 
 ## EXAMPLES
 

@@ -15,6 +15,10 @@ module Turborel
       # @raise [Error] a connection failure if it is malformed
       def self.read(reader)
         tag = reader.u8
+        if Values::STORED_LOBS.include?(tag)
+          raise Error.corrupt_value("a large object's stored form, tag #{tag}, is never sent")
+        end
+
         method = Values::READERS.fetch(tag) { raise reader.corrupt("no value has the tag #{tag}") }
         send(method, reader, tag)
       end
@@ -74,7 +78,7 @@ module Turborel
       # @return [Boolean] 0 false, 1 true; unknown comes as null
       def self.boolean(reader, _tag)
         byte = reader.u8
-        Reader::FLAGS.fetch(byte) { raise reader.corrupt("#{byte} is not a truth value") }
+        Reader::FLAGS.fetch(byte) { raise Error.corrupt_value("#{byte} is not a truth value") }
       end
 
       # @return [DecFloat] coefficient i128, then exponent i32 as u32, in

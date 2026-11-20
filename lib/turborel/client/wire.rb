@@ -61,9 +61,11 @@ module Turborel
       end
 
       # The next reply, of one of +kinds+; an Error its failure raised; any
-      # other loses the connection.
-      def expect(*kinds)
-        reply = receive
+      # other loses the connection. +answer+ says how the request is
+      # answered: by :replies, a statement's, or by :one, as a Describe of
+      # a cursor is by a Description no rows follow.
+      def expect(*kinds, answer: :replies)
+        reply = receive(answer)
         raise failed(reply.failure) if reply.is_a?(Protocol::Replies::ErrorReply)
         unless kinds.include?(reply.class)
           raise lose("the server sent #{reply.class.name&.split("::")&.last} out of turn")
@@ -115,16 +117,25 @@ module Turborel
         @granted.include?(Protocol::Capabilities::QUERY_ATTRIBUTES) ? @query_attributes : Protocol::Requests::NO_ATTRIBUTES
       end
 
-      # The server's next reply, each Notice and Status before it taken.
-      def receive
+      # The server's next reply, each Notice and Status before it taken; a
+      # reply with a value the driver cannot take read past with the rest
+      # of its request's, as +answer+ says they are told.
+      def receive(answer = :replies)
         loop do
-          reply = next_reply
-          case reply
-          when Protocol::Replies::Notice then notice(reply)
-          when Protocol::Replies::Status then @settings[reply.name] = reply.value
-          else return noted(reply)
-          end
+          reply = took(next_reply(answer))
+          return reply if reply
         end
+      end
+
+      # +reply+, unless a Notice or a Status, which is taken; a reply of a
+      # statement, what it says noted.
+      def took(reply)
+        case reply
+        when Protocol::Replies::Notice then notice(reply)
+        when Protocol::Replies::Status then @settings[reply.name] = reply.value
+        else return noted(reply)
+        end
+        nil
       end
 
       # Takes +notice+: to the handler, or kept, the last KEPT_NOTICES.
@@ -164,19 +175,62 @@ module Turborel
         @completion = complete
       end
 
-      # The next frame the server sends, decoded: inflated first if it is
-      # compressed and compression was granted; a z frame received without
-      # the grant fails the connection [PROTOCOL Compressed frames].
-      def next_reply
+      # The next frame the server sends, decoded. A frame read whole that
+      # does not decode is malformed, which loses the connection (08006),
+      # or holds a value the driver cannot take, which fails its request
+      # alone (SQLCODE -916, or -900 past a limit) once the rest of its
+      # replies are read past, under :replies, so the next request takes
+      # its own [PROTOCOL Values and fields].
+      def next_reply(answer = :replies)
+        kind, body = next_frame
+        begin
+          Protocol::Replies.decode(kind, body)
+        rescue Error => e
+          skipped(kind, body, e)
+          drained(kind, body) if answer == :replies
+          raise e
+        end
+      end
+
+      # The next frame the server sends, its kind and body: inflated first
+      # if it is compressed and compression was granted; a z frame received
+      # without the grant fails the connection [PROTOCOL Compressed
+      # frames]. One not whole, or whose header or compression is
+      # malformed, loses the connection.
+      def next_frame
         lost = @lost
         raise lost if lost
 
         kind, length = Protocol::Frame.decode_header(@stream.read_exactly(Protocol::Frame::HEADER_BYTES), @max_body)
         body = @stream.read_exactly(length)
-        kind, body = inflated(body) if kind == Protocol::Compression::COMPRESSED && @compress_from
-        Protocol::Replies.decode(kind, body)
+        kind == Protocol::Compression::COMPRESSED && @compress_from ? inflated(body) : [kind, body]
       rescue Error => e
         raise lost_by(e)
+      end
+
+      # Takes a frame of +kind+ and +body+ that did not decode, for +error+:
+      # the connection lost if it ends it, as a malformed frame's does; else
+      # of a Complete, what its head says noted as its whole would be.
+      def skipped(kind, body, error)
+        raise lost_by(error) if Wire.ends_connection?(error.failure)
+
+        head = Protocol::Replies.completed_head(kind, body)
+        noted(head) if head
+      end
+
+      # Reads past the rest of a request's replies once one, of +kind+ and
+      # +body+, held a value the driver cannot take: to the one that ends
+      # them, each taken as receive takes it, or passed over as that one
+      # was [PROTOCOL Values and fields].
+      def drained(kind, body)
+        until Protocol::Replies.ends_request?(kind, body)
+          kind, body = next_frame
+          begin
+            took(Protocol::Replies.decode(kind, body))
+          rescue Error => e
+            skipped(kind, body, e)
+          end
+        end
       end
 
       # The kind and body the z frame +body+ holds.

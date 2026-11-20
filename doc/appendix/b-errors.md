@@ -16,12 +16,14 @@ gives where turborel-client has none.
 
 | SQLSTATE | SQLCODE | When | Ends the connection |
 |---|---|---|---|
-| 08006 | -919 | A malformed reply, a frame too long, a reply out of turn (a Ready before SCRAM's server-final among them), the server's answer to Terminate, a direct query's rows Suspended, a compressed frame not granted or damaged, a server that cannot be reached, a failed TLS handshake, a wait past its timeout, a closed connection | yes |
+| 08006 | -919 | A malformed reply (a frame cut short, bytes after its last field, a kind or a value's tag unknown), a frame too long, a reply out of turn (a Ready before SCRAM's server-final among them), the server's answer to Terminate, a direct query's rows Suspended, a compressed frame not granted or damaged, a server that cannot be reached, a failed TLS handshake, a wait past its timeout, a closed connection | yes |
 | 08006 | -919 | A method needing a capability the server did not grant, or connection or query attributes past their bounds, more than 32 or one too long, before anything is sent; a write to an export's output that failed, its replies read to their end | no |
 | 28000 | -919 | A password or SCRAM over plain TCP; a channel binding required and impossible; a SCRAM server whose final signature is wrong, which does not know the verifier | the connection is not made |
 | 08001 | -919 | No server of the settings could be connected to, or a file they name could not be read; no pooled connection came back within the pool's wait | the connection is not made |
 | 08002, 08003, 08004, 0A001, 25000, 28000, 2E000, 2A000 | as [The SQL-agent](../client/29-sql-agent.md) lists | A connection statement the SQL-agent refuses | no |
 | 26000 | -921 | The plain API's `exec_prepared` or `deallocate` of a name no statement is prepared under, as EXECUTE gives it | no |
+| TB916 | -916 | A reply's value whose body cannot be taken, in a frame read whole: a truth or units byte other than 0 or 1, a damaged JSON value, a malformed condition, a value of tag 18 or 19; its request fails, the rest of its replies read past | no |
+| 0A000 | -900 | A reply's JSON value nested past 128 or longer than 256 MiB, its request failing as above | no |
 | 22003 | -301 | A number or a length out of the range of its field | no |
 | 22021 | -301 | A string that cannot be written as UTF-8 | no |
 | 22000 | -301 | A value the protocol cannot carry | no |

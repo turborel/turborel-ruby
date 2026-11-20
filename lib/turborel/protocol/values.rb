@@ -67,9 +67,7 @@ module Turborel
       # turborel-protocol's reader takes as values by their type's own
       # decoder, as the server never writes them: CHARACTER VARYING's, read
       # as tag 1's; BINARY VARYING's, as 6's; TIME and TIMESTAMP WITH TIME
-      # ZONE's, as 9's and 11's. Tags 18 and 19, the large objects' stored
-      # form, are refused, as every Turborel driver refuses them (RULES.md
-      # D8).
+      # ZONE's, as 9's and 11's.
       VARYING = 5
       # (see VARYING)
       BINARY_VARYING = 7
@@ -77,6 +75,10 @@ module Turborel
       TIME_ZONED = 10
       # (see VARYING)
       TIMESTAMP_ZONED = 12
+      # The tags of the large objects' stored form, which turborel-protocol's
+      # reader takes but the server never sends: each a value that cannot be
+      # taken, as every Turborel driver refuses it (RULES.md D8).
+      STORED_LOBS = [18, 19].freeze
       # The moment of each datetime tag read.
       READ_MOMENTS = MOMENTS.merge(TIME_ZONED => :time, TIMESTAMP_ZONED => :timestamp).freeze
       # A large object's kind byte, and back [PROTOCOL Values].

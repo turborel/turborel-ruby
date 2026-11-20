@@ -57,6 +57,11 @@ module Turborel
       }.freeze
       # The tags a Complete takes [PROTOCOL The tail].
       COMPLETE_TAGS = [Tail::POSITION, Tail::MORE, Tail::ROWS, Tail::GENERATED, Tail::CONDITIONS, Tail::TIME].freeze
+      # The kinds of the replies a request has more replies after: a
+      # Description, Rows, a Notice and a Status.
+      GOING_ON = %w[D B N T].map(&:ord).freeze
+      # The kind of a Complete.
+      COMPLETE = "K".ord
       # A Lob reply's kinds [PROTOCOL Replies].
       LOB_DATA = 0
       # (see LOB_DATA)
@@ -74,6 +79,60 @@ module Turborel
         reply = send(method, reader)
         reader.finish
         reply
+      end
+
+      # Whether a reply of +kind+ and +body+, decoded or not, is the last
+      # its request is answered with, by the order of a statement's replies,
+      # as turborel-protocol's reply.rs ends_request says: a Description,
+      # Rows, a Notice or a Status has more after it; a Complete has if its
+      # head says more follow; any other ends its request's.
+      #
+      # @param kind [Integer]
+      # @param body [String]
+      # @return [Boolean]
+      def self.ends_request?(kind, body)
+        return false if GOING_ON.include?(kind)
+        return true unless kind == COMPLETE
+
+        !completed_head(kind, body)&.more
+      end
+
+      # The head of a reply of +kind+ and +body+, if a Complete whose head
+      # reads: its SQLCODE, SQLSTATE and whether a transaction is active,
+      # and of its tail the commit's position and whether more follow,
+      # which come before anything a client may fail to take, as
+      # reply.rs completed_head reads it.
+      #
+      # @param kind [Integer]
+      # @param body [String]
+      # @return [Complete, nil]
+      def self.completed_head(kind, body)
+        return nil unless kind == COMPLETE
+
+        reader = Reader.new(body, "reply")
+        generated = [] #: Array[String]
+        conditions = [] #: Array[Failure]
+        fields = { sqlcode: ValueReader.signed32(reader.u32), sqlstate: reader.str, active: reader.flag, position: nil,
+                   more: false, rows: nil, generated:, conditions:, time: nil }
+        head_tail(reader, fields)
+        Complete.new(**fields)
+      rescue Error
+        nil
+      end
+
+      # Reads into +fields+ a Complete's position and whether more follow,
+      # to its first other tag.
+      #
+      # @api private
+      # @return [void]
+      def self.head_tail(reader, fields)
+        Tail.new(reader, COMPLETE_TAGS).each_tag do |tag|
+          case tag
+          when Tail::POSITION then fields[:position] = reader.u64
+          when Tail::MORE then fields[:more] = true
+          else break
+          end
+        end
       end
 
       # @return [Challenge] bytes
@@ -138,6 +197,8 @@ module Turborel
         failure = Fields.failure(reader)
         reader.finish
         failure
+      rescue Error => e
+        raise Error.corrupt_value("a condition is malformed: #{e.message}")
       end
 
       # @return [ErrorReply] a failure

@@ -54,7 +54,12 @@ A statement's failure leaves the connection as it was. A connection
 exception, SQLSTATE class 08 but 08003, ends it, as does credentials
 refused as the connection is made: a malformed or too long reply, a
 reply out of turn, a closed connection, a wait past its timeout. After
-one, `lost?` is true and every method raises that failure again.
+one, `lost?` is true and every method raises that failure again. A
+reply whose frame is whole but holds a value the driver cannot take, as
+damaged JSON or a truth byte other than 0 or 1, fails its statement
+alone with that value's error, SQLCODE -916, or -900 past Turborel's
+limits: the rest of the statement's replies are read past first, so the
+next statement gets its own, and the connection goes on.
 [Appendix B](../appendix/b-errors.md) lists the failures the driver
 raises itself.
 

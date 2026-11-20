@@ -29,6 +29,7 @@ module Turborel
       BINARY_VARYING: Integer
       TIME_ZONED: Integer
       TIMESTAMP_ZONED: Integer
+      STORED_LOBS: Array[Integer]
       READ_MOMENTS: Hash[Integer, Symbol]
       LOB_KINDS: Hash[Integer, Symbol]
       UUID_OCTETS: Integer

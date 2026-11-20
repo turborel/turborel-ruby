@@ -11,7 +11,7 @@ protocol, `doc/client/05-protocol.md`; the client library,
 `doc/client/02-library.md`; and its settings, pipelines and pools,
 `doc/client/02-library-connections.md`. Each section here is one of
 theirs, and each row cites its heading as the tests cite it (RULES.md
-D6). The headings are those of Turborel's main at a413b841. Last come
+D6). The headings are those of Turborel's main at e97e0aa4. Last come
 the rows of this driver's standard API (RULES.md D2).
 
 **Done** means the driver's code for the row exists and is tested by
@@ -56,10 +56,10 @@ The same in every driver; the status of each row is in its table.
 
 | Part | Rows |
 |---|---|
-| The protocol | 246 |
-| The client library | 92 |
+| The protocol | 247 |
+| The client library | 94 |
 | Settings, pipelines and pools | 82 |
-| All but the standard API | 420 |
+| All but the standard API | 423 |
 
 ---
 
@@ -111,6 +111,7 @@ From `doc/client/05-protocol.md`, The Native Protocol.
 | P-FIELD-7 | list: its count, `u32`, then each item; strings, a list of strings | `[PROTOCOL Values and fields]` | done |
 | P-FIELD-8 | key: 16 bytes, with no length before them | `[PROTOCOL Values and fields]` | done |
 | P-FIELD-9 | A count larger than what follows fails as the body runs out, reserving no memory for it | `[PROTOCOL Values and fields]` | done |
+| P-FIELD-10 | A value whose body its reader cannot take leaves its frame read whole and the stream in step: the request fails with the value's error, not of class 08, after the rest of its replies are read past to the last; a malformed frame loses the connection (08006) | `[PROTOCOL Values and fields]` | done |
 
 ### Data types
 
@@ -569,7 +570,7 @@ From `doc/client/02-library.md`, The Client Library.
 | C-CONN-11 | A password, or SCRAM, refused over plain TCP before connecting (SQLSTATE 28000) | `[CLIENT Connecting]` | done |
 | C-CONN-12 | TLS trusting a file's authorities, the platform's, or both; SSL_CERT_FILE and SSL_CERT_DIR | `[CLIENT Connecting]` | done |
 | C-CONN-13 | The server's product and the session's authorization identifier, as Ready told them | `[CLIENT Connecting]` | done |
-| C-CONN-14 | Terminate: the transaction as SESSION.COMMIT_AT_END says, a failing commit's failure given, waiting at most the read timeout, else 60 seconds | `[CLIENT Connecting]` | done |
+| C-CONN-14 | Terminate: the transaction as SESSION.COMMIT_AT_END says, a failing commit's failure given, a Notice or Status before it read past; on a stream that bounds itself waiting at most the read timeout, else 60 seconds; on a stream given to `open`, as its maker set it | `[CLIENT Connecting]` | done |
 
 ### Timeouts
 
@@ -581,6 +582,7 @@ From `doc/client/02-library.md`, The Client Library.
 | C-TIME-4 | A wait that runs out loses the connection (SQLSTATE 08006), saying the server did not answer in time | `[CLIENT Timeouts]` | done |
 | C-TIME-5 | A named pipe bounded only as it is opened | `[CLIENT Timeouts]` | done |
 | C-TIME-6 | Replies taken up to 16 MiB, or as many bytes as the program says; a longer one loses the connection | `[CLIENT Timeouts]` | done |
+| C-TIME-7 | A stream of the program's own that bounds itself, opened within Timeouts, bounded as they say, its read timeout settable as a connection's | `[CLIENT Timeouts]` | done |
 
 ### Running statements
 
@@ -594,6 +596,7 @@ From `doc/client/02-library.md`, The Client Library.
 | C-RUN-6 | Cancel from another thread, giving up after 10 seconds, or a limit of the program's | `[CLIENT Running statements]` | done |
 | C-RUN-7 | A transaction begun by the first statement, lasting until COMMIT or ROLLBACK | `[CLIENT Running statements]` | done |
 | C-RUN-8 | Autocommit: each statement its own transaction, by `ends`, with no COMMIT sent | `[CLIENT Running statements]` | done |
+| C-RUN-9 | A reply holding a value the client cannot take fails its statement with that value's error (SQLCODE -916, or another not of class 08); the connection goes on, the rest of the statement's replies read past first | `[CLIENT Running statements]` | done |
 
 ### Prepared statements
 

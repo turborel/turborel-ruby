@@ -89,7 +89,7 @@ module Turborel
 
       # The value of the node at +at+, and the bytes it takes.
       def node(at, depth)
-        raise corrupt("arrays and objects nest too deep") if depth > JsonBinary::MAX_NESTING
+        raise Error.beyond("a JSON value's arrays and objects nest too deep") if depth > JsonBinary::MAX_NESTING
 
         tag = byte(at)
         return [CONSTANTS.fetch(tag), 1] if CONSTANTS.key?(tag)
@@ -259,7 +259,7 @@ module Turborel
       end
 
       # The connection failure of damaged octets.
-      def corrupt(why) = Error.connection_failure("a JSON value received is damaged: #{why}")
+      def corrupt(why) = Error.corrupt_value("a JSON value received is damaged: #{why}")
     end
   end
 end

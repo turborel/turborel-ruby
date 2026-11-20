@@ -68,6 +68,15 @@ module Turborel
         taken
       end
 
+      # Whether the server has closed, nothing more to read; it waits, as
+      # bounded, for a byte or the close.
+      #
+      # @return [Boolean]
+      def at_end?
+        fill(1)
+        @buffer.empty?
+      end
+
       # What the server sends until it closes, at most +limit+ bytes.
       #
       # @param limit [Integer]

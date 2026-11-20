@@ -16,7 +16,7 @@ module Turborel
         assert_equal DataType.new(kind: :character, params: { length: 10, units: :characters }),
                      type(hex("01 0A000000 00"))
         assert_equal DataType.new(kind: :varying, params: { length: 3, units: :octets }), type(hex("05 03000000 01"))
-        assert_fails { type(hex("01 0A000000 02")) }
+        assert_fails(CORRUPT) { type(hex("01 0A000000 02")) }
       end
 
       # Verifies: [PROTOCOL Data types] tags 2, 3 and 15, the numbers: exact

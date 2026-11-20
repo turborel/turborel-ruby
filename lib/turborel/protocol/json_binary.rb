@@ -89,9 +89,7 @@ module Turborel
       # @raise [Error] a connection failure if the octets are damaged,
       #   nested past 128 or longer than 256 MiB (RULES.md D8)
       def self.decode(bytes, most: MAX_DOCUMENT_OCTETS)
-        if bytes.bytesize > most
-          raise Error.connection_failure("a JSON value's stored form is longer than #{most} octets")
-        end
+        raise Error.beyond("a JSON value's stored form is longer than #{most} octets") if bytes.bytesize > most
 
         JsonDecoder.new(bytes).document
       end

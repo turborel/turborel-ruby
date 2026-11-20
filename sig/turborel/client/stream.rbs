@@ -18,6 +18,7 @@ module Turborel
       def initialize: (untyped io, ?timeout: seconds?, ?bounded: bool) -> void
       def write_all: (String bytes) -> void
       def read_exactly: (Integer count) -> String
+      def at_end?: () -> bool
       def read_to_end: (Integer limit) -> String
       def close: () -> void
 

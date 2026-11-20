@@ -95,10 +95,15 @@ module Turborel
 
       READERS: Hash[Integer, Symbol]
       COMPLETE_TAGS: Array[Integer]
+      GOING_ON: Array[Integer]
+      COMPLETE: Integer
       LOB_DATA: Integer
       LOB_LOCATOR: Integer
 
       def self.decode: (Integer kind, String body) -> reply
+      def self.ends_request?: (Integer kind, String body) -> bool
+      def self.completed_head: (Integer kind, String body) -> Complete?
+      def self.head_tail: (Reader reader, Hash[Symbol, untyped] fields) -> void
       def self.challenge: (Reader reader) -> Challenge
       def self.ready: (Reader reader) -> Ready
       def self.prepared: (Reader reader) -> Prepared

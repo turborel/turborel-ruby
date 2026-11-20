@@ -13,6 +13,7 @@ Turborel::Client.connect_to(target, user:, mechanism:, timeouts: DEFAULT_TIMEOUT
 Turborel::Client.connect(host, port = 7422, user:, mechanism:)
 Turborel::Client.connect_local(path, user:, mechanism:)
 Turborel::Client::Connection.open(io, user:, mechanism:, offer: Offers.default)
+Turborel::Client::Connection.open_within(io, user:, mechanism:, timeouts: DEFAULT_TIMEOUTS, offer: Offers.default)
 
 Turborel::Client::Targets.tcp(host, port = 7422)
 Turborel::Client::Targets.local(path)
@@ -42,7 +43,10 @@ canceller.cancel(within = 10)
 by `mechanism`, waiting as `timeouts` say and asking for what `offer`
 asks; over TLS the mechanism is bound to the connection first.
 `Connection.open` logs in over any stream the program opened, which then
-answers for its own privacy and waits. [Connecting](../user/02-connecting.md)
+answers for its own privacy and waits, `terminate`'s too;
+`Connection.open_within` logs in over one that bounds itself, a socket
+or TLS over one, and bounds it as `timeouts` say. `terminate` reads past
+a Notice or a Status to the Error a failing commit sends. [Connecting](../user/02-connecting.md)
 tells the mechanisms, TLS, timeouts and what a connection is told.
 
 The SCRAM key cache keeps the keys a password derived after a login, so

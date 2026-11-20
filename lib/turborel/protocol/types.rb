@@ -174,7 +174,7 @@ module Turborel
       # @return [Symbol] a character type's units
       def self.units(reader)
         unit = reader.u8
-        UNITS.fetch(unit) { raise reader.corrupt("a type's units are #{unit}") }
+        UNITS.fetch(unit) { raise Error.corrupt_value("a type's units are #{unit}") }
       end
 
       # @param reader [Reader]

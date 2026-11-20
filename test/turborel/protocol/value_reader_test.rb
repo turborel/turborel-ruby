@@ -88,11 +88,11 @@ module Turborel
       end
 
       # Verifies: [PROTOCOL Values] tag 14, a truth value: 0 false, 1 true,
-      # any other byte failing the connection.
+      # any other byte a value that cannot be taken (TB916).
       def test_truth_values
         refute value(hex("0E 00"))
         assert value(hex("0E 01"))
-        assert_fails { value(hex("0E 02")) }
+        assert_fails(CORRUPT) { value(hex("0E 02")) }
       end
 
       # Verifies: [PROTOCOL Values] tag 15, a decimal floating point number:
@@ -157,23 +157,26 @@ module Turborel
       end
 
       # Verifies: [PROTOCOL Values] tag 25, JSON, the stored form in bytes;
-      # a tag no value has fails the connection.
+      # a tag no value has fails the connection; a large object's stored
+      # tag is a value that cannot be taken.
       def test_json_and_unknown_tags
         assert_equal Json.new(value: { "a" => [1, nil] }),
                      value(writer.u8(25).bytes(JsonBinary.encode({ "a" => [1, nil] })).to_s)
-        [5, 7, 10, 12, 18, 19, 28].each { |tag| assert_fails { value(writer.u8(tag).to_s) } }
+        [5, 7, 10, 12, 28].each { |tag| assert_fails { value(writer.u8(tag).to_s) } }
+        [18, 19].each { |tag| assert_fails(CORRUPT) { value(writer.u8(tag).to_s) } }
       end
 
       # Verifies: [PROTOCOL Values] the tags of CHARACTER VARYING, BINARY
       # VARYING and the datetimes WITH TIME ZONE read as turborel-protocol's
       # reader reads them, as tags 1, 6, 9 and 11; the large objects' stored
-      # tags, 18 and 19, refused, losing the connection (RULES.md D8).
+      # tags, 18 and 19, refused as values that cannot be taken (TB916,
+      # RULES.md D8).
       def test_tags_the_page_does_not_list
         datetime = writer.u8(1).u8(6).u32(60).u64(5).to_s
 
         assert_equal ["ab", "\x01".b], [value(writer.u8(5).str("ab").to_s), value(writer.u8(7).bytes("\x01").to_s)]
         assert_equal(%i[time timestamp], [10, 12].map { |tag| value(writer.u8(tag).raw(datetime).to_s).moment })
-        [18, 19].each { |tag| assert_fails { value(writer.u8(tag).u8(0).bytes("x").to_s) } }
+        [18, 19].each { |tag| assert_fails(CORRUPT) { value(writer.u8(tag).u8(0).bytes("x").to_s) } }
       end
     end
   end

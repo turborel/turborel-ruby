@@ -39,9 +39,11 @@ class fails with SQLSTATE 22000, before anything is sent.
 The server writes no other tag. A value of tag 5, 7, 10 or 12, of
 CHARACTER VARYING, BINARY VARYING, TIME WITH TIME ZONE or TIMESTAMP
 WITH TIME ZONE, is read as tag 1, 6, 9 or 11 is, as turborel-protocol's
-reader reads it; one of tag 18 or 19, a large object's stored form, or
-of any other tag, is malformed, and loses the connection, SQLSTATE
-08006, as a value that cannot be decoded does.
+reader reads it; this follows turborel-client, though the page lists
+only 1, 6, 9 and 11. One of tag 18 or 19, a large object's stored form,
+is a value that cannot be taken: its request fails, SQLCODE -916,
+SQLSTATE TB916, the connection kept. One of any other tag is malformed,
+and loses the connection, SQLSTATE 08006.
 
 The bounds of each:
 
@@ -87,7 +89,9 @@ The bounds of each:
   1.50, read and written so, its `to_s` "1.50" and its `to_d` the
   `BigDecimal`; a `BigDecimal`, which keeps no scale, is written at the
   least scale that holds it. Arrays and objects nest at most 128 deep, and a
-  stored form is at most 256 MiB. Damaged octets fail the connection.
+  stored form is at most 256 MiB. Damaged octets are a value that cannot be taken (TB916), and one nested
+deeper or longer one past Turborel's limits (0A000): each fails its
+request, the connection kept.
 - **UUIDs** are 16 octets, no more and no fewer.
 
 ## Data types
