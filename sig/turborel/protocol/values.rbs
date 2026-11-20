@@ -39,7 +39,11 @@ module Turborel
       I32_BIAS: Integer
       READERS: Hash[Integer, Symbol]
 
+      HALF: Integer
+
       def self.decfloat?: (Integer coefficient, Integer exponent) -> bool
+      def self.rounded_decfloat: (Integer coefficient, Integer exponent) -> DecFloat?
+      def self.rounded: (Integer magnitude, Integer exponent) -> [Integer, Integer]
     end
   end
 end

@@ -118,9 +118,12 @@ module Turborel
       def decfloat(at, _depth)
         coefficient = i128(at)
         exponent = ValueReader.signed32(word(at + I128_BYTES))
-        raise corrupt("a DECFLOAT is malformed") unless Values.decfloat?(coefficient, exponent)
+        # A node's DECFLOAT is made as turborel's node reader makes it,
+        # rounded to 34 digits, and refused only out of range.
+        value = Values.rounded_decfloat(coefficient, exponent)
+        raise corrupt("a DECFLOAT is out of range") unless value
 
-        [DecFloat.new(coefficient:, exponent:), WIDE_BYTES]
+        [value, WIDE_BYTES]
       end
 
       # Node 8: octets u32, then UTF-8.

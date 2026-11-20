@@ -67,12 +67,26 @@ module Turborel
       end
 
       # Verifies: [PROTOCOL Values] a datetime's moment must be one of the
-      # three and its zoned flag 0 or 1; a DECFLOAT must be in its one form.
+      # three and its zoned flag 0 or 1; a DECFLOAT must be in range.
       def test_damaged_scalars_fail
         assert_fails { decode("01 09 03 0000000000000000 0000 00 00") }
         assert_fails { decode("01 09 00 0000000000000000 0000 02 00") }
-        assert_fails { decode("01 06 0A#{"00" * 15} 00000000") }
+        assert_fails { decode("01 06 01#{"00" * 15} 01180000") }
         assert_fails { decode("01 08 01000000 FF") }
+      end
+
+      # Verifies: [PROTOCOL Values] a DECFLOAT node is read as turborel's
+      # node reader reads it: rounded half to even to 34 digits, its trailing
+      # zeros taken into its exponent.
+      def test_decfloat_nodes_are_rounded_as_turborel_rounds_them
+        node = ->(coefficient, exponent) { JsonBinary.decode(writer.u8(1).u8(6).i128(coefficient).i32(exponent).to_s) }
+
+        assert_equal DecFloat.new(coefficient: 1, exponent: 1), node.call(10, 0)
+        assert_equal DecFloat.new(coefficient: 0, exponent: 0), node.call(0, 9)
+        assert_equal DecFloat.new(coefficient: (10**33) + 2, exponent: 1), node.call((10**34) + 15, 0)
+        assert_equal DecFloat.new(coefficient: (10**33) + 2, exponent: 1), node.call((10**34) + 25, 0)
+        assert_equal DecFloat.new(coefficient: -((10**33) + 25), exponent: 0), node.call(-((10**34) + 251), -1)
+        assert_equal DecFloat.new(coefficient: 1, exponent: 35), node.call((10**35) - 1, 0)
       end
 
       # Verifies: [PROTOCOL Values] arrays and objects nest at most 128 deep,

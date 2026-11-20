@@ -85,6 +85,8 @@ module Turborel
       DECFLOAT_ADJUSTED = (-6143)..6144
       # Ten, the radix of exact numbers.
       RADIX = 10
+      # The digit at which a dropped digit rounds up, or to even.
+      HALF = 5
       # The most digits an i128 holds, past which an exact number's units
       # are not even computed.
       I128_DIGITS = 39
@@ -104,17 +106,50 @@ module Turborel
 
       # Whether +coefficient+ and +exponent+ are a DECFLOAT in its one
       # form: zero as 0 and 0; else no trailing zero, at most 34 digits,
-      # and an adjusted exponent in range (turborel's DecFloat::new).
+      # and an adjusted exponent in range, as turborel's DecFloat::new
+      # leaves them unchanged.
       #
       # @param coefficient [Integer]
       # @param exponent [Integer]
       # @return [Boolean]
       def self.decfloat?(coefficient, exponent)
-        return exponent.zero? if coefficient.zero?
+        rounded_decfloat(coefficient, exponent) == DecFloat.new(coefficient:, exponent:)
+      end
 
-        digits = coefficient.abs.to_s.size
-        trailing = (coefficient % RADIX).zero?
-        !trailing && digits <= DECFLOAT_DIGITS && DECFLOAT_ADJUSTED.cover?(exponent + digits - 1)
+      # +coefficient+ times ten to +exponent+ as turborel's DecFloat::new
+      # makes it: rounded half to even to 34 digits, its trailing zeros
+      # taken into the exponent, zero as 0 and 0; +nil+ if its adjusted
+      # exponent is out of range or its exponent does not fit an i32.
+      #
+      # @param coefficient [Integer]
+      # @param exponent [Integer]
+      # @return [DecFloat, nil]
+      def self.rounded_decfloat(coefficient, exponent)
+        magnitude, exponent = rounded(coefficient.abs, exponent)
+        return DecFloat.new(coefficient: 0, exponent: 0) if magnitude.zero?
+
+        while (magnitude % RADIX).zero?
+          magnitude /= RADIX
+          exponent += 1
+        end
+        within = DECFLOAT_ADJUSTED.cover?(exponent + magnitude.to_s.size - 1) && Writer::I32_RANGE.cover?(exponent)
+        DecFloat.new(coefficient: coefficient.negative? ? -magnitude : magnitude, exponent:) if within
+      end
+
+      # +magnitude+ and +exponent+ rounded half to even to 34 digits, the
+      # digits dropped raising the exponent.
+      #
+      # @return [Array(Integer, Integer)]
+      def self.rounded(magnitude, exponent)
+        dropped = 0
+        sticky = false
+        [magnitude.to_s.size - DECFLOAT_DIGITS, 0].max.times do
+          sticky ||= !dropped.zero?
+          magnitude, dropped = magnitude.divmod(RADIX)
+          exponent += 1
+        end
+        up = dropped > HALF || (dropped == HALF && (sticky || magnitude.odd?))
+        [up ? magnitude + 1 : magnitude, exponent]
       end
     end
   end

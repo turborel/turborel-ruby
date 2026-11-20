@@ -55,8 +55,10 @@ The bounds of each:
   and `fraction` its precisions; `units`, an `i128`, months of a
   year-month interval and microseconds of a day-time one.
 - **DECFLOAT**: `coefficient`, of at most 34 digits and no trailing zero,
-  times ten to `exponent`; zero is 0 and 0. One not in that form fails,
-  read or written.
+  times ten to `exponent`; zero is 0 and 0. A value, tag 15, not in that
+  form fails, read or written. Within a JSON value, a DECFLOAT is read as
+  Turborel reads it, rounded half to even to 34 digits, and fails only
+  out of range.
 - **Large objects**: `kind` is `:character` or `:binary`; a whole one's
   `data` is UTF-8 of a character one, and its `octets` and `characters`
   its lengths; a locator lasts until its transaction ends.
