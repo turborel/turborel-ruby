@@ -23,6 +23,11 @@ AllCops:
 Layout/EndOfLine:
   EnforcedStyle: lf
 
+# Steep's inline type annotations, `#:`, are comments without the space
+# (D11).
+Layout/LeadingCommentSpace:
+  AllowSteepAnnotation: true
+
 # R-STYLE-1: one quoting, as the Ruby community's most common style has it.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -40,6 +45,12 @@ Metrics/ClassLength:
   Max: 600
 Metrics/ModuleLength:
   Max: 600
+# A test is a list of assertions of one behaviour at each of its edges
+# (R-TEST-2, R-TEST-4), which the ABC metric counts as branches; the
+# library is held to it.
+Metrics/AbcSize:
+  Exclude:
+    - "test/**/*"
 Metrics/BlockLength:
   Exclude:
     - "*.gemspec"

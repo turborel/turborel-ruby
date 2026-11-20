@@ -22,8 +22,13 @@ module Checks
     # @return [Array<String>] every citation that names nothing
     def self.problems
       known = { headings: headings, decisions: decisions, rules: rules }
-      (Sources.files + Dir.glob(DOCUMENTS)).uniq.flat_map { |path| file_problems(path, File.read(path), known) }
+      (Sources.files + Dir.glob(DOCUMENTS)).uniq.flat_map { |path| file_problems(path, joined(File.read(path)), known) }
     end
+
+    # @return [String] +text+ with its lines joined, a comment's markers
+    #   between them dropped, so a citation wrapped across lines is read
+    #   whole
+    def self.joined(text) = text.gsub(/[ \t]*\n[ \t]*(?:#[ \t]*)?/, " ")
 
     # @return [Array<String>] the citations of one file that name nothing
     def self.file_problems(path, text, known)
