@@ -287,7 +287,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-REQ-1 | A request sent before the last one is answered, the replies read in turn, in order | `[PROTOCOL Requests]` | not yet |
+| P-REQ-1 | A request sent before the last one is answered, the replies read in turn, in order | `[PROTOCOL Requests]` | done |
 | P-REQ-2 | Every request but Hello, Answer and Cancel sent only after Ready | `[PROTOCOL Requests]` | done |
 
 ### Hello 'H'
@@ -703,11 +703,11 @@ From `doc/client/02-library.md`, The Client Library.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-AGENT-1 | A program's connections, each named, one current | `[CLIENT The SQL-agent]` | not yet |
-| C-AGENT-2 | CONNECT, through a connector the program gives, to the address and as the user it names | `[CLIENT The SQL-agent]` | not yet |
-| C-AGENT-3 | SET CONNECTION | `[CLIENT The SQL-agent]` | not yet |
-| C-AGENT-4 | DISCONNECT | `[CLIENT The SQL-agent]` | not yet |
-| C-AGENT-5 | Every other statement sent to the current connection | `[CLIENT The SQL-agent]` | not yet |
+| C-AGENT-1 | A program's connections, each named, one current | `[CLIENT The SQL-agent]` | done |
+| C-AGENT-2 | CONNECT, through a connector the program gives, to the address and as the user it names | `[CLIENT The SQL-agent]` | done |
+| C-AGENT-3 | SET CONNECTION | `[CLIENT The SQL-agent]` | done |
+| C-AGENT-4 | DISCONNECT | `[CLIENT The SQL-agent]` | done |
+| C-AGENT-5 | Every other statement sent to the current connection | `[CLIENT The SQL-agent]` | done |
 
 ---
 
@@ -803,36 +803,36 @@ From `doc/client/02-library-connections.md`, Settings, Pipelines and Pools.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-PIPE-1 | Queue queries and executions, run them, one outcome each, in order | `[CLIENT Pipelines]` | not yet |
-| C-PIPE-2 | A failure its request's own, the requests after it run | `[CLIENT Pipelines]` | not yet |
-| C-PIPE-3 | Requests written a window of 64 KiB at a time, its replies read before the next | `[CLIENT Pipelines]` | not yet |
-| C-PIPE-4 | Under autocommit, each request its own transaction | `[CLIENT Pipelines]` | not yet |
-| C-PIPE-5 | Skip on error: a savepoint before each request but the first, those after a failure rolled back and skipped, those not yet written never sent | `[CLIENT Pipelines]` | not yet |
-| C-PIPE-6 | A skipping batch one transaction, committed as it ends under autocommit where it began none | `[CLIENT Pipelines]` | not yet |
-| C-PIPE-7 | Run fails if the connection is lost (SQLSTATE 08006) or a skipping batch cannot be undone | `[CLIENT Pipelines]` | not yet |
+| C-PIPE-1 | Queue queries and executions, run them, one outcome each, in order | `[CLIENT Pipelines]` | done |
+| C-PIPE-2 | A failure its request's own, the requests after it run | `[CLIENT Pipelines]` | done |
+| C-PIPE-3 | Requests written a window of 64 KiB at a time, its replies read before the next | `[CLIENT Pipelines]` | done |
+| C-PIPE-4 | Under autocommit, each request its own transaction | `[CLIENT Pipelines]` | done |
+| C-PIPE-5 | Skip on error: a savepoint before each request but the first, those after a failure rolled back and skipped, those not yet written never sent | `[CLIENT Pipelines]` | done |
+| C-PIPE-6 | A skipping batch one transaction, committed as it ends under autocommit where it began none | `[CLIENT Pipelines]` | done |
+| C-PIPE-7 | Run fails if the connection is lost (SQLSTATE 08006) or a skipping batch cannot be undone | `[CLIENT Pipelines]` | done |
 
 ### Pools
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-POOL-1 | A bounded set of connections the program's threads share, its clones the same pool | `[CLIENT Pools]` | not yet |
-| C-POOL-2 | Get an idle connection that answers, or make one while fewer than `max` are made, or wait | `[CLIENT Pools]` | not yet |
-| C-POOL-3 | A pooled connection given back as it is released | `[CLIENT Pools]` | not yet |
-| C-POOL-4 | `max`, 10 by default | `[CLIENT Pools]` | not yet |
-| C-POOL-5 | `max_idle`, 10 by default | `[CLIENT Pools]` | not yet |
-| C-POOL-6 | `idle_timeout`, 10 minutes by default | `[CLIENT Pools]` | not yet |
-| C-POOL-7 | `max_lifetime`, 1 hour by default | `[CLIENT Pools]` | not yet |
-| C-POOL-8 | `wait`, 30 seconds by default | `[CLIENT Pools]` | not yet |
-| C-POOL-9 | `check`, yes by default | `[CLIENT Pools]` | not yet |
-| C-POOL-10 | `reset`, none by default | `[CLIENT Pools]` | not yet |
-| C-POOL-11 | Given back reset by the protocol's Reset, autocommit off, then the `reset` statements | `[CLIENT Pools]` | not yet |
-| C-POOL-12 | Checked by Ping | `[CLIENT Pools]` | not yet |
-| C-POOL-13 | Of a server that takes neither, the check ROLLBACK and the reset one pipeline | `[CLIENT Pools]` | not yet |
-| C-POOL-14 | A connection lost, failing its reset, past its lifetime or beyond `max_idle` closed | `[CLIENT Pools]` | not yet |
-| C-POOL-15 | One idle past `idle_timeout`, or failing its check, closed as get meets it | `[CLIENT Pools]` | not yet |
-| C-POOL-16 | Get fails with SQLSTATE 08001 if none comes back within `wait`, or with the failure of making one | `[CLIENT Pools]` | not yet |
-| C-POOL-17 | A pool made of settings, or of anything that makes a connection | `[CLIENT Pools]` | not yet |
-| C-POOL-18 | No thread started by the pool; each wait the waiter's own | `[CLIENT Pools]` | not yet |
+| C-POOL-1 | A bounded set of connections the program's threads share, its clones the same pool | `[CLIENT Pools]` | done |
+| C-POOL-2 | Get an idle connection that answers, or make one while fewer than `max` are made, or wait | `[CLIENT Pools]` | done |
+| C-POOL-3 | A pooled connection given back as it is released | `[CLIENT Pools]` | done |
+| C-POOL-4 | `max`, 10 by default | `[CLIENT Pools]` | done |
+| C-POOL-5 | `max_idle`, 10 by default | `[CLIENT Pools]` | done |
+| C-POOL-6 | `idle_timeout`, 10 minutes by default | `[CLIENT Pools]` | done |
+| C-POOL-7 | `max_lifetime`, 1 hour by default | `[CLIENT Pools]` | done |
+| C-POOL-8 | `wait`, 30 seconds by default | `[CLIENT Pools]` | done |
+| C-POOL-9 | `check`, yes by default | `[CLIENT Pools]` | done |
+| C-POOL-10 | `reset`, none by default | `[CLIENT Pools]` | done |
+| C-POOL-11 | Given back reset by the protocol's Reset, autocommit off, then the `reset` statements | `[CLIENT Pools]` | done |
+| C-POOL-12 | Checked by Ping | `[CLIENT Pools]` | done |
+| C-POOL-13 | Of a server that takes neither, the check ROLLBACK and the reset one pipeline | `[CLIENT Pools]` | done |
+| C-POOL-14 | A connection lost, failing its reset, past its lifetime or beyond `max_idle` closed | `[CLIENT Pools]` | done |
+| C-POOL-15 | One idle past `idle_timeout`, or failing its check, closed as get meets it | `[CLIENT Pools]` | done |
+| C-POOL-16 | Get fails with SQLSTATE 08001 if none comes back within `wait`, or with the failure of making one | `[CLIENT Pools]` | done |
+| C-POOL-17 | A pool made of settings, or of anything that makes a connection | `[CLIENT Pools]` | done |
+| C-POOL-18 | No thread started by the pool; each wait the waiter's own | `[CLIENT Pools]` | done |
 
 ### The SCRAM key cache
 

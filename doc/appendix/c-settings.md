@@ -4,8 +4,7 @@
 
 Every connection setting, by its name in `Options`, a URI's query and a
 service file; the environment's variable that gives it, if one does;
-what it says; and its default. The settings of a pool come at milestone
-M6.
+what it says; and its default. Then the settings of a pool.
 
 | Setting | Variable | What it says | Default |
 |---|---|---|---|
@@ -29,3 +28,17 @@ M6.
 
 A variable set but empty gives nothing. A service's section cannot set
 `service` or `service_file`.
+
+## A pool's settings
+
+A `PoolConfig`'s fields, `PoolConfig.default` giving each its default.
+
+| Field | What it says | Default |
+|---|---|---|
+| `max` | The most connections made at once, handed out and idle | 10 |
+| `max_idle` | The most kept idle | 10 |
+| `idle_timeout` | Seconds one may stay idle; `nil` for as long as it lives | 600, ten minutes |
+| `max_lifetime` | Seconds one lives from when it was made; `nil` for no limit | 3600, an hour |
+| `wait` | Seconds `get` waits for one to come back | 30 |
+| `check` | Whether an idle connection is checked to answer before it is handed out | `true` |
+| `reset` | Statements run as each comes back, after the pool's own | none |

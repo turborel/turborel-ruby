@@ -32,8 +32,9 @@ and pools.
 The driver is built in milestones, M0 to M8. Its low-level client
 connects, logs in, runs statements, prepared statements and cursors,
 reads and writes large objects, copies, imports and exports, and
-connects by settings to one of several servers, today; pipelines and
-pools come at M6.
+connects by settings to one of several servers, pipelines requests,
+pools connections and holds named connections as an SQL-agent, today;
+the plain API and the ActiveRecord adapter come at M7.
 [CONFORMANCE.md](CONFORMANCE.md) shows what is done, row by row, and
 [TODO.md](TODO.md) what is open.
 

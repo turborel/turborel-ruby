@@ -9,18 +9,9 @@ in [RULES.md](RULES.md).
 
 Code never cites this file (R-DOC-5).
 
-[M6 Throughput](#m6-throughput) ·
 [M7 Standard API](#m7-standard-api) · [M8 Parity audit](#m8-parity-audit)
 
 ---
-
-## M6 Throughput
-
-- Pipelines: P-REQ-1 and the C-PIPE rows.
-- Pools: the C-POOL rows.
-- The SQL-agent: the C-AGENT rows.
-- The manual: the chapter Pipelines and Pools; the pages of pipelines,
-  pools and the SQL-agent.
 
 ## M7 Standard API
 
