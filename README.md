@@ -33,8 +33,8 @@ The driver is built in milestones, M0 to M8. Its low-level client
 connects, logs in, runs statements, prepared statements and cursors,
 reads and writes large objects, copies, imports and exports, and
 connects by settings to one of several servers, pipelines requests,
-pools connections and holds named connections as an SQL-agent, today;
-the plain API and the ActiveRecord adapter come at M7.
+pools connections and holds named connections as an SQL-agent, today,
+and the plain API and the ActiveRecord adapter stand on it.
 [CONFORMANCE.md](CONFORMANCE.md) shows what is done, row by row, and
 [TODO.md](TODO.md) what is open.
 
@@ -66,19 +66,22 @@ A program's Gemfile may name the clone instead:
 
 ## A first query
 
-This is what the standard API will be once milestone M7 builds it and
-M8's audit checks it. None of it runs yet, and its names may change
-until then.
+This is the standard API as milestone M7 built it; M8's audit checks
+it, and its names may change until then.
 
 ```ruby
 require "turborel"
 
 conn = Turborel.connect("turborel://ann@db.example/?tls_mode=verify-full")
-conn.exec_params("SELECT ID, NAME FROM STAFF WHERE ID < ?", [3]) do |result|
-  result.each { |row| puts "#{row["ID"]} #{row["NAME"]}" }
+conn.exec_params("SELECT ID, NAME FROM STAFF WHERE ID < ?", [3]).each do |row|
+  puts "#{row["ID"]} #{row["NAME"]}"
 end
 conn.close
 ```
+
+A Rails application names the adapter `turborel` in
+`config/database.yml`, as [Installing](doc/user/01-installing.md#in-a-rails-application)
+tells.
 
 ## The manual
 

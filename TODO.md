@@ -9,16 +9,9 @@ in [RULES.md](RULES.md).
 
 Code never cites this file (R-DOC-5).
 
-[M7 Standard API](#m7-standard-api) · [M8 Parity audit](#m8-parity-audit)
+[M8 Parity audit](#m8-parity-audit)
 
 ---
-
-## M7 Standard API
-
-- The standard API (RULES.md D2): the S-API rows.
-- The manual: the chapter Installing, the API Reference's pages of the
-  standard API, and every page the earlier milestones filled checked
-  again against the code, every example run.
 
 ## M8 Parity audit
 

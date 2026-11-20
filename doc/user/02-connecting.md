@@ -2,10 +2,31 @@
 
 [Contents](README.md)
 
-A program connects to a server through the low-level client,
-`Turborel::Client`, naming where the server is and who it connects as.
-The standard API's way of connecting comes at milestone M7, over the
-same connection.
+A program connects by the plain API's `Turborel.connect`, by settings,
+or through the low-level client, `Turborel::Client`, naming where the
+server is and who it connects as. Each gives the same connection.
+
+## By the plain API
+
+`Turborel.connect(uri, **settings)` connects as a `turborel://` URI
+says, its settings by name laid over the URI's, then over those of the
+service file, the environment and the defaults, as
+[Settings](09-settings.md) tells; or as a `Turborel::Client::Settings`
+it is given. It gives a `Turborel::Connection`, whose `client` is the
+low-level client's connection beneath it.
+
+```ruby
+conn = Turborel.connect("turborel://127.0.0.1:7422/?tls_mode=disable", user: "bob", application_name: "reports")
+puts conn.client.authorization
+conn.close
+```
+
+```text
+BOB
+```
+
+The rest of this chapter tells the low-level client's way, which the
+plain API's rests on.
 
 ## Where the server is
 

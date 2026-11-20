@@ -21,12 +21,13 @@ gives where turborel-client has none.
 | 28000 | -919 | A password or SCRAM over plain TCP; a channel binding required and impossible; a SCRAM server that does not prove it knows the verifier | the connection is not made |
 | 08001 | -919 | No server of the settings could be connected to, or a file they name could not be read; no pooled connection came back within the pool's wait | the connection is not made |
 | 08002, 08003, 08004, 0A001, 25000, 28000, 2E000, 2A000 | as [The SQL-agent](../client/29-sql-agent.md) lists | A connection statement the SQL-agent refuses | no |
+| 26000 | -921 | The plain API's `exec_prepared` or `deallocate` of a name no statement is prepared under, as EXECUTE gives it | no |
 | 22003 | -301 | A number or a length out of the range of its field | no |
 | 22021 | -301 | A string that cannot be written as UTF-8 | no |
 | 22000 | -301 | A value the protocol cannot carry | no |
 | 2200N | -301 | An XML value's text that is not well-formed XML content | no |
 | 0A000 | -900 | Past Turborel's limits: nesting, a JSON value's size | no |
-| TB910 | -910 | The program's misuse where turborel-client has no case: an argument none of those a method takes, a pooled connection asked for after it is released | no |
+| TB910 | -910 | The program's misuse where turborel-client has no case: an argument none of those a method takes, a pooled connection asked for after it is released, a row or column a result lacks, the plain API's parameters that are no `Array`, its `transaction` while one is active | no |
 
 ## The server's classes
 
@@ -49,3 +50,7 @@ gives where turborel-client has none.
 
 A failure that ends the connection leaves it lost: `lost?` is true, and
 every request after raises that failure again.
+
+The ActiveRecord adapter raises ActiveRecord's own errors, each caused
+by the driver's, as [The ActiveRecord
+Adapter](../client/03-api-active-record.md#errors) lists them.

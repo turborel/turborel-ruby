@@ -857,10 +857,10 @@ later decision of RULES.md.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| S-API-1 | `Turborel.connect`, by a `turborel://` URI or settings, giving a `Turborel::Connection` | `[DESIGN] D2` | not yet |
-| S-API-2 | `exec`, a statement's text, and `exec_params`, with `?` parameters | `[DESIGN] D2` | not yet |
-| S-API-3 | `prepare` and `exec_prepared` | `[DESIGN] D2` | not yet |
-| S-API-4 | `Turborel::Result`: its columns, its rows by row and by column, each value as Appendix A maps it, and its completion | `[DESIGN] D2` | not yet |
-| S-API-5 | Transactions: `transaction` with a block, committed as it ends and rolled back as it raises | `[DESIGN] D2` | not yet |
-| S-API-6 | Every failure of the plain API a `Turborel::Error`, carrying the server's failure | `[DESIGN] D2` | not yet |
-| S-API-7 | The ActiveRecord adapter for Rails 8.1 and later, registered as `turborel` | `[DESIGN] D2` | not yet |
+| S-API-1 | `Turborel.connect`, by a `turborel://` URI or settings, giving a `Turborel::Connection` | `[DESIGN] D2` | done |
+| S-API-2 | `exec`, a statement's text, and `exec_params`, with `?` parameters | `[DESIGN] D2` | done |
+| S-API-3 | `prepare` and `exec_prepared` | `[DESIGN] D2` | done |
+| S-API-4 | `Turborel::Result`: its columns, its rows by row and by column, each value as Appendix A maps it, and its completion | `[DESIGN] D2` | done |
+| S-API-5 | Transactions: `transaction` with a block, committed as it ends and rolled back as it raises | `[DESIGN] D2` | done |
+| S-API-6 | Every failure of the plain API a `Turborel::Error`, carrying the server's failure | `[DESIGN] D2` | done |
+| S-API-7 | The ActiveRecord adapter for Rails 8.1 and later, registered as `turborel` | `[DESIGN] D2` | done |

@@ -48,8 +48,11 @@ at its own scale wherever it is given.
 What the server describes of a result's columns and a statement's
 parameters is a `Column` and a `Parameter`, each with its `DataType`.
 
-How a program receives values and passes them, through the plain API
-and the low-level client, is told with them, at milestones M3 and M7.
+A program receives values and passes them so through the low-level
+client, as [Statements and Cursors](22-statements.md) tells, through the
+plain API, as [Turborel::Connection](01-api-connection.md) tells, and
+through the ActiveRecord adapter, which casts them to ActiveRecord's
+types, as [The ActiveRecord Adapter](03-api-active-record.md) tells.
 
 ## ERRORS
 
