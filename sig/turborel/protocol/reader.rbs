@@ -1,0 +1,45 @@
+module Turborel
+  module Protocol
+    # Reads a message's fields front to back.
+    class Reader
+      MAX_NESTING: Integer
+      U8_BYTES: Integer
+      U32_BYTES: Integer
+      U64_BYTES: Integer
+      HALF_BITS: Integer
+      U32: String
+      U64: String
+      I64: String
+      F64: String
+      FLAGS: Hash[Integer, bool]
+
+      @bytes: String
+      @what: String
+      @at: Integer
+      @depth: Integer
+
+      def initialize: (String bytes, String what) -> void
+      def at_end?: () -> bool
+      def take: (Integer count) -> String
+      def rest: () -> String
+      def u8: () -> Integer
+      def u32: () -> Integer
+      def u64: () -> Integer
+      def i64: () -> Integer
+      def i128: () -> Integer
+      def f64: () -> Float
+      def bytes: () -> String
+      def str: () -> String
+      def flag: () -> bool
+      def strs: () -> Array[String]
+      def counted: [T] () { () -> T } -> Array[T]
+      def nested: [T] () { () -> T } -> T
+      def finish: () -> void
+      def corrupt: (String why) -> Error
+
+      private
+
+      def unpacked: (Integer count, String directive) -> Integer
+    end
+  end
+end

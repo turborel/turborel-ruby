@@ -6,6 +6,10 @@ require_relative "turborel/failure"
 require_relative "turborel/version"
 
 require_relative "turborel/protocol/frame"
+require_relative "turborel/protocol/reader"
+require_relative "turborel/protocol/writer"
+
+require_relative "turborel/protocol/compression"
 
 # The Ruby driver for turborel, a relational database system. It speaks
 # turborel's native protocol, version 1, itself, in Ruby alone, with no
@@ -15,6 +19,6 @@ require_relative "turborel/protocol/frame"
 # its statements run with or without parameters, prepared statements,
 # results and transactions; and an ActiveRecord adapter beside it, under
 # its own require path (RULES.md D2). Until those are built, this module
-# holds the gem's version, its error type and the protocol's frame header.
+# holds the gem's version, its error type and the protocol's codec.
 module Turborel
 end

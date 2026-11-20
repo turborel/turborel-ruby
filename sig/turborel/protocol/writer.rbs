@@ -1,0 +1,46 @@
+module Turborel
+  module Protocol
+    # Writes a message's fields.
+    class Writer
+      MAX_U8: Integer
+      MAX_U32: Integer
+      MAX_U64: Integer
+      I16_RANGE: Range[Integer]
+      I32_RANGE: Range[Integer]
+      I64_RANGE: Range[Integer]
+      I128_RANGE: Range[Integer]
+      LOW_MASK: Integer
+      HALF_BITS: Integer
+      U8: String
+      I16: String
+      U32: String
+      U64: String
+      I64: String
+      F64: String
+
+      @out: String
+
+      def initialize: () -> void
+      def to_s: () -> String
+      def u8: (Integer value) -> self
+      def u32: (Integer value) -> self
+      def u64: (Integer value) -> self
+      def i16: (Integer value) -> self
+      def i32: (Integer value) -> self
+      def i64: (Integer value) -> self
+      def i128: (Integer value) -> self
+      def f64: (Float value) -> self
+      def bytes: (String value) -> self
+      def str: (String value) -> self
+      def flag: (bool value) -> self
+      def strs: (Array[String] values) -> self
+      def raw: (String octets) -> self
+      def self.utf8: (String value) -> String
+
+      private
+
+      def put: (Integer | Float value, String directive) -> self
+      def checked: (Integer value, Range[Integer] range, String field) -> Integer
+    end
+  end
+end

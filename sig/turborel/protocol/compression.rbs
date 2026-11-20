@@ -1,0 +1,17 @@
+module Turborel
+  module Protocol
+    # Compressed frames [PROTOCOL Compressed frames].
+    module Compression
+      COMPRESSED: Integer
+      DEFAULT_THRESHOLD: Integer
+      PREFIX_BYTES: Integer
+      INFLATE_CHUNK: Integer
+
+      def self.compress_frames: (String frames, ?Integer threshold) -> String
+      def self.compressed: (Integer kind, String body, Integer threshold) -> String
+      def self.decompress: (String body, ?Integer max) -> [Integer, String]
+      def self.inflate: (String stream, Integer length) -> String
+      def self.inflate_pieces: (Zlib::Inflate inflater, String stream, Integer length) -> String
+    end
+  end
+end

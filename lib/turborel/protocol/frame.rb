@@ -26,6 +26,14 @@ module Turborel
       # an unsigned 32-bit little-endian length.
       LAYOUT = "CV"
 
+      # A frame of +kind+ whose body is +body+: its header, then the body.
+      #
+      # @param kind [Integer] the message's kind, 0 to 255
+      # @param body [String] the body's octets
+      # @return [String] binary
+      # @raise [Error] if the kind or the body's length does not fit its field
+      def self.encode(kind, body) = encode_header(kind, body.bytesize) + body.b
+
       # The header of a frame of +kind+ whose body is +length+ bytes.
       #
       # @param kind [Integer] the message's kind, 0 to 255
