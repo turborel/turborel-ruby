@@ -1,0 +1,33 @@
+module Turborel
+  module Protocol
+    # A message's tail [PROTOCOL The tail].
+    class Tail
+      ATTRIBUTES: Integer
+      MULTI: Integer
+      CURSOR: Integer
+      POSITION: Integer
+      MORE: Integer
+      ROWS: Integer
+      SEVERITY: Integer
+      CONSTRAINT: Integer
+      GENERATED: Integer
+      CONDITIONS: Integer
+      TIME: Integer
+      MAX_ATTRIBUTES: Integer
+      MAX_ATTRIBUTE_NAME: Integer
+      MAX_ATTRIBUTE_VALUE: Integer
+
+      type attributes = Array[[String, String]]
+
+      @reader: Reader
+      @taken: Array[Integer] | Range[Integer]
+      @last: Integer
+
+      def initialize: (Reader reader, Array[Integer] | Range[Integer] taken) -> void
+      def each_tag: () { (Integer tag) -> void } -> void
+      def self.put_attributes: (Writer writer, attributes attributes) -> void
+      def self.put_attribute: (Writer writer, String name, String value) -> void
+      def self.attribute?: (String name, String value) -> bool
+    end
+  end
+end

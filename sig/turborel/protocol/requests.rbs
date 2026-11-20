@@ -1,0 +1,63 @@
+module Turborel
+  module Protocol
+    # Every request the client sends [PROTOCOL Requests].
+    module Requests
+      VERSION: Integer
+      HELLO: Integer
+      ANSWER: Integer
+      QUERY: Integer
+      PREPARE: Integer
+      EXECUTE: Integer
+      FETCH: Integer
+      CLOSE: Integer
+      DEALLOCATE: Integer
+      LOB: Integer
+      CANCEL: Integer
+      TERMINATE: Integer
+      DESCRIBE: Integer
+      PING: Integer
+      RESET: Integer
+      CHANGE_USER: Integer
+      COPY_IN: Integer
+      COPY_DATA: Integer
+      COPY_END: Integer
+      LOB_READ: Integer
+      LOB_CREATE: Integer
+      LOB_APPEND: Integer
+      LOB_FREE: Integer
+      LOB_HOLD: Integer
+      DESCRIBE_STATEMENT: Integer
+      DESCRIBE_CURSOR: Integer
+      KEY_BYTES: Integer
+      NO_ATTRIBUTES: Tail::attributes
+
+      def self.hello: (user: String, mechanism: String, initial: String, capabilities: Array[String],
+                       ?attributes: Tail::attributes) -> String
+      def self.answer: (String answer) -> String
+      def self.query: (String sql, ends: bool, ?attributes: Tail::attributes, ?multi: bool) -> String
+      def self.prepare: (Integer statement, String sql) -> String
+      def self.execute: (Integer statement, Array[untyped] values, rows: Integer, ends: bool,
+                         ?tail: { ?attributes: Tail::attributes, ?cursor: Integer }) -> String
+      def self.fetch: (Integer statement, rows: Integer, ?cursor: Integer) -> String
+      def self.close: (Integer statement, ?cursor: Integer) -> String
+      def self.deallocate: (Integer statement) -> String
+      def self.lob_read: (Integer locator, Integer from, Integer count, characters: bool) -> String
+      def self.lob_create: (Symbol kind) -> String
+      def self.lob_append: (Integer locator, String octets) -> String
+      def self.lob_free: (Integer locator) -> String
+      def self.lob_hold: (Integer locator) -> String
+      def self.cancel: (String key) -> String
+      def self.terminate: () -> String
+      def self.describe_statement: (Integer statement) -> String
+      def self.describe_cursor: (Integer statement, Integer cursor) -> String
+      def self.ping: () -> String
+      def self.reset: () -> String
+      def self.change_user: (String user, String mechanism, String initial) -> String
+      def self.copy_in: (String table, Array[String] columns, ends: bool) -> String
+      def self.copy_data: (Array[Array[untyped]] rows) -> String
+      def self.copy_end: (abandon: bool) -> String
+      def self.put_cursor: (Writer writer, Integer cursor) -> Writer
+      def self.lob: (Writer writer) -> String
+    end
+  end
+end

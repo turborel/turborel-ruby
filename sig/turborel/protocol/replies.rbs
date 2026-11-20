@@ -1,0 +1,118 @@
+module Turborel
+  module Protocol
+    # Every reply the client receives [PROTOCOL Replies].
+    module Replies
+      class Challenge < Data
+        attr_reader challenge: String
+        def self.new: (challenge: String) -> instance
+      end
+
+      class Ready < Data
+        attr_reader authorization: String
+        attr_reader key: String
+        attr_reader capabilities: Array[String]
+        attr_reader server: String
+        def self.new: (authorization: String, key: String, capabilities: Array[String], server: String) -> instance
+      end
+
+      class Prepared < Data
+        attr_reader statement: Integer
+        attr_reader parameters: Array[Parameter]
+        attr_reader columns: Array[Column]
+        def self.new: (statement: Integer, parameters: Array[Parameter], columns: Array[Column]) -> instance
+      end
+
+      class Description < Data
+        attr_reader columns: Array[Column]
+        def self.new: (columns: Array[Column]) -> instance
+      end
+
+      class Rows < Data
+        attr_reader rows: Array[Array[value]]
+        def self.new: (rows: Array[Array[value]]) -> instance
+      end
+
+      class Suspended < Data
+        def self.new: () -> instance
+      end
+
+      class Timing < Data
+        attr_reader total: Integer
+        attr_reader queued: Integer
+        attr_reader locks: Integer
+        def self.new: (total: Integer, queued: Integer, locks: Integer) -> instance
+      end
+
+      class Complete < Data
+        attr_reader sqlcode: Integer
+        attr_reader sqlstate: String
+        attr_reader active: bool
+        attr_reader position: Integer?
+        attr_reader more: bool
+        attr_reader rows: Integer?
+        attr_reader generated: Array[String]
+        attr_reader conditions: Array[Failure]
+        attr_reader time: Timing?
+        def self.new: (sqlcode: Integer, sqlstate: String, active: bool, position: Integer?, more: bool, rows: Integer?,
+                       generated: Array[String], conditions: Array[Failure], time: Timing?) -> instance
+                    | (**untyped) -> instance
+      end
+
+      class ErrorReply < Data
+        attr_reader failure: Failure
+        def self.new: (failure: Failure) -> instance
+      end
+
+      class LobData < Data
+        attr_reader data: String
+        def self.new: (data: String) -> instance
+      end
+
+      class LobLocator < Data
+        attr_reader locator: Integer
+        def self.new: (locator: Integer) -> instance
+      end
+
+      class Notice < Data
+        attr_reader sqlstate: String
+        attr_reader message: String
+        attr_reader diagnostics: Diagnostics?
+        def self.new: (sqlstate: String, message: String, diagnostics: Diagnostics?) -> instance
+      end
+
+      class Status < Data
+        attr_reader name: String
+        attr_reader value: String
+        def self.new: (name: String, value: String) -> instance
+      end
+
+      class Pong < Data
+        def self.new: () -> instance
+      end
+
+      type reply = Challenge | Ready | Prepared | Description | Rows | Suspended | Complete | ErrorReply
+                 | LobData | LobLocator | Notice | Status | Pong
+
+      READERS: Hash[Integer, Symbol]
+      COMPLETE_TAGS: Array[Integer]
+      LOB_DATA: Integer
+      LOB_LOCATOR: Integer
+
+      def self.decode: (Integer kind, String body) -> reply
+      def self.challenge: (Reader reader) -> Challenge
+      def self.ready: (Reader reader) -> Ready
+      def self.prepared: (Reader reader) -> Prepared
+      def self.description: (Reader reader) -> Description
+      def self.rows: (Reader reader) -> Rows
+      def self.suspended: (Reader _reader) -> Suspended
+      def self.complete: (Reader reader) -> Complete
+      def self.completed: (Reader reader, Integer tag) -> Hash[Symbol, untyped]
+      def self.condition: (String bytes) -> Failure
+      def self.error: (Reader reader) -> ErrorReply
+      def self.lob: (Reader reader) -> (LobData | LobLocator)
+      def self.notice: (Reader reader) -> Notice
+      def self.status: (Reader reader) -> Status
+      def self.pong: (Reader _reader) -> Pong
+    end
+  end
+end

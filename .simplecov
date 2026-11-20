@@ -6,5 +6,5 @@ SimpleCov.start do
   enable_coverage :branch
   add_filter "/test/"
   add_filter "/vendor/"
-  minimum_coverage line: 95, branch: 90
+  minimum_coverage line: 98, branch: 95
 end

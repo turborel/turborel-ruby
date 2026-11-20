@@ -1,0 +1,14 @@
+module Turborel
+  module Protocol
+    # The composite fields [PROTOCOL Composite fields].
+    module Fields
+      DIAGNOSTICS: Array[Symbol]
+      DIAGNOSTIC_TAGS: Range[Integer]
+
+      def self.column: (Reader reader) -> Column
+      def self.parameter: (Reader reader) -> Parameter
+      def self.failure: (Reader reader) -> Failure
+      def self.diagnostics: (Reader reader) -> Diagnostics?
+    end
+  end
+end

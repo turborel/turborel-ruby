@@ -81,8 +81,8 @@ From `doc/client/05-protocol.md`, The Native Protocol.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-FRAME-1 | The header: kind `u8`, then the body's length `u32` little-endian, the header not counted; written and read | `[PROTOCOL Frames]` | done |
-| P-FRAME-2 | A kind read in the direction it travels: `C` from a client is Close, from the server Challenge | `[PROTOCOL Frames]` | not yet |
-| P-FRAME-3 | A kind the reader does not know fails the connection (SQLCODE -919, SQLSTATE 08006) | `[PROTOCOL Frames]` | not yet |
+| P-FRAME-2 | A kind read in the direction it travels: `C` from a client is Close, from the server Challenge | `[PROTOCOL Frames]` | done |
+| P-FRAME-3 | A kind the reader does not know fails the connection (SQLCODE -919, SQLSTATE 08006) | `[PROTOCOL Frames]` | done |
 | P-FRAME-4 | A body cut short fails the connection | `[PROTOCOL Frames]` | done |
 | P-FRAME-5 | Bytes left over after a message's last field fail the connection | `[PROTOCOL Frames]` | done |
 | P-FRAME-6 | Replies taken up to 16 MiB of body unless the program says otherwise; a longer one fails the connection | `[PROTOCOL Frames]` | done |
@@ -109,7 +109,7 @@ From `doc/client/05-protocol.md`, The Native Protocol.
 | P-FIELD-5 | string: its length in bytes, `u32`, then its UTF-8 | `[PROTOCOL Values and fields]` | done |
 | P-FIELD-6 | bytes: its length, `u32`, then the bytes | `[PROTOCOL Values and fields]` | done |
 | P-FIELD-7 | list: its count, `u32`, then each item; strings, a list of strings | `[PROTOCOL Values and fields]` | done |
-| P-FIELD-8 | key: 16 bytes, with no length before them | `[PROTOCOL Values and fields]` | not yet |
+| P-FIELD-8 | key: 16 bytes, with no length before them | `[PROTOCOL Values and fields]` | done |
 | P-FIELD-9 | A count larger than what follows fails as the body runs out, reserving no memory for it | `[PROTOCOL Values and fields]` | done |
 
 ### Data types
@@ -202,36 +202,36 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-COMP-1 | row: a list of values | `[PROTOCOL Composite fields]` | not yet |
-| P-COMP-2 | column: named flag; its name, if named; data type; not null flag | `[PROTOCOL Composite fields]` | not yet |
-| P-COMP-3 | parameter: varying flag, 1 where the server gives CHARACTER VARYING of the longest length; data type | `[PROTOCOL Composite fields]` | not yet |
-| P-COMP-4 | failure: SQLCODE `i32 as u32`; SQLSTATE, 5 characters; message; cited flag and the rule; placed flag and the position, in characters; active flag; tail 7 to 15 | `[PROTOCOL Composite fields]` | not yet |
+| P-COMP-1 | row: a list of values | `[PROTOCOL Composite fields]` | done |
+| P-COMP-2 | column: named flag; its name, if named; data type; not null flag | `[PROTOCOL Composite fields]` | done |
+| P-COMP-3 | parameter: varying flag, 1 where the server gives CHARACTER VARYING of the longest length; data type | `[PROTOCOL Composite fields]` | done |
+| P-COMP-4 | failure: SQLCODE `i32 as u32`; SQLSTATE, 5 characters; message; cited flag and the rule; placed flag and the position, in characters; active flag; tail 7 to 15 | `[PROTOCOL Composite fields]` | done |
 
 ### The tail
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-TAIL-1 | 1 attributes, on Hello, Query and Execute: a count, then each name and value | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-2 | 2 multi, on Query | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-3 | 3 cursor, `u32`, on Execute, Fetch and Close | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-4 | 4 position, `u64`, on Complete | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-5 | 5 more, on Complete | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-6 | 6 rows, `u64`, on Complete | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-7 | 7 severity, on a failure and Notice | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-8 | 8 detail, on a failure and Notice | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-9 | 9 hint, on a failure and Notice | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-10 | 10 context, on a failure and Notice | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-11 | 11 schema, on a failure and Notice | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-12 | 12 table, on a failure and Notice | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-13 | 13 column, on a failure and Notice | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-14 | 14 data type, on a failure and Notice | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-15 | 15 constraint, on a failure and Notice | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-16 | 16 generated, a list of strings, on Complete | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-17 | 17 conditions, a list of failures as bytes, on Complete | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-18 | 18 time, total, queued and locks, each `u64`, on Complete | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-100 | Tags in increasing order; a tag the message does not take, or one not past the last, fails the connection | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-101 | A field written only where its capability was granted; a message with an empty tail is its first form exactly | `[PROTOCOL The tail]` | not yet |
-| P-TAIL-102 | At most 32 attributes, a name of 1 to 64 bytes, a value of at most 1024; more fails the connection | `[PROTOCOL The tail]` | not yet |
+| P-TAIL-1 | 1 attributes, on Hello, Query and Execute: a count, then each name and value | `[PROTOCOL The tail]` | done |
+| P-TAIL-2 | 2 multi, on Query | `[PROTOCOL The tail]` | done |
+| P-TAIL-3 | 3 cursor, `u32`, on Execute, Fetch and Close | `[PROTOCOL The tail]` | done |
+| P-TAIL-4 | 4 position, `u64`, on Complete | `[PROTOCOL The tail]` | done |
+| P-TAIL-5 | 5 more, on Complete | `[PROTOCOL The tail]` | done |
+| P-TAIL-6 | 6 rows, `u64`, on Complete | `[PROTOCOL The tail]` | done |
+| P-TAIL-7 | 7 severity, on a failure and Notice | `[PROTOCOL The tail]` | done |
+| P-TAIL-8 | 8 detail, on a failure and Notice | `[PROTOCOL The tail]` | done |
+| P-TAIL-9 | 9 hint, on a failure and Notice | `[PROTOCOL The tail]` | done |
+| P-TAIL-10 | 10 context, on a failure and Notice | `[PROTOCOL The tail]` | done |
+| P-TAIL-11 | 11 schema, on a failure and Notice | `[PROTOCOL The tail]` | done |
+| P-TAIL-12 | 12 table, on a failure and Notice | `[PROTOCOL The tail]` | done |
+| P-TAIL-13 | 13 column, on a failure and Notice | `[PROTOCOL The tail]` | done |
+| P-TAIL-14 | 14 data type, on a failure and Notice | `[PROTOCOL The tail]` | done |
+| P-TAIL-15 | 15 constraint, on a failure and Notice | `[PROTOCOL The tail]` | done |
+| P-TAIL-16 | 16 generated, a list of strings, on Complete | `[PROTOCOL The tail]` | done |
+| P-TAIL-17 | 17 conditions, a list of failures as bytes, on Complete | `[PROTOCOL The tail]` | done |
+| P-TAIL-18 | 18 time, total, queued and locks, each `u64`, on Complete | `[PROTOCOL The tail]` | done |
+| P-TAIL-100 | Tags in increasing order; a tag the message does not take, or one not past the last, fails the connection | `[PROTOCOL The tail]` | done |
+| P-TAIL-101 | A field written only where its capability was granted; a message with an empty tail is its first form exactly | `[PROTOCOL The tail]` | done |
+| P-TAIL-102 | At most 32 attributes, a name of 1 to 64 bytes, a value of at most 1024; more fails the connection | `[PROTOCOL The tail]` | done |
 
 ### Opening a connection
 
@@ -293,20 +293,20 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-HELLO-1 | Hello: version 1, user, mechanism, initial bytes, capabilities, tail 1 attributes | `[PROTOCOL Hello 'H']` | not yet |
+| P-HELLO-1 | Hello: version 1, user, mechanism, initial bytes, capabilities, tail 1 attributes | `[PROTOCOL Hello 'H']` | done |
 | P-HELLO-2 | Connection attributes in Hello, which every server reads, granted or not | `[PROTOCOL Hello 'H']` | not yet |
 
 ### Answer 'A'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-ANSWER-1 | Answer: bytes, the client's answer to a Challenge | `[PROTOCOL Answer 'A']` | not yet |
+| P-ANSWER-1 | Answer: bytes, the client's answer to a Challenge | `[PROTOCOL Answer 'A']` | done |
 
 ### Query 'Q'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-QUERY-1 | Query: sql, ends flag, tail 1 attributes, 2 multi | `[PROTOCOL Query 'Q']` | not yet |
+| P-QUERY-1 | Query: sql, ends flag, tail 1 attributes, 2 multi | `[PROTOCOL Query 'Q']` | done |
 | P-QUERY-2 | A query answered by Description, Rows and Complete; another statement by Complete; a failure by Error | `[PROTOCOL Query 'Q']` | not yet |
 | P-QUERY-3 | A query that returns no row completes with SQLCODE 100, SQLSTATE 02000 | `[PROTOCOL Query 'Q']` | not yet |
 | P-QUERY-4 | `ends`: committed as the statement succeeds, rolled back as it fails, the reply saying no transaction is active; a failing commit's Error in place of the Complete | `[PROTOCOL Query 'Q']` | not yet |
@@ -324,7 +324,7 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-EXEC-1 | Execute: statement, values, rows (0 for all), ends flag, tail 1 attributes, 3 cursor | `[PROTOCOL Execute 'E']` | not yet |
+| P-EXEC-1 | Execute: statement, values, rows (0 for all), ends flag, tail 1 attributes, 3 cursor | `[PROTOCOL Execute 'E']` | done |
 | P-EXEC-2 | A query's rows in Rows with no Description, then Suspended if the cursor has more, else Complete, the cursor closed | `[PROTOCOL Execute 'E']` | not yet |
 | P-EXEC-3 | `ends` as a Query's; a cursor left open keeps the transaction, ended with it under `fetch-ends` | `[PROTOCOL Execute 'E']` | not yet |
 | P-EXEC-4 | Cursor 0 unless tag 3 names another, with `cursors`; one already open fails (SQLSTATE 24000) | `[PROTOCOL Execute 'E']` | not yet |
@@ -403,14 +403,14 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-COPYIN-1 | CopyIn: table, columns (none for every column), ends flag; no reply | `[PROTOCOL CopyIn 'I']` | not yet |
+| P-COPYIN-1 | CopyIn: table, columns (none for every column), ends flag; no reply | `[PROTOCOL CopyIn 'I']` | done |
 | P-COPYIN-2 | Until CopyEnd, only CopyData, CopyEnd and Ping sent | `[PROTOCOL CopyIn 'I']` | not yet |
 
 ### CopyData 'J'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-COPYDATA-1 | CopyData: a list of rows, as many at a time as the client likes; no reply | `[PROTOCOL CopyData 'J']` | not yet |
+| P-COPYDATA-1 | CopyData: a list of rows, as many at a time as the client likes; no reply | `[PROTOCOL CopyData 'J']` | done |
 
 ### CopyEnd 'N'
 
@@ -425,44 +425,44 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-CHAL-1 | Challenge: bytes, the next step of an exchange | `[PROTOCOL Challenge 'C']` | not yet |
+| P-CHAL-1 | Challenge: bytes, the next step of an exchange | `[PROTOCOL Challenge 'C']` | done |
 
 ### Ready 'R'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-READY-1 | Ready: authorization, key (16 bytes), capabilities, server | `[PROTOCOL Ready 'R']` | not yet |
+| P-READY-1 | Ready: authorization, key (16 bytes), capabilities, server | `[PROTOCOL Ready 'R']` | done |
 | P-READY-2 | The cancel key kept as the client's secret | `[PROTOCOL Ready 'R']` | not yet |
 
 ### Prepared 'P'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-PREPD-1 | Prepared: statement, parameters in the order of their `?` marks, columns (none of a statement not a query) | `[PROTOCOL Prepared 'P']` | not yet |
+| P-PREPD-1 | Prepared: statement, parameters in the order of their `?` marks, columns (none of a statement not a query) | `[PROTOCOL Prepared 'P']` | done |
 
 ### Description 'D'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-DESCR-1 | Description: columns, of a Query's rows or an open cursor | `[PROTOCOL Description 'D']` | not yet |
+| P-DESCR-1 | Description: columns, of a Query's rows or an open cursor | `[PROTOCOL Description 'D']` | done |
 
 ### Rows 'B'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-ROWS-1 | Rows: a batch of rows, read as it comes | `[PROTOCOL Rows 'B']` | not yet |
+| P-ROWS-1 | Rows: a batch of rows, read as it comes | `[PROTOCOL Rows 'B']` | done |
 
 ### Suspended 'S'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-SUSP-1 | Suspended: the rows asked for sent, the cursor having more | `[PROTOCOL Suspended 'S']` | not yet |
+| P-SUSP-1 | Suspended: the rows asked for sent, the cursor having more | `[PROTOCOL Suspended 'S']` | done |
 
 ### Complete 'K'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-COMPL-1 | Complete: SQLCODE 0 or 100, SQLSTATE, active flag, tail 4, 5, 6, 16, 17, 18 | `[PROTOCOL Complete 'K']` | not yet |
+| P-COMPL-1 | Complete: SQLCODE 0 or 100, SQLSTATE, active flag, tail 4, 5, 6, 16, 17, 18 | `[PROTOCOL Complete 'K']` | done |
 | P-COMPL-2 | Tag 4, the log position of the commit the statement made | `[PROTOCOL Complete 'K']` | not yet |
 | P-COMPL-3 | Tag 6, the rows a statement changed, or a query's rows in all at its end | `[PROTOCOL Complete 'K']` | not yet |
 | P-COMPL-4 | Tag 16, each identity value an INSERT generated, as SQL writes it, in the order of its rows | `[PROTOCOL Complete 'K']` | not yet |
@@ -473,27 +473,27 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-ERROR-1 | Error: a failure, its tail 7 to 15 only with `diagnostics` | `[PROTOCOL Error 'E']` | not yet |
+| P-ERROR-1 | Error: a failure, its tail 7 to 15 only with `diagnostics` | `[PROTOCOL Error 'E']` | done |
 | P-ERROR-2 | An Error of class 08 but 08003, or of class 28 as the connection is made, ends the connection | `[PROTOCOL Error 'E']` | not yet |
 
 ### Lob 'L', the reply
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-LOBR-1 | 0 data: bytes | `[PROTOCOL Lob 'L']` | not yet |
-| P-LOBR-2 | 1 locator: `u32` | `[PROTOCOL Lob 'L']` | not yet |
+| P-LOBR-1 | 0 data: bytes | `[PROTOCOL Lob 'L']` | done |
+| P-LOBR-2 | 1 locator: `u32` | `[PROTOCOL Lob 'L']` | done |
 
 ### Notice 'N'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-NOTICE-1 | Notice: SQLSTATE, message, tail 7 to 15 with `diagnostics`, before the statement's completion | `[PROTOCOL Notice 'N']` | not yet |
+| P-NOTICE-1 | Notice: SQLSTATE, message, tail 7 to 15 with `diagnostics`, before the statement's completion | `[PROTOCOL Notice 'N']` | done |
 
 ### Status 'T'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-STATUS-1 | Status: name, value as SQL writes it, empty for a null | `[PROTOCOL Status 'T']` | not yet |
+| P-STATUS-1 | Status: name, value as SQL writes it, empty for a null | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-2 | One of each at login and after Reset or ChangeUser; after a statement, one of each it changed; a setting reset told at the database's value | `[PROTOCOL Status 'T']` | not yet |
 | P-STATUS-3 | AUTHORIZATION | `[PROTOCOL Status 'T']` | not yet |
 | P-STATUS-4 | SCHEMA | `[PROTOCOL Status 'T']` | not yet |
@@ -508,7 +508,7 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-PONG-1 | Pong, the answer to Ping | `[PROTOCOL Pong 'G']` | not yet |
+| P-PONG-1 | Pong, the answer to Ping | `[PROTOCOL Pong 'G']` | done |
 
 ### Conversations
 
@@ -530,17 +530,17 @@ cited under the page's section on values.
 | P-ERRN-3 | The server's own notices always as a Notice | `[PROTOCOL Errors and notices]` | not yet |
 | P-ERRN-4 | SQLSTATE 01T01, Reset or ChangeUser rolled back the transaction, a Notice of severity NOTICE | `[PROTOCOL Errors and notices]` | not yet |
 | P-ERRN-5 | SQLSTATE TBR01, SQLCODE -920, a replica that had not applied REPLICATION.READ_AFTER's position in time | `[PROTOCOL Errors and notices]` | not yet |
-| P-ERRN-6 | A malformed message, a request not granted, a frame too long or a request out of turn fails the connection (SQLCODE -919, SQLSTATE 08006) | `[PROTOCOL Errors and notices]` | not yet |
+| P-ERRN-6 | A malformed message, a request not granted, a frame too long or a request out of turn fails the connection (SQLCODE -919, SQLSTATE 08006) | `[PROTOCOL Errors and notices]` | done |
 
 ### A worked example
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-EXAMPLE-1 | The Hello of `trust` as ANN asking for `ping`, 41 bytes | `[PROTOCOL A worked example]` | not yet |
-| P-EXAMPLE-2 | Ping and Pong, a header alone each | `[PROTOCOL A worked example]` | not yet |
-| P-EXAMPLE-3 | The Query of `VALUES 1` with `ends` set | `[PROTOCOL A worked example]` | not yet |
-| P-EXAMPLE-4 | The Rows reply of the exact number 1 | `[PROTOCOL A worked example]` | not yet |
-| P-EXAMPLE-5 | The Complete with an empty tail, and with `row-counts` its tags 6 and 18 | `[PROTOCOL A worked example]` | not yet |
+| P-EXAMPLE-1 | The Hello of `trust` as ANN asking for `ping`, 41 bytes | `[PROTOCOL A worked example]` | done |
+| P-EXAMPLE-2 | Ping and Pong, a header alone each | `[PROTOCOL A worked example]` | done |
+| P-EXAMPLE-3 | The Query of `VALUES 1` with `ends` set | `[PROTOCOL A worked example]` | done |
+| P-EXAMPLE-4 | The Rows reply of the exact number 1 | `[PROTOCOL A worked example]` | done |
+| P-EXAMPLE-5 | The Complete with an empty tail, and with `row-counts` its tags 6 and 18 | `[PROTOCOL A worked example]` | done |
 
 ---
 

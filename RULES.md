@@ -71,8 +71,9 @@ Each is told in full in [§7](#7-the-decisions).
 | `Steepfile`, `.rubocop.yml`, `.simplecov`, `.yardopts` | the type checker, the linter and formatter, coverage, the API reference |
 | `lib/turborel.rb` | the gem's root module |
 | `lib/turborel/version.rb` | `Turborel::VERSION` (D5) |
-| `lib/turborel/error.rb` | `Turborel::Error`, every failure (R-ERR-1) |
-| `lib/turborel/protocol/` | the `codec` layer, with no I/O (D1) |
+| `lib/turborel/error.rb`, `failure.rb` | `Turborel::Error`, every failure, and the `Failure` and `Diagnostics` it carries (R-ERR-1) |
+| `lib/turborel/values.rb` | the value classes a value of the protocol is read into and written from: `Datetime`, `Interval`, `DecFloat`, `Lob` and the rest, and `DataType`, `Column` and `Parameter` |
+| `lib/turborel/protocol/` | the `codec` layer, with no I/O (D1): `reader.rb` and `writer.rb`, the fields; `frame.rb` and `compression.rb`, frames; `tail.rb`; `types.rb`; `values.rb`, `value_reader.rb` and `value_writer.rb`; `json_binary.rb` and `json_decoder.rb`, JSON's binary tree; `fields.rb`, the composite fields; `requests.rb` and `replies.rb`, every message |
 | `sig/` | RBS signatures, a file for each of `lib/` (D11) |
 | `test/` | minitest, a `*_test.rb` for each file of `lib/`, and `test_helper.rb` (D13) |
 | `doc/` | the manual |
@@ -404,7 +405,7 @@ least 90 % of lines, and of branches where the tool measures them. It
 only rises: a change that raises coverage well above it raises it. A
 floor below 100 % says why.
 
-The floor is 95 % of lines and 90 % of branches of `lib/`, kept in
+The floor is 98 % of lines and 95 % of branches of `lib/`, kept in
 `.simplecov` (D14). It is below 100 % because code of one platform,
 Unix sockets and Windows named pipes, runs only where its platform
 does, and coverage is measured on Linux.
