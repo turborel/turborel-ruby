@@ -1,0 +1,24 @@
+module Turborel
+  module Import
+    # SQL names as turborel's lexer reads them.
+    module Names
+      KEY_WORDS: Array[String]
+      MAX_IDENTIFIER_LENGTH: Integer
+      MAX_NAME_PARTS: Integer
+      REGULAR: Regexp
+      LINE_BREAKS: Array[String]
+      NAMING: Array[Symbol]
+      SEPARATOR: Regexp
+
+      def self.table_name: (String text) -> String
+      def self.name?: (Array[[Symbol, String]] tokens) -> bool
+      def self.column_name: (String name) -> String
+      def self.delimited: (String name) -> String
+      def self.tokens: (String text) -> Array[[Symbol, String]]
+      def self.token: (String rest) -> [Symbol, String, Integer]
+      def self.regular_token: (String regular) -> [Symbol, String, Integer]
+      def self.delimited_token: (String rest) -> [Symbol, String, Integer]
+      def self.closed_token: (String name, Integer at) -> [Symbol, String, Integer]
+    end
+  end
+end

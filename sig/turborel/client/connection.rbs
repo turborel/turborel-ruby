@@ -5,6 +5,9 @@ module Turborel
       include Wire
       include Statements
       include Session
+      include Lobs
+      include Copy
+      include Export
 
       @stream: Stream
       @target: Target?
@@ -26,6 +29,7 @@ module Turborel
       @notices: Array[Notice]
       @notice_handler: (^(Notice) -> untyped)?
       @query_attributes: Array[[String, String]]
+      @copying: Copying?
 
       attr_reader authorization: String
       attr_reader server: String

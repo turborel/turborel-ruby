@@ -1,0 +1,68 @@
+module Turborel
+  module Client
+    # A connection's large objects.
+    module Lobs : Wire
+      CHUNK_OCTETS: Integer
+      INLINE_OCTETS: Integer
+
+      def read_lob: (Lob lob, Integer from, Integer count, ?characters: bool) -> String
+      def lob_reader: (Lob lob) -> LobReader
+      def create_lob: (Symbol kind) -> LobWriter
+      def free_lob: (Lob lob) -> Protocol::Replies::Complete
+      def hold_lob: (Lob lob) -> Protocol::Replies::Complete
+      def lob_append: (Integer locator, String octets) -> Protocol::Replies::Complete
+      def self.held_range: (Lob lob, String data, Integer from, Integer count, bool characters) -> String
+      def self.char_cut: (String bytes, Integer most) -> Integer
+      def self.lead_at_or_before: (String bytes, Integer cut) -> Integer
+      def self.last_lead: (String bytes, Integer cut) -> Integer?
+      def self.continuation?: (Integer? byte) -> bool
+      def self.width: (Integer byte) -> Integer
+
+      private
+
+      def located: (Lob lob, String why) -> Integer
+    end
+
+    # A large object's octets as a stream.
+    class LobReader
+      @connection: Connection
+      @lob: Lob
+      @at: Integer
+      @chunk: String
+
+      def initialize: (Connection connection, Lob lob) -> void
+      def read: (?Integer? length, ?String? buffer) -> String?
+      def readpartial: (Integer length, ?String? buffer) -> String
+      def eof?: () -> bool
+
+      private
+
+      def take: (Integer length) -> String?
+      def all: () -> String
+      def refill: () -> void
+    end
+
+    # A new large object written a piece at a time.
+    class LobWriter
+      @connection: Connection
+      @kind: Symbol
+      @locator: Integer
+      @pending: String
+      @octets: Integer
+      @characters: Integer
+
+      attr_reader kind: Symbol
+
+      def initialize: (Connection connection, Symbol kind, Integer locator) -> void
+      def write: (*String pieces) -> Integer
+      def <<: (String piece) -> LobWriter
+      def flush: () -> void
+      def finish: () -> Lob
+
+      private
+
+      def written: (String bytes) -> Integer
+      def append_piece: () -> void
+    end
+  end
+end

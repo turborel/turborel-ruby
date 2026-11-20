@@ -1,0 +1,88 @@
+module Turborel
+  # Rows of a source imported into a table.
+  module Import
+    # A source of records.
+    interface _Source
+      def headings: () -> Array[Heading]?
+      def record: () -> Record?
+    end
+
+    DEFAULT_BATCH: Integer
+
+    # Where in a source a record began.
+    class Position < Data
+      attr_reader record: Integer
+      attr_reader line: Integer?
+      def self.new: (record: Integer, line: Integer?) -> instance
+      def to_s: () -> String
+    end
+
+    # What a source says of one of its fields.
+    class Heading < Data
+      attr_reader name: String
+      attr_reader type: DataType?
+      def self.new: (name: String, type: DataType?) -> instance
+    end
+
+    # A record of a source.
+    class Record < Data
+      attr_reader values: Array[value]
+      attr_reader position: Position
+      def self.new: (values: Array[value], position: Position) -> instance
+    end
+
+    # What an import is to do.
+    class Options < Data
+      attr_reader table: String
+      attr_reader batch: Integer
+      attr_reader skip: bool
+      def self.new: (table: String, batch: Integer, skip: bool) -> instance
+      def self.into: (String table) -> Options
+      def with: (?table: String, ?batch: Integer, ?skip: bool) -> Options
+    end
+
+    # What an import did.
+    class Imported < Data
+      attr_reader rows: Integer
+      attr_reader rejected: Integer
+      def self.new: (rows: Integer, rejected: Integer) -> instance
+    end
+
+    # A row skipped.
+    class Rejected < Data
+      attr_reader position: Position
+      attr_reader failure: Failure
+      attr_reader input: bool
+      def self.new: (position: Position, failure: Failure, input: bool) -> instance
+      def to_s: () -> String
+    end
+
+    # Why a source cannot give its next record.
+    class SourceError < StandardError
+      @position: Position?
+      attr_reader position: Position?
+      def initialize: (Position? position, String message) -> void
+    end
+
+    # Why an import stopped.
+    class ImportError < Error
+      @position: Position?
+      @committed: Integer
+      @rolled_back: Integer
+      @input: bool
+
+      attr_reader position: Position?
+      attr_reader committed: Integer
+      attr_reader rolled_back: Integer
+      attr_reader input: bool
+      def initialize: (Failure failure, position: Position?, committed: Integer, rolled_back: Integer, input: bool) -> void
+      def message: () -> String
+    end
+
+    def self.run: (Client::Connection connection, _Source source, Options options) ?{ (Rejected rejected) -> untyped } -> Imported
+    def self.rows: (Integer count) -> String
+    def self.cause_text: (Failure failure, bool input) -> String
+    def self.input: (String message) -> Failure
+    def self.sql: (Error error) -> Failure
+  end
+end

@@ -16,7 +16,10 @@ module Turborel
       @granted: Array[String]
       @query_attributes: Array[[String, String]]
 
+      @copying: Copying?
+
       KEPT_NOTICES: Integer
+      WHILE_COPYING: Array[Integer]
       WARNING_CLASS: String
 
       def self.ends_connection?: (Failure failure) -> bool
@@ -24,6 +27,8 @@ module Turborel
       private
 
       def send_frame: (String frames) -> void
+      def written: (String frames) -> void
+      def copying!: (String frames) -> void
       def expect: (*Class kinds) -> untyped
       def completion_reply: () -> Protocol::Replies::Complete
       def outcome: () -> [Rows | Protocol::Replies::Complete, bool]

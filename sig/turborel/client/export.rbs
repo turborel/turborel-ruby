@@ -1,0 +1,57 @@
+module Turborel
+  module Client
+    # Something an export writes to.
+    interface _Out
+      def write: (String bytes) -> untyped
+    end
+
+    # A connection's exports.
+    module Export : Statements
+      FORMATS: Array[Symbol]
+
+      def export: (String sql, _Out out, ?Symbol format) -> Integer
+      def self.read_native: (String | untyped input) -> [Array[Column], Array[Array[value]]]
+      def self.not_native: (String why) -> Error
+      def self.flushed: (_Out out) -> untyped
+    end
+
+    # A query's rows written as CSV.
+    class CsvSink
+      QUOTED: Regexp
+
+      @out: _Out
+      @types: Array[DataType]
+
+      def initialize: (_Out out) -> void
+      def columns: (Array[Column] columns) -> untyped
+      def rows: (Array[Array[value]] rows) -> untyped
+      def finish: () -> untyped
+
+      private
+
+      def line: (Array[value] row) -> String
+      def record: (Array[String] fields) -> untyped
+      def field: (String text) -> String
+    end
+
+    # A query's rows written as the protocol's own frames.
+    class NativeSink
+      @out: _Out
+
+      def initialize: (_Out out) -> void
+      def columns: (Array[Column] columns) -> untyped
+      def rows: (Array[Array[value]] rows) -> untyped
+      def finish: () -> untyped
+    end
+
+    # Native rows read back.
+    class NativeReader
+      @bytes: String
+      @at: Integer
+
+      def initialize: (String bytes) -> void
+      def first_columns: () -> Array[Column]
+      def next_reply: () -> Protocol::Replies::reply
+    end
+  end
+end

@@ -1,0 +1,73 @@
+module Turborel
+  module Import
+    # An import under way through one prepared INSERT.
+    class Run
+      CANCELLED: Integer
+      LOB_KINDS: Hash[Symbol, Symbol]
+
+      @connection: Client::Connection
+      @insert: Client::Statement
+      @options: Options
+      @rejected: ^(Rejected) -> untyped
+      @committed: Integer
+      @in_batch: Integer
+      @skipped: Integer
+
+      def self.start: (Client::Connection connection, _Source source, Options options, ^(Rejected) -> untyped rejected) -> Imported
+      def self.prepared: (Client::Connection connection, _Source source, Options options) -> [Client::Statement, Array[String]]
+      def self.columns: (Client::Connection connection, _Source source, String table) -> Array[String]
+      def self.fields_wrong: (Record record, Integer wanted) -> String?
+      def self.named: (String table) -> String
+      def self.described: (Client::Connection connection, String table) -> Array[String]
+      def self.sql_step: [T] () { () -> T } -> T
+      def self.before: (String message) -> ImportError
+      def initialize: (Client::Connection connection, Client::Statement insert, Options options, ^(Rejected) -> untyped rejected) -> void
+      def imported: (_Source source) -> Imported
+
+      private
+
+      def deallocated: () -> ImportError?
+      def rows: (_Source source) -> Imported
+      def row: (Record record) -> void
+      def failed: (Record record, Error error) -> void
+      def located: (Array[value] values) -> Array[value]
+      def long_octets: (value value) -> String?
+      def reject: (Position position, Failure failure, bool input) -> void
+      def stop: (Position? position, Failure failure, bool input) -> ImportError
+      def commit: () -> void
+    end
+
+    # An import by copy.
+    class Copied
+      ROW: Regexp
+      LOB_TYPES: Array[Symbol]
+
+      @connection: Client::Connection
+      @options: Options
+      @parameters: Array[Parameter]
+      @table: String
+      @columns: Array[String]
+      @committed: Integer
+      @batch: Array[Position]
+
+      attr_reader committed: Integer
+
+      def self.copies?: (Client::Connection connection, Client::Statement insert, Options options) -> bool
+      def self.start: (Client::Connection connection, _Source source, Options options, Client::Statement insert, Array[String] columns) -> Imported
+      def initialize: (Client::Connection connection, Options options, Array[Parameter] parameters, [String, Array[String]] into) -> void
+      def copied: (_Source source) -> bool
+
+      private
+
+      def within: [T] (Client::Copying copy) { () -> T } -> T
+      def batch: (Client::Copying copy, _Source source, [Position, Array[value]] first) -> bool
+      def sent: (Client::Copying copy, Position position, Array[value] values) -> void
+      def checked: (_Source source) -> [Position, Array[value]]?
+      def values_of: (Record record) -> Array[value]
+      def assigned: (Record record) -> Array[value]
+      def ended: (Client::Copying copy) -> nil
+      def row_of: (Failure failure) -> Integer?
+      def stop: (Position? position, Failure failure, Integer rolled_back, bool input) -> ImportError
+    end
+  end
+end

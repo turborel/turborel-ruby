@@ -22,6 +22,7 @@ module Turborel
 
       def initialize: () -> void
       def to_s: () -> String
+      def size: () -> Integer
       def u8: (Integer value) -> self
       def u32: (Integer value) -> self
       def u64: (Integer value) -> self

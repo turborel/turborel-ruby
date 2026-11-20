@@ -1,0 +1,38 @@
+module Turborel
+  module Client
+    # A connection's copies.
+    module Copy : Wire, Session
+      CHUNK_BYTES: Integer
+
+      @autocommit: bool
+      @copying: Copying?
+
+      def copy_in: (String table, ?Array[String] columns) -> Copying
+                 | (String table, ?Array[String] columns) { (Copying copy) -> untyped } -> Integer
+      def copy_rows: (String table, Array[String] columns, Enumerable[Array[value]] rows) -> Integer
+      def copy_begin: (String table, Array[String] columns, bool ends) -> Copying
+      def copy_end: (bool abandon) -> Integer
+      def copy_data: (Integer count, String encoded) -> void
+      def lost?: () -> bool
+    end
+
+    # A copy under way.
+    class Copying
+      @connection: Connection
+      @waiting: Protocol::Writer
+      @count: Integer
+      @ended: bool
+
+      def initialize: (Connection connection) -> void
+      def <<: (Array[value] row) -> Copying
+      def finish: () -> Integer
+      def abandon: () -> nil
+      def ended?: () -> bool
+
+      private
+
+      def flush: () -> void
+      def ended: (bool abandon) -> Integer
+    end
+  end
+end

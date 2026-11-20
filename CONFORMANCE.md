@@ -172,8 +172,8 @@ From `doc/client/05-protocol.md`, The Native Protocol.
 | P-VAL-27 | 27 UUID: bytes, a count of 16, then the 16 octets (gap G1) | `[PROTOCOL Values]` | done |
 | P-VAL-100 | A value's tag says how it is written, not its column's type: CHARACTER VARYING written with tag 1 | `[PROTOCOL Values]` | done |
 | P-VAL-101 | A datetime's zoned byte 1 for a type WITH TIME ZONE; without a zone, the displacement the value is shown in | `[PROTOCOL Values]` | done |
-| P-VAL-102 | A large object of at most SERVER.LOB_INLINE_BYTES, 64 KiB by default, read whole; a longer one by its locator, valid until its transaction ends | `[PROTOCOL Values]` | not yet |
-| P-VAL-103 | A large object sent whole, or as a locator the client made with Lob requests | `[PROTOCOL Values]` | not yet |
+| P-VAL-102 | A large object of at most SERVER.LOB_INLINE_BYTES, 64 KiB by default, read whole; a longer one by its locator, valid until its transaction ends | `[PROTOCOL Values]` | done |
+| P-VAL-103 | A large object sent whole, or as a locator the client made with Lob requests | `[PROTOCOL Values]` | done |
 
 ### JSON values
 
@@ -276,7 +276,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-CAP-11 | `multi-statement` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-12 | `compression` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-13 | `commit-position` | `[PROTOCOL Capabilities]` | done |
-| P-CAP-14 | `copy` | `[PROTOCOL Capabilities]` | not yet |
+| P-CAP-14 | `copy` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-15 | `row-counts` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-16 | `generated-values` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-17 | `fetch-ends` | `[PROTOCOL Capabilities]` | done |
@@ -354,11 +354,11 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-LOB-1 | 0 read: locator, from, count, characters flag; answered by a Lob reply of data | `[PROTOCOL Lob 'L']` | not yet |
-| P-LOB-2 | 1 create: kind; answered by a Lob reply of a locator | `[PROTOCOL Lob 'L']` | not yet |
-| P-LOB-3 | 2 append: locator, bytes, a character free to split between appends; answered by Complete | `[PROTOCOL Lob 'L']` | not yet |
-| P-LOB-4 | 3 free: locator; answered by Complete | `[PROTOCOL Lob 'L']` | not yet |
-| P-LOB-5 | 4 hold: locator, kept past its transaction's commit; answered by Complete | `[PROTOCOL Lob 'L']` | not yet |
+| P-LOB-1 | 0 read: locator, from, count, characters flag; answered by a Lob reply of data | `[PROTOCOL Lob 'L']` | done |
+| P-LOB-2 | 1 create: kind; answered by a Lob reply of a locator | `[PROTOCOL Lob 'L']` | done |
+| P-LOB-3 | 2 append: locator, bytes, a character free to split between appends; answered by Complete | `[PROTOCOL Lob 'L']` | done |
+| P-LOB-4 | 3 free: locator; answered by Complete | `[PROTOCOL Lob 'L']` | done |
+| P-LOB-5 | 4 hold: locator, kept past its transaction's commit; answered by Complete | `[PROTOCOL Lob 'L']` | done |
 
 ### Cancel 'Z'
 
@@ -384,7 +384,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-PING-1 | Ping, answered by Pong, at any point after Ready, during a copy too | `[PROTOCOL Ping 'G']` | not yet |
+| P-PING-1 | Ping, answered by Pong, at any point after Ready, during a copy too | `[PROTOCOL Ping 'G']` | done |
 
 ### Reset 'W'
 
@@ -406,7 +406,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-COPYIN-1 | CopyIn: table, columns (none for every column), ends flag; no reply | `[PROTOCOL CopyIn 'I']` | done |
-| P-COPYIN-2 | Until CopyEnd, only CopyData, CopyEnd and Ping sent | `[PROTOCOL CopyIn 'I']` | not yet |
+| P-COPYIN-2 | Until CopyEnd, only CopyData, CopyEnd and Ping sent | `[PROTOCOL CopyIn 'I']` | done |
 
 ### CopyData 'J'
 
@@ -418,10 +418,10 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-COPYEND-1 | CopyEnd: abandon flag; answered by a Complete whose tag 6 counts the rows inserted, whatever was granted, or by the copy's Error | `[PROTOCOL CopyEnd 'N']` | not yet |
-| P-COPYEND-2 | All or nothing: a failure kept until CopyEnd, its detail naming the row, as `row 7 of the copy` | `[PROTOCOL CopyEnd 'N']` | not yet |
-| P-COPYEND-3 | `abandon` 1 undoes every row, the Complete counting none | `[PROTOCOL CopyEnd 'N']` | not yet |
-| P-COPYEND-4 | A copy whose `ends` is 1 committed as it succeeds, rolled back otherwise; another run under a savepoint of its own | `[PROTOCOL CopyEnd 'N']` | not yet |
+| P-COPYEND-1 | CopyEnd: abandon flag; answered by a Complete whose tag 6 counts the rows inserted, whatever was granted, or by the copy's Error | `[PROTOCOL CopyEnd 'N']` | done |
+| P-COPYEND-2 | All or nothing: a failure kept until CopyEnd, its detail naming the row, as `row 7 of the copy` | `[PROTOCOL CopyEnd 'N']` | done |
+| P-COPYEND-3 | `abandon` 1 undoes every row, the Complete counting none | `[PROTOCOL CopyEnd 'N']` | done |
+| P-COPYEND-4 | A copy whose `ends` is 1 committed as it succeeds, rolled back otherwise; another run under a savepoint of its own | `[PROTOCOL CopyEnd 'N']` | done |
 
 ### Challenge 'C'
 
@@ -521,8 +521,8 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-CONV-1 | A statement's replies in their order: Rows, then Notices, then Statuses, then Complete, Error or Suspended | `[PROTOCOL Conversations]` | done |
 | P-CONV-2 | A statement under autocommit, one Query with `ends` set | `[PROTOCOL Conversations]` | done |
 | P-CONV-3 | A cursor read in parts, its transaction ended by the Fetch with `fetch-ends` | `[PROTOCOL Conversations]` | done |
-| P-CONV-4 | A copy | `[PROTOCOL Conversations]` | not yet |
-| P-CONV-5 | A copy whose row breaks a constraint | `[PROTOCOL Conversations]` | not yet |
+| P-CONV-4 | A copy | `[PROTOCOL Conversations]` | done |
+| P-CONV-5 | A copy whose row breaks a constraint | `[PROTOCOL Conversations]` | done |
 | P-CONV-6 | A reset of a session in a transaction | `[PROTOCOL Conversations]` | done |
 
 ### Errors and notices
@@ -610,15 +610,15 @@ From `doc/client/02-library.md`, The Client Library.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-LOB-1 | A CLOB or BLOB of at most SERVER.LOB_INLINE_BYTES whole in its row; a longer one as its locator and lengths | `[CLIENT Large objects]` | not yet |
-| C-LOB-2 | Read a range, by octets or by a CLOB's characters, at most 256 KiB a chunk | `[CLIENT Large objects]` | not yet |
-| C-LOB-3 | A reader of the whole value, a chunk at a time, as the language's stream | `[CLIENT Large objects]` | not yet |
-| C-LOB-4 | A locator valid until its transaction ends, the transaction kept open under autocommit too | `[CLIENT Large objects]` | not yet |
-| C-LOB-5 | Free a locator | `[CLIENT Large objects]` | not yet |
-| C-LOB-6 | Hold a locator past the commit, until it is freed or a rollback ends it | `[CLIENT Large objects]` | not yet |
-| C-LOB-7 | Create a value a piece at a time through a writer, and pass it as a parameter | `[CLIENT Large objects]` | not yet |
-| C-LOB-8 | A CLOB's octets UTF-8, a character split between writes | `[CLIENT Large objects]` | not yet |
-| C-LOB-9 | An import's field longer than 64 KiB for a CLOB or BLOB column sent by creating a large object | `[CLIENT Large objects]` | not yet |
+| C-LOB-1 | A CLOB or BLOB of at most SERVER.LOB_INLINE_BYTES whole in its row; a longer one as its locator and lengths | `[CLIENT Large objects]` | done |
+| C-LOB-2 | Read a range, by octets or by a CLOB's characters, at most 256 KiB a chunk | `[CLIENT Large objects]` | done |
+| C-LOB-3 | A reader of the whole value, a chunk at a time, as the language's stream | `[CLIENT Large objects]` | done |
+| C-LOB-4 | A locator valid until its transaction ends, the transaction kept open under autocommit too | `[CLIENT Large objects]` | done |
+| C-LOB-5 | Free a locator | `[CLIENT Large objects]` | done |
+| C-LOB-6 | Hold a locator past the commit, until it is freed or a rollback ends it | `[CLIENT Large objects]` | done |
+| C-LOB-7 | Create a value a piece at a time through a writer, and pass it as a parameter | `[CLIENT Large objects]` | done |
+| C-LOB-8 | A CLOB's octets UTF-8, a character split between writes | `[CLIENT Large objects]` | done |
+| C-LOB-9 | An import's field longer than 64 KiB for a CLOB or BLOB column sent by creating a large object | `[CLIENT Large objects]` | done |
 
 ### XML values
 
@@ -640,13 +640,13 @@ From `doc/client/02-library.md`, The Client Library.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-IMPORT-1 | Import a source's rows into a table over a connection | `[CLIENT Importing]` | not yet |
-| C-IMPORT-2 | A source: its headings, names and types if known, then each record with where it began, held a record at a time | `[CLIENT Importing]` | not yet |
-| C-IMPORT-3 | Delimited text, CSV and tab-separated, with a header, a delimiter and a text for null | `[CLIENT Importing]` | not yet |
-| C-IMPORT-4 | Rows committed a batch at a time, 1000 by default, or all at once | `[CLIENT Importing]` | not yet |
-| C-IMPORT-5 | A failing row skipped and given to the program, if asked | `[CLIENT Importing]` | not yet |
-| C-IMPORT-6 | No transaction active on the session | `[CLIENT Importing]` | not yet |
-| C-IMPORT-7 | An import's failure: where its record began, why (the input's or SQL's), the rows committed and rolled back | `[CLIENT Importing]` | not yet |
+| C-IMPORT-1 | Import a source's rows into a table over a connection | `[CLIENT Importing]` | done |
+| C-IMPORT-2 | A source: its headings, names and types if known, then each record with where it began, held a record at a time | `[CLIENT Importing]` | done |
+| C-IMPORT-3 | Delimited text, CSV and tab-separated, with a header, a delimiter and a text for null | `[CLIENT Importing]` | done |
+| C-IMPORT-4 | Rows committed a batch at a time, 1000 by default, or all at once | `[CLIENT Importing]` | done |
+| C-IMPORT-5 | A failing row skipped and given to the program, if asked | `[CLIENT Importing]` | done |
+| C-IMPORT-6 | No transaction active on the session | `[CLIENT Importing]` | done |
+| C-IMPORT-7 | An import's failure: where its record began, why (the input's or SQL's), the rows committed and rolled back | `[CLIENT Importing]` | done |
 
 ### What a connection asks for
 
@@ -689,15 +689,15 @@ From `doc/client/02-library.md`, The Client Library.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-COPY-1 | Copy into a table, of the columns named or all | `[CLIENT Copying and exporting]` | not yet |
-| C-COPY-2 | Send rows, many to a message, with no reply each | `[CLIENT Copying and exporting]` | not yet |
-| C-COPY-3 | Finish, giving the rows inserted | `[CLIENT Copying and exporting]` | not yet |
-| C-COPY-4 | All or nothing: a row refused undoes every row, its failure's detail naming the row | `[CLIENT Copying and exporting]` | not yet |
-| C-COPY-5 | A copy dropped before it finishes abandoned | `[CLIENT Copying and exporting]` | not yet |
-| C-COPY-6 | Copy the rows an iterator gives | `[CLIENT Copying and exporting]` | not yet |
-| C-COPY-7 | Importing by copy where the server grants it and no column is a large object | `[CLIENT Copying and exporting]` | not yet |
-| C-COPY-8 | Export as CSV, a header of the columns' names then a record for each row, as they come | `[CLIENT Copying and exporting]` | not yet |
-| C-COPY-9 | Export as the protocol's own frames, read back with every value as it was | `[CLIENT Copying and exporting]` | not yet |
+| C-COPY-1 | Copy into a table, of the columns named or all | `[CLIENT Copying and exporting]` | done |
+| C-COPY-2 | Send rows, many to a message, with no reply each | `[CLIENT Copying and exporting]` | done |
+| C-COPY-3 | Finish, giving the rows inserted | `[CLIENT Copying and exporting]` | done |
+| C-COPY-4 | All or nothing: a row refused undoes every row, its failure's detail naming the row | `[CLIENT Copying and exporting]` | done |
+| C-COPY-5 | A copy dropped before it finishes abandoned | `[CLIENT Copying and exporting]` | done |
+| C-COPY-6 | Copy the rows an iterator gives | `[CLIENT Copying and exporting]` | done |
+| C-COPY-7 | Importing by copy where the server grants it and no column is a large object | `[CLIENT Copying and exporting]` | done |
+| C-COPY-8 | Export as CSV, a header of the columns' names then a record for each row, as they come | `[CLIENT Copying and exporting]` | done |
+| C-COPY-9 | Export as the protocol's own frames, read back with every value as it was | `[CLIENT Copying and exporting]` | done |
 
 ### The SQL-agent
 

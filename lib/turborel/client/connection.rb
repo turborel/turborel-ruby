@@ -11,6 +11,9 @@ module Turborel
       include Wire
       include Statements
       include Session
+      include Lobs
+      include Copy
+      include Export
 
       # @return [String] the session's authorization identifier, as Ready
       #   told it
@@ -69,6 +72,7 @@ module Turborel
         @notices = []
         @notice_handler = nil
         @query_attributes = Protocol::Requests::NO_ATTRIBUTES
+        @copying = nil
       end
 
       # Logs in by Hello, then each challenge answered until Ready.

@@ -74,7 +74,9 @@ Each is told in full in [§7](#7-the-decisions).
 | `lib/turborel/error.rb`, `failure.rb` | `Turborel::Error`, every failure, and the `Failure` and `Diagnostics` it carries (R-ERR-1) |
 | `lib/turborel/values.rb` | the value classes a value of the protocol is read into and written from: `Datetime`, `Interval`, `DecFloat`, `Lob` and the rest, and `DataType`, `Column` and `Parameter` |
 | `lib/turborel/protocol/` | the `codec` layer, with no I/O (D1): `reader.rb` and `writer.rb`, the fields; `frame.rb` and `compression.rb`, frames; `tail.rb`; `types.rb`; `values.rb`, `value_reader.rb` and `value_writer.rb`; `json_binary.rb` and `json_decoder.rb`, JSON's binary tree; `fields.rb`, the composite fields; `requests.rb` and `replies.rb`, every message |
-| `lib/turborel/client.rb`, `lib/turborel/client/` | the low-level client: the `transport` layer (`target.rb`, `transport.rb`, `stream.rb`, `timeouts.rb`), `auth` and `tls` (`mechanisms.rb`, `scram.rb`, `key_cache.rb`, `tls.rb`), and the `session` (`connection.rb`, `wire.rb`, `statements.rb`, `session.rb`, `outcomes.rb`, `offer.rb`, `canceller.rb`) |
+| `lib/turborel/client.rb`, `lib/turborel/client/` | the low-level client: the `transport` layer (`target.rb`, `transport.rb`, `stream.rb`, `timeouts.rb`), `auth` and `tls` (`mechanisms.rb`, `scram.rb`, `key_cache.rb`, `tls.rb`), and the `session` (`connection.rb`, `wire.rb`, `statements.rb`, `session.rb`, `outcomes.rb`, `offer.rb`, `canceller.rb`), its large objects, copies and exports (`lobs.rb`, `lob_streams.rb`, `copy.rb`, `export.rb`) |
+| `lib/turborel/import.rb`, `lib/turborel/import/` | imports: the source's records, delimited text, SQL names, string assignment, the run by INSERT or by copy |
+| `lib/turborel/text.rb`, `lib/turborel/text/` | values written as Turborel shows them, and a JSON value's text |
 | `lib/turborel/xml/` | an XML value's nodes, parsed from its text |
 | `sig/` | RBS signatures, a file for each of `lib/` (D11) |
 | `test/` | minitest, a `*_test.rb` for each file of `lib/`, and `test_helper.rb` (D13); `test/support/` the fake server unit tests script; `test/server/` the live tests' server set-up (R-TEST-8) |

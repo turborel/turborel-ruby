@@ -15,6 +15,8 @@ module Turborel
       KEPT_NOTICES = 64
       # The SQLSTATE class of a completion condition, a warning.
       WARNING_CLASS = "01"
+      # The requests sent while a copy is under way.
+      WHILE_COPYING = [Protocol::Requests::COPY_DATA, Protocol::Requests::COPY_END, Protocol::Requests::PING].freeze
 
       # Whether +failure+ ends the connection it came on: a connection
       # exception, class 08, but 08003, which names another connection; or
@@ -36,11 +38,26 @@ module Turborel
         lost = @lost
         raise lost if lost
 
+        copying!(frames)
+        written(frames)
+      end
+
+      # Writes +frames+, compressed past the threshold once granted; a
+      # failure loses the connection.
+      def written(frames)
         threshold = @compress_from
         frames = Protocol::Compression.compress_frames(frames, threshold) if threshold
         @stream.write_all(frames)
       rescue Error => e
         raise lost_by(e)
+      end
+
+      # Refuses +frames+ while a copy is under way unless they are CopyData,
+      # CopyEnd or Ping [PROTOCOL CopyIn 'I'].
+      def copying!(frames)
+        return unless @copying && !WHILE_COPYING.include?(frames.getbyte(0))
+
+        raise Error.misused("a copy is under way: finish or abandon it first")
       end
 
       # The next reply, of one of +kinds+; an Error its failure raised; any

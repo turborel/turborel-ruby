@@ -1,0 +1,27 @@
+module Turborel
+  module Protocol
+    # Data types written as the server writes them.
+    module TypeWriter
+      PARAMS: Hash[Symbol, Symbol]
+
+      def self.write: (Writer writer, DataType type) -> void
+      def self.column: (Writer writer, Column column) -> void
+      def self.nothing: (Writer _writer, Hash[Symbol, untyped] _params) -> nil
+      def self.length_units: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.precision_scale: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.precision: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.length: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.lob_length: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.qualifier: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.array: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.multiset: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.row: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.structured: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.reference: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.xml: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.extension: (Writer writer, Hash[Symbol, untyped] params) -> void
+      def self.units: (Hash[Symbol, untyped] params) -> Integer
+      def self.optional: (Writer writer, String? text) -> void
+    end
+  end
+end

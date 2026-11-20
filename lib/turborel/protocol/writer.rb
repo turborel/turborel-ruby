@@ -48,6 +48,9 @@ module Turborel
       # @return [String] what was written, binary
       def to_s = @out
 
+      # @return [Integer] the octets written so far
+      def size = @out.bytesize
+
       # @param value [Integer] a byte
       # @return [self]
       def u8(value) = put(checked(value, 0..MAX_U8, "u8"), U8)

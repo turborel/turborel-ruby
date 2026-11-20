@@ -1,0 +1,59 @@
+module Turborel
+  # Values written as text, as turborel shows them.
+  module Text
+    MICROS: Hash[Symbol, Integer]
+    FIELD_UNITS: Hash[Symbol, Integer]
+    FIELDS: Array[Symbol]
+    RANKS: Hash[Symbol, Integer]
+    SEPARATORS: Hash[Symbol, String]
+    MAX_EXACT_PRECISION: Integer
+    DECFLOAT_PLAIN: Range[Integer]
+    ERA_SHIFT: Integer
+    SHOWN: Hash[Module, Symbol]
+    LITERALS: Hash[Module, Symbol]
+
+    def self.of: (untyped value, ?DataType? type) -> String
+    def self.literal: (untyped value, ?DataType? type) -> String
+    def self.null: (untyped _value, DataType? _type) -> String
+    def self.string: (String value, DataType? _type) -> String
+    def self.truth: (bool value, DataType? _type) -> String
+    def self.own: (untyped value, DataType? _type) -> String
+    def self.own_text: (untyped value, DataType? _type) -> String
+    def self.json: (Turborel::Json value, DataType? _type) -> String
+    def self.exact: (Integer | BigDecimal value, DataType? type) -> String
+    def self.approximate: (Float value, ?DataType? _type) -> String
+    def self.scientific: (String digits) -> String
+    def self.shortest: (Float value) -> [String, Integer]
+    def self.decfloat: (DecFloat value, ?DataType? _type) -> String
+    def self.numeral: (Integer coefficient, Integer exponent) -> String
+    def self.datetime: (Datetime value, ?DataType? _type) -> String
+    def self.zoned: (Datetime value) -> String
+    def self.civil: (Integer days) -> String
+    def self.year_of: (Integer day_of_era) -> Integer
+    def self.month_day: (Integer day_of_year) -> [Integer, Integer]
+    def self.clock: (Integer micros, Integer precision) -> String
+    def self.displacement: (Integer zone) -> String
+    def self.interval: (Interval value, ?DataType? _type) -> String
+    def self.interval_field: (Interval value, Symbol field, Integer index) -> String
+    def self.whole_field: (Integer number, Symbol field, Integer index) -> String
+    def self.field_value: (Integer size, Symbol field, Integer index) -> Integer
+    def self.lob: (Lob value, ?DataType? _type) -> String
+    def self.hex: (String octets) -> String
+    def self.string_literal: (String value, DataType? _type) -> String
+    def self.array_literal: (Array[untyped] value, DataType? type) -> String
+    def self.datetime_literal: (Datetime value, DataType? _type) -> String
+    def self.decfloat_literal: (DecFloat value, DataType? _type) -> String
+    def self.row_literal: (Row value, DataType? _type) -> String
+    def self.multiset_literal: (Multiset value, DataType? _type) -> String
+    def self.structured_literal: (Structured value, DataType? _type) -> String
+    def self.reference_literal: (Reference value, DataType? _type) -> String
+    def self.json_literal: (Turborel::Json value, DataType? _type) -> String
+    def self.uuid_literal: (Uuid value, DataType? _type) -> String
+    def self.xml_literal: (Xml value, DataType? _type) -> String
+    def self.interval_literal: (Interval value, DataType? _type) -> String
+    def self.qualifier: (Interval value) -> String
+    def self.lob_literal: (Lob value, DataType? _type) -> String
+    def self.literals: (Array[untyped] values, DataType? type) -> String
+    def self.quoted: (String text) -> String
+  end
+end

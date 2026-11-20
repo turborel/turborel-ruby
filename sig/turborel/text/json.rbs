@@ -1,0 +1,20 @@
+module Turborel
+  module Text
+    # A JSON value's text as turborel writes it.
+    module Json
+      ESCAPES: Hash[String, String]
+      NO_TEXT: String
+
+      def self.shown: (untyped item) -> String
+      def self.of: (untyped item) -> String
+      def self.scalar: (untyped item) -> String
+      def self.number: (untyped item) -> String
+      def self.approximate: (Float value) -> String
+      def self.string: (String text) -> String
+
+      # An item no JSON text is.
+      class NoText < StandardError
+      end
+    end
+  end
+end

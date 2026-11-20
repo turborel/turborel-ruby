@@ -1,0 +1,64 @@
+module Turborel
+  module Import
+    # How delimited text is written.
+    class Dialect < Data
+      attr_reader delimiter: String
+      attr_reader quoted: bool
+      attr_reader header: bool
+      attr_reader null: String
+      attr_reader max_record: Integer
+      def self.new: (delimiter: String, quoted: bool, header: bool, null: String, max_record: Integer) -> instance
+      def self.csv: () -> Dialect
+      def self.tsv: () -> Dialect
+      def with: (?delimiter: String, ?quoted: bool, ?header: bool, ?null: String, ?max_record: Integer) -> Dialect
+      def with_header: () -> Dialect
+      def with_null: (String null) -> Dialect
+      def with_max_record: (Integer bytes) -> Dialect
+      def with_delimiter: (untyped delimiter) -> Dialect
+    end
+
+    # Something delimited text is read from, a line at a time.
+    interface _Lines
+      def gets: (String separator, Integer limit) -> String?
+    end
+
+    # Delimited text read a record at a time.
+    class Delimited
+      DEFAULT_MAX_RECORD: Integer
+      QUOTE: String
+      BOM: String
+      FIELD_START: Symbol
+
+      @input: _Lines
+      @dialect: Dialect
+      @lines: Integer
+      @records: Integer
+      @header_pending: bool
+      @started: bool
+      @done: bool
+
+      def initialize: (_Lines input, ?Dialect dialect) -> void
+      def headings: () -> Array[Heading]?
+      def record: () -> Record?
+      def self.scanned: (Symbol state, String piece, Dialect dialect) -> Symbol
+      def self.step: (Symbol state, bool quote, bool split) -> Symbol
+      def self.split: (String bytes, Dialect dialect) -> Array[[String, bool]]
+      def self.unquoted: (String bytes, Dialect dialect) -> Array[[String, bool]]
+      def self.past_delimiter: (String bytes, Integer at, Dialect dialect, Integer number) -> Integer
+      def self.plain: (String bytes, Integer at, String delimiter, Integer number) -> [String, Integer]
+      def self.enclosed: (String bytes, Integer at, Integer number) -> [String, Integer]
+      def self.text: (String bytes, Integer number) -> String
+      def self.unclosed: () -> String
+
+      private
+
+      def fields: (Integer number) -> [Array[[String, bool]]?, Integer]
+      def raw: () -> String?
+      def piece_of: (String bytes) -> String?
+      def line_of: (Integer most) -> String?
+      def long?: (String bytes) -> bool
+      def ended: (Symbol state, String bytes) -> String?
+      def taken: (String bytes) -> String
+    end
+  end
+end

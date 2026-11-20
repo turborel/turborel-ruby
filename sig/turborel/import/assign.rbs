@@ -1,0 +1,17 @@
+module Turborel
+  module Import
+    # A string assigned to a character string column as INSERT assigns it.
+    module Assign
+      INSERT_ASSIGNS: String
+      RIGHT_TRUNCATION: String
+      CHARACTER_KINDS: Array[Symbol]
+
+      def self.assigned: (Array[value] values, Array[Parameter] parameters) -> Array[value]
+      def self.string: (String text, DataType type) -> (String | Lob)
+      def self.assigned_to: (String kept, DataType type, Integer length, bool octets) -> (String | Lob)
+      def self.prefix: (String text, Integer most, bool octets) -> String
+      def self.refused: (DataType type, Integer count, Integer length, bool octets) -> Error
+      def self.written: (DataType type) -> String
+    end
+  end
+end
