@@ -366,6 +366,21 @@ module Turborel
         assert_predicate connection, :lost?
         server.join
       end
+
+      # Verifies: [CLIENT Running statements] a cancel gives up after its
+      # limit, the program's here, as after 10 seconds by default, its
+      # connection closed (08006).
+      def test_a_cancel_gives_up
+        silent = FakeServer.new do |peer|
+          peer.frame
+          peer.rest
+        end
+        refused = assert_fails { Canceller.new(silent.target, "\x07" * 16).cancel(0.05) }
+
+        assert_match(/did not answer in time/, refused.message)
+        assert_equal 10, CANCEL_WITHIN
+        silent.join
+      end
     end
   end
 end

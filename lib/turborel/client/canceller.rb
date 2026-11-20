@@ -25,10 +25,14 @@ module Turborel
       #   reached, or does not close in time
       def cancel(within = CANCEL_WITHIN)
         stream, = Transport.open(@target, within)
-        stream.write_all(Protocol::Requests.cancel(@key))
-        # The server closes it, saying nothing.
-        stream.read_to_end(Protocol::Frame::HEADER_BYTES)
-        stream.close
+        begin
+          stream.write_all(Protocol::Requests.cancel(@key))
+          # The server closes it, saying nothing.
+          stream.read_to_end(Protocol::Frame::HEADER_BYTES)
+        ensure
+          stream.close
+        end
+        nil
       end
 
       # Never the key.
