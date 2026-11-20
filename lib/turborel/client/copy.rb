@@ -97,8 +97,9 @@ module Turborel
       end
 
       # Sends +row+, an Array of a value for each column, with those before
-      # it once they are about CHUNK_BYTES. A row the server refuses comes
-      # as finish's failure.
+      # it once they are about CHUNK_BYTES; a row of a value the protocol
+      # cannot carry is refused whole, the copy kept. A row the server
+      # refuses comes as finish's failure.
       #
       # @param row [Array]
       # @return [Copying] itself
@@ -107,7 +108,9 @@ module Turborel
       def <<(row)
         raise Error.misused("the copy has ended") if @ended
 
-        Protocol::ValueWriter.row_values(@waiting, row)
+        written = Protocol::Writer.new
+        Protocol::ValueWriter.row_values(written, row)
+        @waiting.raw(written.to_s)
         @count += 1
         flush if @waiting.size >= Copy::CHUNK_BYTES
         self

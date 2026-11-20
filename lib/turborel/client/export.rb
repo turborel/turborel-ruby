@@ -70,48 +70,79 @@ module Turborel
       def self.not_native(why) = Error.connection_failure("not native rows: #{why}")
     end
 
+    # What an export's sinks share: each write made unless one before it
+    # failed, so the query's replies are read to their end whatever the
+    # output does, and the first failure given as the export ends, as
+    # turborel-client's export keeps it [CLIENT Copying and exporting].
+    #
+    # @api private
+    class Sink
+      # A sink writing to +out+.
+      def initialize(out)
+        @out = out
+        @failed = nil #: StandardError?
+      end
+
+      # Ends the export: the output flushed, or the first write that failed
+      # given.
+      #
+      # @raise [Error] a connection failure of a write that failed, which
+      #   ends the export, not the connection
+      def finish
+        flush unless @failed
+        failed = @failed
+        raise Error.connection_failure("cannot write the export: #{failed.message}") if failed
+      end
+
+      private
+
+      # Flushes the output, a failure kept.
+      def flush
+        Export.flushed(@out)
+      rescue StandardError => e
+        @failed = e
+      end
+
+      # Writes +bytes+, unless a write before failed; a failure kept.
+      def write(bytes)
+        return if @failed
+
+        @out.write(bytes)
+      rescue StandardError => e
+        @failed = e
+      end
+    end
+
     # A query's rows written as CSV as they come [CLIENT Copying and
     # exporting].
     #
     # @api private
-    class CsvSink
+    class CsvSink < Sink
       # What makes a field quoted.
       QUOTED = /[,"\n\r]|\A[[:space:]]|[[:space:]]\z/
 
       # A sink writing to +out+.
       def initialize(out)
-        @out = out
+        super
         @types = [] #: Array[DataType]
       end
 
       # Writes the header.
       def columns(columns)
         @types = columns.map(&:type)
-        record(columns.map { |column| field(column.name.to_s) })
+        write(record(columns.map { |column| field(column.name.to_s) }))
       end
 
       # Writes a record for each row.
-      def rows(rows)
-        @out.write(rows.map { |row| line(row) }.join)
-      rescue Error
-        raise
-      rescue StandardError => e
-        raise Error.connection_failure("cannot write the export: #{e.message}")
-      end
-
-      # Ends the export.
-      def finish = Export.flushed(@out)
+      def rows(rows) = write(rows.map { |row| line(row) }.join)
 
       private
 
       # The record of +row+.
-      def line(row)
-        fields = row.each_with_index.map { |value, i| value.nil? ? "" : field(Text.of(value, @types[i])) }
-        "#{fields.join(",")}\r\n"
-      end
+      def line(row) = record(row.each_with_index.map { |value, i| value.nil? ? "" : field(Text.of(value, @types[i])) })
 
-      # Writes the record of +fields+.
-      def record(fields) = @out.write("#{fields.join(",")}\r\n")
+      # The record of +fields+.
+      def record(fields) = "#{fields.join(",")}\r\n"
 
       # +text+ as CSV writes it: quoted where it must be.
       def field(text) = text.empty? || QUOTED.match?(text) ? "\"#{text.gsub('"', '""')}\"" : text
@@ -120,28 +151,25 @@ module Turborel
     # A query's rows written as the protocol's own frames as they come.
     #
     # @api private
-    class NativeSink
-      # A sink writing to +out+.
-      def initialize(out) = @out = out
-
+    class NativeSink < Sink
       # Writes a Description.
       def columns(columns)
         writer = Protocol::Writer.new.u32(columns.size)
         columns.each { |column| Protocol::TypeWriter.column(writer, column) }
-        @out.write(Protocol::Frame.encode("D".ord, writer.to_s))
+        write(Protocol::Frame.encode("D".ord, writer.to_s))
       end
 
       # Writes Rows.
       def rows(rows)
         writer = Protocol::Writer.new.u32(rows.size)
         rows.each { |row| Protocol::ValueWriter.row_values(writer, row) }
-        @out.write(Protocol::Frame.encode("B".ord, writer.to_s))
+        write(Protocol::Frame.encode("B".ord, writer.to_s))
       end
 
-      # Writes the Complete that ends them.
+      # Writes the Complete that ends them, then ends the export.
       def finish
-        @out.write(Protocol::Frame.encode("K".ord, Protocol::Writer.new.i32(0).str("00000").flag(false).to_s))
-        Export.flushed(@out)
+        write(Protocol::Frame.encode("K".ord, Protocol::Writer.new.i32(0).str("00000").flag(false).to_s))
+        super
       end
     end
 

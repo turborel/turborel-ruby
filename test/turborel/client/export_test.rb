@@ -67,18 +67,34 @@ module Turborel
       end
 
       # Verifies: [CLIENT Copying and exporting] an export runs a query: a
-      # statement that is no query fails; a write that fails ends it.
+      # statement that is no query fails; a write that fails ends the
+      # export, its replies read to their end so the connection keeps in
+      # step, the failure given as 08006 of the export's, not the
+      # connection's, as a header's or a flush's is.
       def test_no_query_and_a_failing_write
         connection, server = scripted do |peer|
           peer.frame
           peer.complete
           answered(peer, [[1, "a"]])
+          answered(peer, [[2, "b"]])
+          answered(peer, [[3, "c"]])
+          peer.frame
+          peer.complete
         end
 
         assert_fails { connection.export("COMMIT", StringIO.new) }
         broken = Object.new
         broken.define_singleton_method(:write) { |bytes| bytes.start_with?("1,") ? raise(IOError, "full") : bytes.size }
-        assert_fails { connection.export("SELECT N, T FROM X", broken) }
+        failed = assert_fails { connection.export("SELECT N, T FROM X", broken) }
+
+        assert_equal ["cannot write the export: full", false], [failed.message, connection.lost?]
+        header = Object.new
+        header.define_singleton_method(:write) { |_| raise Errno::ENOSPC }
+        assert_fails { connection.export("SELECT N, T FROM X", header, :native) }
+        unflushed = StringIO.new
+        unflushed.define_singleton_method(:flush) { raise IOError, "closed" }
+        assert_fails { connection.export("SELECT N, T FROM X", unflushed) }
+        assert_equal "00000", connection.query("COMMIT").sqlstate
         connection.terminate
         server.join
       end

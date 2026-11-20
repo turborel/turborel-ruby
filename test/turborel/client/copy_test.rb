@@ -145,6 +145,27 @@ module Turborel
 
         assert_equal ["X".ord], server.join.map(&:first)
       end
+
+      # Verifies: [PROTOCOL CopyData 'J'] a row of a value the protocol
+      # cannot carry refused whole, before it is sent, the copy kept and the
+      # rows before and after it sent as they are.
+      def test_a_row_refused_whole
+        connection, server = scripted do |peer, frames|
+          3.times { frames << peer.frame }
+          peer.complete(0, "00000", tail: counted(2))
+        end
+        copy = connection.copy_in("STAFF", %w[ID NAME])
+        copy << [7, "Niklaus"]
+
+        assert_fails(DATA_EXCEPTION) { copy << [8, Object.new] }
+        copy << [9, "Barbara"]
+
+        assert_equal 2, copy.finish
+        connection.terminate
+        _, data, = server.join
+
+        assert_equal Protocol::Requests.copy_data([[7, "Niklaus"], [9, "Barbara"]]), Protocol::Frame.encode(*data)
+      end
     end
   end
 end

@@ -56,7 +56,9 @@ module Turborel
 
       def challenged: (Protocol::Replies::reply reply, Mechanism mechanism) -> void
       def ready: (Protocol::Replies::Ready reply, Mechanism mechanism, Offer offer) -> void
+      def final_bytes: () -> String
       def terminated: (String rest) -> void
+      def final_reply: (String rest) -> Protocol::Replies::reply?
     end
   end
 end

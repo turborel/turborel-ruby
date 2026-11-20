@@ -15,30 +15,39 @@ module Turborel
       def self.flushed: (_Out out) -> untyped
     end
 
+    # What an export's sinks share.
+    class Sink
+      @out: _Out
+      @failed: StandardError?
+
+      def initialize: (_Out out) -> void
+      def finish: () -> untyped
+
+      private
+
+      def flush: () -> untyped
+      def write: (String bytes) -> untyped
+    end
+
     # A query's rows written as CSV.
-    class CsvSink
+    class CsvSink < Sink
       QUOTED: Regexp
 
-      @out: _Out
       @types: Array[DataType]
 
       def initialize: (_Out out) -> void
       def columns: (Array[Column] columns) -> untyped
       def rows: (Array[Array[value]] rows) -> untyped
-      def finish: () -> untyped
 
       private
 
       def line: (Array[value] row) -> String
-      def record: (Array[String] fields) -> untyped
+      def record: (Array[String] fields) -> String
       def field: (String text) -> String
     end
 
     # A query's rows written as the protocol's own frames.
-    class NativeSink
-      @out: _Out
-
-      def initialize: (_Out out) -> void
+    class NativeSink < Sink
       def columns: (Array[Column] columns) -> untyped
       def rows: (Array[Array[value]] rows) -> untyped
       def finish: () -> untyped

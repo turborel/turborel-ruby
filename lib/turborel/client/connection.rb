@@ -142,12 +142,7 @@ module Turborel
       #   a connection failure if it does not close in time
       def terminate
         send_frame(Protocol::Requests.terminate)
-        timeouts = @timeouts
-        @stream.timeout = timeouts.read || TERMINATE_WITHIN if timeouts
-        rest = @stream.read_to_end(@max_body + Protocol::Frame::HEADER_BYTES)
-        @stream.close
-        @lost = Error.connection_failure("the connection was terminated")
-        terminated(rest)
+        terminated(final_bytes)
       end
 
       # Leaves the connection with no Terminate: its stream closed, as a
@@ -192,16 +187,36 @@ module Turborel
         @stream.timeout = timeouts.read if timeouts
       end
 
-      # The end of a terminated session: nothing, a notice or a status
-      # before the close, or the failing commit's Error.
+      # What the server sent after Terminate, until it closed; the stream
+      # closed and the connection lost whatever the read gave.
+      def final_bytes
+        timeouts = @timeouts
+        @stream.timeout = timeouts.read || TERMINATE_WITHIN if timeouts
+        @stream.read_to_end(@max_body + Protocol::Frame::HEADER_BYTES)
+      ensure
+        @stream.close
+        @lost = Error.connection_failure("the connection was terminated")
+      end
+
+      # The end of a terminated session: nothing, a notice, a status or a
+      # Pong before the close, or the failing commit's Error; any other
+      # reply a connection failure, as the server answers no Terminate.
       def terminated(rest)
-        return if rest.bytesize < Protocol::Frame::HEADER_BYTES
+        case final_reply(rest)
+        in nil | Protocol::Replies::Notice | Protocol::Replies::Status | Protocol::Replies::Pong then nil
+        in Protocol::Replies::ErrorReply => reply then raise Error, reply.failure
+        else raise Error.connection_failure("the server answered Terminate")
+        end
+      end
+
+      # The reply +rest+ begins with, if a whole header is there.
+      def final_reply(rest)
+        return nil if rest.bytesize < Protocol::Frame::HEADER_BYTES
 
         kind, length = Protocol::Frame.decode_header(rest.byteslice(0, Protocol::Frame::HEADER_BYTES) || "", @max_body)
         body = rest.byteslice(Protocol::Frame::HEADER_BYTES, length) || ""
         kind, body = inflated(body) if kind == Protocol::Compression::COMPRESSED && @compress_from
-        reply = Protocol::Replies.decode(kind, body)
-        raise Error, reply.failure if reply.is_a?(Protocol::Replies::ErrorReply)
+        Protocol::Replies.decode(kind, body)
       end
     end
   end

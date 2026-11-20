@@ -76,13 +76,16 @@ module Turborel
       def completion_reply = expect(Protocol::Replies::Complete)
 
       # One statement's outcome, Rows or a Completion, and whether another
-      # statement's replies follow.
+      # statement's replies follow; a query's rows broken off by Suspended
+      # lose the connection, as a direct query has no cursor to suspend.
       def outcome
         first = expect(Protocol::Replies::Complete, Protocol::Replies::Description)
         return [first, first.more] if first.is_a?(Protocol::Replies::Complete)
 
         rows, ended = rows_until_end
-        [Rows.new(columns: first.columns, rows:), ended&.more || false]
+        raise lose("the server broke off its rows") unless ended
+
+        [Rows.new(columns: first.columns, rows:), ended.more]
       end
 
       # The rows the server sends until it says whether the cursor has

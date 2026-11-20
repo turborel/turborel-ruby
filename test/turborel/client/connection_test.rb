@@ -303,6 +303,69 @@ module Turborel
         assert_equal({ "SCHEMA" => "B", "READ_ONLY" => "NO" }, connection.settings)
         connection.terminate
       end
+
+      # Verifies: [PROTOCOL Terminate 'X'] after Terminate the server sends
+      # nothing, a notice, a status or a Pong before it closes, or a failing
+      # commit's Error; any other reply a connection failure, as the server
+      # answers no Terminate; the connection lost and its stream closed even
+      # as the wait for the close runs out.
+      def test_terminate_takes_no_answer
+        answered = FakeServer.new do |peer|
+          peer.frame
+          peer.ready
+          peer.frame
+          peer.complete
+        end
+        assert_fails { connect(answered).terminate }
+        answered.join
+        noticed = FakeServer.new do |peer|
+          peer.frame
+          peer.ready
+          peer.frame
+          peer.notice("01T01", "rolled back")
+        end
+
+        assert_nil connect(noticed).terminate
+        noticed.join
+      end
+
+      # Verifies: [CLIENT Connecting] terminate waits for the server to
+      # close at most the read timeout; past it the connection is lost, its
+      # stream closed.
+      def test_terminate_that_runs_out
+        server = FakeServer.new do |peer|
+          peer.frame
+          peer.ready
+          peer.frame
+          sleep 0.3
+        end
+        connection = connect(server)
+        connection.read_timeout = 0.05
+
+        assert_fails { connection.terminate }
+        assert_predicate connection, :lost?
+        assert_predicate connection.instance_variable_get(:@stream).instance_variable_get(:@io), :closed?
+        server.join
+      end
+
+      # Verifies: [PROTOCOL Query 'Q'] a query's rows broken off by Suspended
+      # lose the connection, as a direct query has no cursor to suspend.
+      def test_a_query_suspended_is_broken_off
+        server = FakeServer.new do |peer|
+          peer.frame
+          peer.ready
+          peer.frame
+          peer.description("N")
+          peer.rows([1])
+          peer.reply("S")
+          peer.rest
+        end
+        connection = connect(server)
+
+        assert_fails { connection.query("SELECT N FROM T") }
+        assert_predicate connection, :lost?
+        server.join
+      end
     end
   end
 end

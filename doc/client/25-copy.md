@@ -37,7 +37,9 @@ Turborel::Import::SourceError # position, message
 named or all, the copy its transaction's own under autocommit; within a
 transaction, one that fails is undone alone. `<<` sends a row, an
 `Array` of a value for each column, many to a message once they are
-about 256 KiB; `finish` ends the copy, giving the rows inserted;
+about 256 KiB, a row of a value the protocol cannot carry refused whole
+before it is sent and the copy kept; `finish` ends the copy, giving the
+rows inserted;
 `abandon` undoes every row. A copy is all or nothing: a row refused
 undoes every row, its failure's detail naming the row, as `row 7 of the
 copy`. A block's copy finishes as the block ends and is abandoned if it
@@ -62,7 +64,10 @@ given to the block and the rest imported.
 `export` runs a query and writes its rows as they come: as CSV, a header
 then a record for each row ended by CR LF, each value as Turborel shows
 it; or as the protocol's own frames, a Description, Rows and a Complete,
-which `read_native` reads back with every value as it was.
+which `read_native` reads back with every value as it was. A write to
+the output that fails ends the export: the query's replies are read to
+their end, so the connection keeps in step, and the failure is given as
+the export ends.
 
 ## ERRORS
 
