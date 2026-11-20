@@ -9,21 +9,10 @@ in [RULES.md](RULES.md).
 
 Code never cites this file (R-DOC-5).
 
-[M4 Large objects and bulk](#m4-large-objects-and-bulk) ·
 [M5 Settings](#m5-settings) · [M6 Throughput](#m6-throughput) ·
 [M7 Standard API](#m7-standard-api) · [M8 Parity audit](#m8-parity-audit)
 
 ---
-
-## M4 Large objects and bulk
-
-- Large objects: P-VAL-102, P-VAL-103, the P-LOB rows, and the C-LOB
-  rows.
-- Copy: P-CAP-14, P-COPYIN-2, the P-COPYEND rows, P-CONV-4, P-CONV-5,
-  and the C-COPY rows; from M3, P-PING-1, Ping answered during a copy.
-- Import and export: the C-IMPORT rows.
-- The manual: the chapters Large Objects and Copying, Importing and
-  Exporting; the pages of large objects and copy.
 
 ## M5 Settings
 
