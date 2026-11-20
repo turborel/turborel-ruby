@@ -9,22 +9,10 @@ in [RULES.md](RULES.md).
 
 Code never cites this file (R-DOC-5).
 
-[M5 Settings](#m5-settings) · [M6 Throughput](#m6-throughput) ·
+[M6 Throughput](#m6-throughput) ·
 [M7 Standard API](#m7-standard-api) · [M8 Parity audit](#m8-parity-audit)
 
 ---
-
-## M5 Settings
-
-- Settings, the URI and the files, read as turborel-client's settings
-  tests read them (R-TEST-9): the C-SET, C-OPT, C-URI, C-SVC and C-PASS
-  rows.
-- Several servers and roles: the C-HOSTS rows; from M3, P-ERRN-5, a
-  replica that had not applied REPLICATION.READ_AFTER's position.
-- TLS modes and channel binding: the C-TLS rows.
-- The key cache shared by settings: C-KEY-2.
-- The manual: the chapter Settings, the page of settings, and
-  Appendix C.
 
 ## M6 Throughput
 

@@ -31,8 +31,9 @@ and pools.
 
 The driver is built in milestones, M0 to M8. Its low-level client
 connects, logs in, runs statements, prepared statements and cursors,
-and reads and writes large objects, copies, imports and exports, today;
-connecting by settings comes at M5.
+reads and writes large objects, copies, imports and exports, and
+connects by settings to one of several servers, today; pipelines and
+pools come at M6.
 [CONFORMANCE.md](CONFORMANCE.md) shows what is done, row by row, and
 [TODO.md](TODO.md) what is open.
 
