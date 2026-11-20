@@ -60,7 +60,8 @@ module Turborel
 
       # Verifies: [PROTOCOL Errors and notices] a statement's conditions come
       # in its Complete with conditions, else as Notices with notices, else
-      # not at all, of severity WARNING; a failing statement's as Notices.
+      # not at all, of severity WARNING; a failing statement's as Notices,
+      # its failure of severity ERROR.
       def test_conditions_told_one_way
         connect do |c|
           c.query(WARNS)
@@ -71,7 +72,9 @@ module Turborel
           assert_empty c.take_conditions
           c.query("CREATE PROCEDURE WARN_THEN_FAIL() LANGUAGE SQL CONTAINS SQL BEGIN SIGNAL SQLSTATE '01ABC' " \
                   "SET MESSAGE_TEXT = 'first'; SIGNAL SQLSTATE '22ABC' SET MESSAGE_TEXT = 'then'; END")
-          assert_fails([-401, "22ABC"]) { c.query("CALL WARN_THEN_FAIL()") }
+          failed = assert_fails([-401, "22ABC"]) { c.query("CALL WARN_THEN_FAIL()") }
+
+          assert_equal "ERROR", failed.diagnostics.severity
           assert_equal ["01ABC"], c.take_notices.map(&:sqlstate)
           c.query("ROLLBACK")
         end
@@ -158,6 +161,9 @@ module Turborel
       # back, told by notice 01T01, its statements, temporary
       # tables and settings gone, every setting told again, its user and
       # cancel key kept.
+      # Verifies: [CLIENT Controlling the session] ping and reset.
+      # Verifies: [PROTOCOL Errors and notices] the server's own notice, as
+      # 01T01, always a Notice, of severity NOTICE.
       def test_ping_and_reset
         connect do |c|
           c.ping
@@ -212,6 +218,10 @@ module Turborel
       # session renewed as the new user's under a new cancel key, a
       # transaction rolled back by notice 01T01 and none active after; a
       # refusal closes the connection.
+      # Verifies: [PROTOCOL ChangeUser 'U'] a new cancel key, the same
+      # capabilities; a refusal fails the connection.
+      # Verifies: [PROTOCOL Errors and notices] a failure that ends the
+      # session of severity FATAL.
       def test_change_user
         connect(Targets.local(server.socket)) do |c|
           key = c.instance_variable_get(:@key)

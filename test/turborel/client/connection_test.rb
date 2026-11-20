@@ -131,15 +131,22 @@ module Turborel
           peer.write(Protocol::Compression.compress_frames(
                        Protocol::Frame.encode("T".ord, Protocol::Writer.new.str("A").str("x" * 3000).to_s), 0
                      ))
-          peer.frame
+          long = peer.frame
+          peer.complete
+          [long, peer.frame]
         end
         connection = connect(server, offer: Offers.compressed(Offers.default))
 
         assert connection.granted?("compression")
-        connection.terminate
-        kind, = server.join
+        connection.query("VALUES '#{"y" * 4000}'")
 
-        assert_equal "X".ord, kind
+        assert_equal "x" * 3000, connection.setting("A")
+        connection.terminate
+        (long_kind, long_body), (kind,) = server.join
+
+        assert_equal ["z".ord, "X".ord], [long_kind, kind]
+        assert_equal Protocol::Requests.query("VALUES '#{"y" * 4000}'", ends: false),
+                     Protocol::Frame.encode(*Protocol::Compression.decompress(long_body))
       end
 
       # Verifies: [CLIENT Timeouts] each step of the login waits the connect

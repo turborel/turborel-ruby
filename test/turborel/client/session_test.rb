@@ -174,6 +174,9 @@ module Turborel
       # request: each outcome until the last says no more follow, or the
       # failure that stopped the rest; a failure that loses the connection
       # is raised.
+      # Verifies: [PROTOCOL Query 'Q'] several statements, tag 5 of each
+      # Complete saying whether more follow; the first failure ending the
+      # replies.
       def test_several_statements
         more = Protocol::Writer.new.u8(5).to_s
         connection, = scripted do |peer, frames|

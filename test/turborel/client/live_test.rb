@@ -75,10 +75,10 @@ module Turborel
 
         connect(tls_target, mechanism) { |c| assert_equal "ANN", c.authorization }
         old = TLS.context(roots: server.ca).tap { |context| context.max_version = OpenSSL::SSL::TLS1_2_VERSION }
+        older = Scram.new(LiveServer::USERS["ann"], binding: :require)
 
-        connect(tls_target(old), Scram.new(LiveServer::USERS["ann"], binding: :require)) do |c|
-          assert_equal "ANN", c.authorization
-        end
+        connect(tls_target(old), older) { |c| assert_equal "ANN", c.authorization }
+        assert_equal(%i[exporter end_point], [mechanism, older].map { _1.instance_variable_get(:@exchange).binding })
       end
 
       # Verifies: [CLIENT Connecting] SCRAM-SHA-256-PLUS over TLS, by
@@ -177,6 +177,18 @@ module Turborel
       def test_compression
         connect(tcp, Trust.new, offer: Offers.compressed(Offers.default)) do |c|
           assert c.granted?(Protocol::Capabilities::COMPRESSION)
+          long = "y" * 5000
+          sent = []
+          counting = Module.new do
+            define_method(:write_all) do |bytes|
+              sent << bytes.getbyte(0)
+              super(bytes)
+            end
+          end
+          c.instance_variable_get(:@stream).singleton_class.prepend(counting)
+
+          assert_equal [[long]], c.query("VALUES '#{long}'").rows
+          assert_equal ["z".ord], sent.uniq
         end
       end
 

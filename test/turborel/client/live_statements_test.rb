@@ -173,6 +173,8 @@ module Turborel
       # Verifies: [CLIENT Prepared statements] prepared once, its parameters'
       # types and columns given; executed with values as often as wanted,
       # across transactions; described again; deallocated.
+      # Verifies: [CLIENT Controlling the session] a prepared statement
+      # described again.
       def test_prepared_statements
         with_table("PREP", 3) do |c|
           by_id = c.prepare("SELECT NAME FROM PREP WHERE ID = ?")
@@ -206,6 +208,16 @@ module Turborel
       # rows, fetched a batch at a time, closed; several numbered cursors at
       # once; described while open; a statement whose cursor is open not
       # replaced, nor opened again, nor deallocated (24000).
+      # Verifies: [CLIENT Controlling the session] several numbered cursors
+      # of one statement open at once; an open cursor's columns described.
+      # Verifies: [PROTOCOL Prepare 'P'] a statement whose cursor is open not
+      # replaced (24000).
+      # Verifies: [PROTOCOL Execute 'E'] a cursor already open not opened
+      # again (24000).
+      # Verifies: [PROTOCOL Fetch 'F'] a cursor not open not fetched
+      # (24000).
+      # Verifies: [PROTOCOL Deallocate 'D'] a statement whose cursor is open
+      # not deallocated (24000).
       def test_cursors
         with_table("CUR", 5) do |c|
           all = c.prepare("SELECT ID FROM CUR ORDER BY ID")
@@ -249,6 +261,8 @@ module Turborel
       # autocommit with fetch-ends, its transaction ending as it does: its last row's fetch commits,
       # close commits, a failing fetch rolls back (2200W, a value the server
       # cannot serialize).
+      # Verifies: [CLIENT What the server tells] under autocommit with
+      # fetch-ends, a cursor's transaction ended as it ends.
       def test_a_cursor_ends_its_transaction
         with_table("ENDS", 3) do |c|
           c.autocommit = true

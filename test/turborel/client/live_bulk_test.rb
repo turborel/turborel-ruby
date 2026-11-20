@@ -16,6 +16,9 @@ module Turborel
       # whole in its row; a longer one by its locator and lengths, which a
       # reader reads whole a chunk at a time; one sent as a locator the
       # client made, written a piece at a time.
+      # Verifies: [CLIENT Large objects] a short value whole in its row, a
+      # longer one by its locator; a value made a piece at a time through a
+      # writer, passed as a parameter.
       def test_large_objects
         connect do |c|
           c.query("CREATE TABLE SCANS (ID INTEGER, IMAGE BLOB(10M), NOTE CLOB(1M))")
@@ -39,6 +42,8 @@ module Turborel
       # Verifies: [CLIENT Large objects] a locator valid until its
       # transaction ends, the transaction kept under autocommit too; held
       # past the commit until freed; freed, no longer valid (0F001).
+      # Verifies: [PROTOCOL Lob 'L'] hold: a locator kept past its
+      # transaction's commit, answered by Complete.
       def test_locators_hold_and_free
         connect do |c|
           c.query("CREATE TABLE HELD (B BLOB(1M))")
