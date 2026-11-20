@@ -5,7 +5,7 @@
 ## NAME
 
 `Turborel.connect` and `Turborel::Connection`: the plain API's
-connection, in the manner of the pg gem's.
+connection.
 
 ## SYNOPSIS
 

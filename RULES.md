@@ -300,7 +300,7 @@ sockets, each shipped with Ruby (D9).
 
 #### D2. The language's standard API, over a low-level client of turborel-client's features
 
-The driver's standard interface is a plain API in the manner of the pg gem, and an ActiveRecord adapter for Rails 8.1 and later, so a program, and the
+The driver's standard interface is a plain API of connections, results and prepared statements, and an ActiveRecord adapter for Rails 8.1 and later, so a program, and the
 tools built for Ruby's database interface, use it as they use
 any other driver. It sits over a low-level client that has every feature
 of turborel-client. What the standard interface has no place for, such
@@ -312,13 +312,11 @@ Every failure is the driver's error, carrying its SQLCODE and SQLSTATE
 (R-ERR). The standard interface is built at milestone M7 and checked in
 M8's audit; until then its names may change.
 
-Ruby has no standard database interface of its own; what Ruby programs
-know is the pg gem's: a connection, `exec` and `exec_params`, `prepare`
-and `exec_prepared`, results read by row and by column, and
-transactions. So the plain API, under `require "turborel"`, takes that
-shape: `Turborel.connect`, `Turborel::Connection` and `Turborel::Result`.
-It is a shape, not a copy: names and behaviour follow Turborel, not
-PostgreSQL, where they differ.
+Ruby has no standard database interface of its own, so the plain API,
+under `require "turborel"`, is the driver's own: `Turborel.connect`,
+`Turborel::Connection` and `Turborel::Result`; a connection, `exec` and
+`exec_params`, `prepare` and `exec_prepared`, results read by row and
+by column, and transactions. Its names and behaviour follow Turborel.
 
 Rails is how most Ruby programs reach a database, so the gem also
 carries an ActiveRecord adapter for Rails 8.1 and later, under its own

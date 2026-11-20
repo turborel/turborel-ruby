@@ -14,7 +14,8 @@ Gem::Specification.new do |spec|
   spec.description = <<~TEXT
     The Ruby driver for turborel. It speaks turborel's native protocol,
     version 1, in Ruby alone, and is built to match turborel-client, with a
-    plain API in the manner of the pg gem and an ActiveRecord adapter. Its
+    plain API of connections, results and prepared statements and an
+    ActiveRecord adapter. Its
     version is the turborel release it is made for.
   TEXT
   spec.homepage = "https://github.com/turborel/turborel-ruby"

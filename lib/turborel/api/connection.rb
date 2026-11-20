@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# The driver: its plain API, in the manner of the pg gem's (RULES.md D2).
+# The driver: its plain API, of connections, results and prepared
+# statements (RULES.md D2).
 module Turborel
   # Connects as +uri+, a turborel:// URI, and +options+, each a connection
   # setting by its name in Client::Options, say, laid over the URI's, then
@@ -25,9 +26,9 @@ module Turborel
     Connection.new(settings.connect)
   end
 
-  # A connection of the plain API, in the manner of the pg gem's, over a
-  # Client::Connection (RULES.md D2). As Turborel's, its autocommit is off:
-  # a statement begins a transaction that lasts until COMMIT or ROLLBACK.
+  # A connection of the plain API, over a Client::Connection (RULES.md D2).
+  # As Turborel's, its autocommit is off: a statement begins a transaction
+  # that lasts until COMMIT or ROLLBACK.
   class Connection
     # @return [Client::Connection] the low-level connection, for what the
     #   plain API has no place for

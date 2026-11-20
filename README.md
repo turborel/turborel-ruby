@@ -21,7 +21,7 @@ system. It connects a Ruby program to a Turborel server,
 protocol](https://github.com/turborel/turborel/blob/main/doc/client/05-protocol.md),
 version 1, which it speaks itself, in Ruby alone, with no native extension.
 
-Its standard interface is a plain API in the manner of the pg gem, and an ActiveRecord adapter for Rails 8.1 and later. Beneath it is a low-level
+Its standard interface is a plain API of connections, results and prepared statements, and an ActiveRecord adapter for Rails 8.1 and later. Beneath it is a low-level
 client built to do all that Turborel's own client library,
 turborel-client, does: TCP, Unix sockets and Windows named pipes, TLS,
 SCRAM-SHA-256 and SCRAM-SHA-256-PLUS, prepared statements and cursors,
@@ -66,7 +66,7 @@ A program's Gemfile may name the clone instead:
 
 ## A first query
 
-The standard API, the plain API in the manner of the pg gem:
+The standard API, a plain API of connections, results and prepared statements:
 
 ```ruby
 require "turborel"

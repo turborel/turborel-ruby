@@ -3,7 +3,7 @@
 turborel-ruby is the Ruby driver for Turborel, a relational database
 system. It connects a Ruby program to a Turborel server,
 `turboreld`, over Turborel's native protocol, version 1, which it speaks
-itself, in Ruby alone, with no native extension. Its standard interface is a plain API in the manner of the pg gem, and an ActiveRecord adapter for Rails 8.1 and later, over a
+itself, in Ruby alone, with no native extension. Its standard interface is a plain API of connections, results and prepared statements, and an ActiveRecord adapter for Rails 8.1 and later, over a
 low-level client built to do all that Turborel's own client library
 does. This set of manuals describes it for those who write programs with
 it. The SQL a program sends, and the server, are described in Turborel's

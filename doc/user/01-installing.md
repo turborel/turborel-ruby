@@ -4,7 +4,8 @@
 
 This chapter tells what the driver needs, how a program takes the gem
 `turborel` in, and how it connects for the first time, with the
-standard API: the plain API, in the manner of the pg gem, or the
+standard API: the plain API, of connections, results and prepared
+statements, or the
 ActiveRecord adapter.
 
 ## What the driver needs

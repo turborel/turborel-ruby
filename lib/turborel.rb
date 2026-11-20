@@ -81,12 +81,11 @@ require_relative "turborel/import/run"
 # turborel's native protocol, version 1, itself, in Ruby alone, with no
 # native extension and no client library beneath it (RULES.md D1).
 #
-# What it offers is a plain API in the manner of the pg gem: a connection,
-# its statements run with or without parameters, prepared statements,
-# results and transactions; and an ActiveRecord adapter beside it, under
-# its own require path (RULES.md D2). Until those are built, this module
-# holds the gem's version, its error type, the protocol's codec and the
-# low-level client, Turborel::Client.
+# What it offers is a plain API of its own: a connection, its statements
+# run with or without parameters, prepared statements, results and
+# transactions; and an ActiveRecord adapter beside it, under its own
+# require path (RULES.md D2). Beneath them are the low-level client,
+# Turborel::Client, and the protocol's codec.
 module Turborel
 end
 
