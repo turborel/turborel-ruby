@@ -2,8 +2,48 @@
 
 [Contents](README.md)
 
-This appendix will list the SQLSTATE classes the driver reports, those
-it raises itself, such as SQLCODE -919 and SQLSTATE 08006 for a
-connection whose messages cannot be read, and those the server sends,
-how each reaches a program as the driver's error, and which end the
-connection. It is filled at milestone M3.
+Every failure reaches a program as a `Turborel::Error` carrying its
+SQLCODE and SQLSTATE. Most come from the server, as it reports them;
+some the driver raises itself. This appendix lists the SQLSTATE classes
+a program meets, which end the connection, and the failures the driver
+raises itself.
+
+## The driver's own failures
+
+The driver raises these itself, each with the SQLCODE and SQLSTATE
+turborel-client gives the same case, and the codes every Turborel driver
+gives where turborel-client has none.
+
+| SQLSTATE | SQLCODE | When | Ends the connection |
+|---|---|---|---|
+| 08006 | -919 | A malformed reply, a frame too long, a reply out of turn, a compressed frame not granted or damaged, a server that cannot be reached, a failed TLS handshake, a wait past its timeout, a closed connection | yes |
+| 08006 | -919 | A method needing a capability the server did not grant, before anything is sent | no |
+| 28000 | -919 | A password or SCRAM over plain TCP; a channel binding required and impossible; a SCRAM server that does not prove it knows the verifier | the connection is not made |
+| 22003 | -301 | A number or a length out of the range of its field | no |
+| 22021 | -301 | A string that cannot be written as UTF-8 | no |
+| 22000 | -301 | A value the protocol cannot carry | no |
+| 2200N | -301 | An XML value's text that is not well-formed XML content | no |
+| 0A000 | -900 | Past Turborel's limits: nesting, a JSON value's size, connection or query attributes | no |
+| TB910 | -910 | The program's misuse where turborel-client has no case: an argument none of those a method takes | no |
+
+## The server's classes
+
+| Class | What | Ends the connection |
+|---|---|---|
+| 01 | A warning: a statement's completion, a condition, or a notice, as 01T01 when Reset or ChangeUser rolls a transaction back | no |
+| 02 | No data: SQLCODE 100, 02000, a statement that found no row | no |
+| 07 | A dynamic SQL error: 07001, values short of the parameters | no |
+| 08 | A connection exception: 08004, a connection refused; 08006, a connection failure | yes, but 08003 |
+| 0A | A feature not supported | no |
+| 22 | A data exception: 2200W, a value with no serialization, among the class's states | no |
+| 23 | An integrity constraint violation | no |
+| 24 | An invalid cursor state: 24000, a cursor open or not as the call needs | no |
+| 26 | An invalid SQL statement name: 26000, no such prepared statement | no |
+| 28 | Invalid authorization: 28000, credentials refused | as the connection is made |
+| 2A | A syntax error or access rule violation | no |
+| 37 | A statement that cannot be prepared: 37000 | no |
+| 40 | A transaction rollback: 40002, a commit that fails | no |
+| TB | Turborel's own: TB920, SQLCODE -920, a statement cancelled; TBR01, a replica that had not applied REPLICATION.READ_AFTER's position in time | no |
+
+A failure that ends the connection leaves it lost: `lost?` is true, and
+every request after raises that failure again.
