@@ -11,7 +11,7 @@ protocol, `doc/client/05-protocol.md`; the client library,
 `doc/client/02-library.md`; and its settings, pipelines and pools,
 `doc/client/02-library-connections.md`. Each section here is one of
 theirs, and each row cites its heading as the tests cite it (RULES.md
-D6). The headings are those of Turborel's main at 1c4187e4. Last come
+D6). The headings are those of Turborel's main at b40bd830. Last come
 the rows of this driver's standard API (RULES.md D2).
 
 **Done** means the driver's code for the row exists and is tested by
@@ -45,8 +45,8 @@ things the code does:
 | Gap | The code | Rows |
 |---|---|---|
 | G1 | UUID is type tag 27, with no parameters, and value tag 27, whose body is bytes: a `u32` count of 16, then the 16 octets (Turborel's RULES.md D184, `protocol/src/fields.rs`) | P-TYPE-27, P-VAL-27; resolved at 1c4187e4, whose page lists UUID in both tables |
-| G2 | Besides AUTHORIZATION, SCHEMA, READ_ONLY and SERVER_VERSION, the server tells SERVER_READ_ONLY (YES or NO, how a client tells a replica from a primary), CATALOG and OWNER (YES or NO) (`server/src/native/status.rs`) | P-STATUS-7 to P-STATUS-9 |
-| G3 | A JSON value, tag 25, carries the binary tree of Turborel's RULES.md D89 (`src/json/binary.rs`, `src/json/binary/write.rs`) | P-VAL-25, the P-JSON rows |
+| G2 | Resolved on the page at b40bd830. Besides AUTHORIZATION, SCHEMA, READ_ONLY and SERVER_VERSION, the server tells SERVER_READ_ONLY (YES or NO, how a client tells a replica from a primary), CATALOG and OWNER (YES or NO) (`server/src/native/status.rs`) | P-STATUS-7 to P-STATUS-9 |
+| G3 | Resolved on the page at b40bd830 (its section JSON values). A JSON value, tag 25, carries the binary tree of Turborel's RULES.md D89 (`src/json/binary.rs`, `src/json/binary/write.rs`) | P-VAL-25, the P-JSON rows |
 
 ---
 
@@ -177,9 +177,8 @@ From `doc/client/05-protocol.md`, The Native Protocol.
 
 ### JSON values
 
-Gap G3: the page gives a JSON value's body as "its stored form".
-These rows follow Turborel's RULES.md D89 and `src/json/binary.rs`,
-cited under the page's section on values.
+The page's section JSON values, from b40bd830, sets these rows out;
+they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
@@ -197,6 +196,8 @@ cited under the page's section on values.
 | P-JSON-11 | Node 11 object: count `u32`, size `u32`, an offset `u32` of each member in key order, the members in written order, each key and value | `[PROTOCOL Values]` | done |
 | P-JSON-100 | A document: a version octet, 1, then its root node; another version refused | `[PROTOCOL Values]` | done |
 | P-JSON-101 | An object's directory sorted by key octets, members of one key in written order; written order kept | `[PROTOCOL Values]` | done |
+| P-JSON-102 | Limits: arrays and objects nest at most 128 deep, a document is at most 256 MiB; a damaged document or another version refused (SQLCODE -916 at the server) | `[PROTOCOL Values]` | not yet |
+| P-JSON-103 | An exact number written in the narrowest of its three nodes, and a decimal keeping the scale it was written with: 1.50 is units 150, scale 2 | `[PROTOCOL Values]` | not yet |
 
 ### Composite fields
 
@@ -328,6 +329,7 @@ cited under the page's section on values.
 | P-EXEC-2 | A query's rows in Rows with no Description, then Suspended if the cursor has more, else Complete, the cursor closed | `[PROTOCOL Execute 'E']` | not yet |
 | P-EXEC-3 | `ends` as a Query's; a cursor left open keeps the transaction, ended with it under `fetch-ends` | `[PROTOCOL Execute 'E']` | not yet |
 | P-EXEC-4 | Cursor 0 unless tag 3 names another, with `cursors`; one already open fails (SQLSTATE 24000) | `[PROTOCOL Execute 'E']` | not yet |
+| P-EXEC-5 | A CALL with a `?` for an OUT or INOUT parameter first sends one Rows reply of one row, of the columns Prepared gave, each such parameter's value once the procedure ran | `[PROTOCOL Execute 'E']` | not yet |
 
 ### Fetch 'F'
 
@@ -439,6 +441,7 @@ cited under the page's section on values.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-PREPD-1 | Prepared: statement, parameters in the order of their `?` marks, columns (none of a statement not a query) | `[PROTOCOL Prepared 'P']` | done |
+| P-PREPD-2 | Parameters are a statement's inputs alone; a CALL's columns are one for each `?` of an OUT or INOUT parameter, in the procedure's parameter order, named and typed as each; an INOUT `?` is both a parameter and a column | `[PROTOCOL Prepared 'P']` | not yet |
 
 ### Description 'D'
 
@@ -503,6 +506,7 @@ cited under the page's section on values.
 | P-STATUS-8 | CATALOG (gap G2) | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-9 | OWNER, YES or NO (gap G2) | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-10 | Every setting a session may set for itself, SESSION.TIME_ZONE and TRANSACTION.ISOLATION among them | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-11 | At login before Ready, and after Reset or ChangeUser before the reply that ends it, one of each name in the page's table, in its order, then the session's own settings; after a statement only what it changed, before its completion; CATALOG empty if null | `[PROTOCOL Status 'T']` | not yet |
 
 ### Pong 'G'
 

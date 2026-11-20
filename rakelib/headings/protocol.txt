@@ -1,4 +1,4 @@
-# The headings of Turborel's doc/client/05-protocol.md at 1c4187e4, one a line,
+# The headings of Turborel's doc/client/05-protocol.md at b40bd830, one a line,
 # as [PROTOCOL <heading>] cites them (RULES.md D6).
 The Native Protocol
 Frames
@@ -6,6 +6,7 @@ Compressed frames
 Values and fields
 Data types
 Values
+JSON values
 Composite fields
 The tail
 Opening a connection

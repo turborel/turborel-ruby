@@ -19,9 +19,9 @@ Code never cites this file (R-DOC-5).
 ## M3 Statements
 
 - From M2, the rows that need a statement to show them: P-CAP-10,
-  P-CAP-19, P-HELLO-2, P-STATUS-2, P-CANCEL-2 and C-ASK-4.
+  P-CAP-19, P-HELLO-2, P-STATUS-2, P-STATUS-11, P-CANCEL-2 and C-ASK-4.
 - Queries and prepared statements: P-REQ-2, P-QUERY-2 to P-QUERY-6,
-  P-EXEC-2 to P-EXEC-4, the P-PREP, P-FETCH, P-CLOSE, P-DEALLOC and
+  P-EXEC-2 to P-EXEC-5, P-PREPD-2, the P-PREP, P-FETCH, P-CLOSE, P-DEALLOC and
   P-DESC rows, the C-RUN rows but C-RUN-6, and the C-PREP rows.
 - Completions, failures, notices and conditions: P-COMPL-2 to
   P-COMPL-6, the P-ERRN rows but P-ERRN-6, and C-TOLD-2 to C-TOLD-9.
