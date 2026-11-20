@@ -5,6 +5,8 @@
 
 require "simplecov" if ENV["COVERAGE"]
 
+require "English"
+
 require "minitest/autorun"
 require "turborel"
 
@@ -77,3 +79,15 @@ module GithubAnnotations
 end
 
 Minitest::Test.prepend(GithubAnnotations)
+
+# An exception that ends the run outside any test, as one raised while the
+# test files load, is told the same way.
+at_exit do
+  error = $ERROR_INFO
+  if ENV.fetch("GITHUB_ACTIONS", nil) && error && !error.is_a?(SystemExit)
+    where = error.backtrace&.first(3)&.join(" < ")
+    $stdout.puts "::error title=#{RUBY_PLATFORM} #{RUBY_VERSION}::#{error.class}: #{error.message} at #{where}".gsub(
+      /\r?\n/, "%0A"
+    )
+  end
+end
