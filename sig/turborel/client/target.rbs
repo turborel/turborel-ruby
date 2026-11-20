@@ -1,0 +1,25 @@
+module Turborel
+  module Client
+    # Where a server is, and how it is reached.
+    class Target < Data
+      attr_reader kind: Symbol
+      attr_reader host: String?
+      attr_reader port: Integer?
+      attr_reader path: String?
+      attr_reader server_name: String?
+      attr_reader context: OpenSSL::SSL::SSLContext?
+      def self.new: (kind: Symbol, host: String?, port: Integer?, path: String?, server_name: String?,
+                     context: OpenSSL::SSL::SSLContext?) -> instance
+    end
+
+    DEFAULT_PORT: Integer
+    DEFAULT_PIPE: String
+
+    # The targets a connection reaches.
+    module Targets
+      def self.tcp: (String host, ?Integer port) -> Target
+      def self.local: (String path) -> Target
+      def self.tls: (String host, Integer port, server_name: String, context: OpenSSL::SSL::SSLContext?) -> Target
+    end
+  end
+end

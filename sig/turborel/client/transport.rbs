@@ -1,0 +1,17 @@
+module Turborel
+  module Client
+    # Streams to a server.
+    module Transport
+      BUSY_RETRY: Float
+      BUSY: Array[singleton(Exception)]
+
+      def self.open: (Target target, seconds? within) -> [Stream, TlsChannel?]
+      def self.tcp: (String host, Integer port, seconds? within) -> Socket
+      def self.local: (String path, seconds? within) -> Stream
+      def self.pipe: (String path, seconds? within) -> File
+      def self.past?: (Float began, seconds? within) -> bool
+      def self.tls: (Target target, seconds? within) -> [Stream, TlsChannel]
+      def self.handshake: (OpenSSL::SSL::SSLSocket ssl, seconds? within) -> void
+    end
+  end
+end

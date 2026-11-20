@@ -33,6 +33,33 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      # The live tests' server (R-TEST-8): turboreld of Turborel's nightly
+      # pre-release, built for each platform from the same commit of main as
+      # the image ghcr.io/turborel/turborel:nightly, run here natively by
+      # the tests' own set-up (test/server/live_server.rb) on this runner,
+      # so the same live tests run on Linux, macOS and Windows.
+      - name: Fetch turboreld (Linux, macOS)
+        if: runner.os != 'Windows'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          case "$RUNNER_OS" in
+            Linux) target=x86_64-unknown-linux-gnu ;;
+            macOS) target=aarch64-apple-darwin ;;
+          esac
+          gh release download nightly -R turborel/turborel -p "turborel-nightly-$target.tar.gz" -D "$RUNNER_TEMP"
+          tar -xzf "$RUNNER_TEMP/turborel-nightly-$target.tar.gz" -C "$RUNNER_TEMP"
+          echo "TURBOREL_TEST_SERVER=$RUNNER_TEMP/turborel-nightly-$target/turboreld" >> "$GITHUB_ENV"
+      - name: Fetch turboreld (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $target = "x86_64-pc-windows-msvc"
+          gh release download nightly -R turborel/turborel -p "turborel-nightly-$target.zip" -D $env:RUNNER_TEMP
+          Expand-Archive -Path "$env:RUNNER_TEMP/turborel-nightly-$target.zip" -DestinationPath $env:RUNNER_TEMP
+          "TURBOREL_TEST_SERVER=$env:RUNNER_TEMP/turborel-nightly-$target/turboreld.exe" | Out-File -Append $env:GITHUB_ENV
       # The checks of `rake verify`, a step each, so a failure names its
       # check.
       - name: RuboCop
@@ -57,5 +84,21 @@ jobs:
         with:
           ruby-version: "3.3"
           bundler-cache: true
+      # The live tests' server (R-TEST-8): turboreld of Turborel's nightly
+      # pre-release, built for each platform from the same commit of main as
+      # the image ghcr.io/turborel/turborel:nightly, run here natively by
+      # the tests' own set-up (test/server/live_server.rb) on this runner,
+      # so the same live tests run on Linux, macOS and Windows.
+      - name: Fetch turboreld (Linux, macOS)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          case "$RUNNER_OS" in
+            Linux) target=x86_64-unknown-linux-gnu ;;
+            macOS) target=aarch64-apple-darwin ;;
+          esac
+          gh release download nightly -R turborel/turborel -p "turborel-nightly-$target.tar.gz" -D "$RUNNER_TEMP"
+          tar -xzf "$RUNNER_TEMP/turborel-nightly-$target.tar.gz" -C "$RUNNER_TEMP"
+          echo "TURBOREL_TEST_SERVER=$RUNNER_TEMP/turborel-nightly-$target/turboreld" >> "$GITHUB_ENV"
       - name: Coverage
         run: bundle exec rake coverage

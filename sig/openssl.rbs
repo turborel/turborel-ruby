@@ -1,0 +1,8 @@
+# What Ruby's openssl gives that its bundled signatures leave out.
+module OpenSSL
+  module SSL
+    class SSLSocket
+      def export_keying_material: (String label, Integer length, ?String? context) -> String
+    end
+  end
+end

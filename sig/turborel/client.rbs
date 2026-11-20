@@ -1,0 +1,9 @@
+module Turborel
+  # The low-level client.
+  module Client
+    def self.connect_to: (Target target, user: String, mechanism: Mechanism, ?timeouts: Timeouts, ?offer: Offer) -> Connection
+    def self.connect: (String host, ?Integer port, user: String, mechanism: Mechanism) -> Connection
+    def self.connect_local: (String path, user: String, mechanism: Mechanism) -> Connection
+    def self.clear: (Mechanism mechanism) -> void
+  end
+end

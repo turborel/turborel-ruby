@@ -1,0 +1,31 @@
+module Turborel
+  module Client
+    # The SCRAM key cache.
+    class KeyCache
+      ENTRIES: Integer
+      SECRET_BYTES: Integer
+
+      type index = [String, String, Integer]
+
+      @secret: String
+      @entries: Array[[index, Protocol::Scram::Derived]]
+      @hits: Integer
+      @misses: Integer
+      @lock: Thread::Mutex
+
+      def initialize: () -> void
+      def derived: (String password, String salt, Integer iterations) -> Protocol::Scram::Derived
+      def forget: (String password, String salt, Integer iterations) -> void
+      def size: () -> Integer
+      def lookups: () -> [Integer, Integer]
+      def clear: () -> void
+      def inspect: () -> String
+
+      private
+
+      def index: (String password, String salt, Integer iterations) -> index
+      def lookup: (index index) -> Protocol::Scram::Derived?
+      def keep: (index index, Protocol::Scram::Derived keys) -> void
+    end
+  end
+end

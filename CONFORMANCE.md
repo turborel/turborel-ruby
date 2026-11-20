@@ -71,10 +71,10 @@ From `doc/client/05-protocol.md`, The Native Protocol.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-INTRO-1 | TCP, on port 7422 unless told another | `[PROTOCOL The Native Protocol]` | not yet |
-| P-INTRO-2 | A Unix socket, or a named pipe, where the operator asks | `[PROTOCOL The Native Protocol]` | not yet |
-| P-INTRO-3 | TLS begun on the same port, the server telling it by the handshake's first byte, 22 | `[PROTOCOL The Native Protocol]` | not yet |
-| P-INTRO-4 | Version 1, grown by capabilities alone; a client that asks for none sees the first form, byte for byte | `[PROTOCOL The Native Protocol]` | not yet |
+| P-INTRO-1 | TCP, on port 7422 unless told another | `[PROTOCOL The Native Protocol]` | done |
+| P-INTRO-2 | A Unix socket, or a named pipe, where the operator asks | `[PROTOCOL The Native Protocol]` | done |
+| P-INTRO-3 | TLS begun on the same port, the server telling it by the handshake's first byte, 22 | `[PROTOCOL The Native Protocol]` | done |
+| P-INTRO-4 | Version 1, grown by capabilities alone; a client that asks for none sees the first form, byte for byte | `[PROTOCOL The Native Protocol]` | done |
 
 ### Frames
 
@@ -96,7 +96,7 @@ From `doc/client/05-protocol.md`, The Native Protocol.
 | P-ZFRAME-3 | A `z` frame received inflated to at most its `length`, itself at most the longest body taken | `[PROTOCOL Compressed frames]` | done |
 | P-ZFRAME-4 | A `z` frame holding another `z` frame fails the connection | `[PROTOCOL Compressed frames]` | done |
 | P-ZFRAME-5 | A `z` frame that inflates to another length fails the connection | `[PROTOCOL Compressed frames]` | done |
-| P-ZFRAME-6 | A `z` frame received when `compression` was not granted fails the connection | `[PROTOCOL Compressed frames]` | not yet |
+| P-ZFRAME-6 | A `z` frame received when `compression` was not granted fails the connection | `[PROTOCOL Compressed frames]` | done |
 
 ### Values and fields
 
@@ -237,33 +237,33 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-OPEN-1 | A connection's first message is Hello, or Cancel | `[PROTOCOL Opening a connection]` | not yet |
-| P-OPEN-2 | Challenge and Answer, step by step, until the server accepts or refuses | `[PROTOCOL Opening a connection]` | not yet |
-| P-OPEN-3 | Refused: an Error, and the server closes | `[PROTOCOL Opening a connection]` | not yet |
-| P-OPEN-4 | Accepted: a Status for each session setting, with `status`, then Ready | `[PROTOCOL Opening a connection]` | not yet |
-| P-OPEN-5 | The capabilities granted read from Ready, those asked for that the server has, in the table's order | `[PROTOCOL Opening a connection]` | not yet |
-| P-OPEN-6 | Ready at login never compressed; compression begins after it | `[PROTOCOL Opening a connection]` | not yet |
-| P-OPEN-7 | A version other than 1 refused (SQLSTATE 08004) | `[PROTOCOL Opening a connection]` | not yet |
-| P-OPEN-8 | A user name not an identifier, or a mechanism not served, refused before any exchange (SQLSTATE 28000) | `[PROTOCOL Opening a connection]` | not yet |
+| P-OPEN-1 | A connection's first message is Hello, or Cancel | `[PROTOCOL Opening a connection]` | done |
+| P-OPEN-2 | Challenge and Answer, step by step, until the server accepts or refuses | `[PROTOCOL Opening a connection]` | done |
+| P-OPEN-3 | Refused: an Error, and the server closes | `[PROTOCOL Opening a connection]` | done |
+| P-OPEN-4 | Accepted: a Status for each session setting, with `status`, then Ready | `[PROTOCOL Opening a connection]` | done |
+| P-OPEN-5 | The capabilities granted read from Ready, those asked for that the server has, in the table's order | `[PROTOCOL Opening a connection]` | done |
+| P-OPEN-6 | Ready at login never compressed; compression begins after it | `[PROTOCOL Opening a connection]` | done |
+| P-OPEN-7 | A version other than 1 refused (SQLSTATE 08004) | `[PROTOCOL Opening a connection]` | done |
+| P-OPEN-8 | A user name not an identifier, or a mechanism not served, refused before any exchange (SQLSTATE 28000) | `[PROTOCOL Opening a connection]` | done |
 
 ### Mechanisms
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-MECH-1 | `trust`, accepted at once | `[PROTOCOL Mechanisms]` | not yet |
-| P-MECH-2 | `password`, the password's UTF-8, only over TLS, a Unix socket or a named pipe | `[PROTOCOL Mechanisms]` | not yet |
-| P-MECH-3 | `certificate`, by the TLS client certificate's common name | `[PROTOCOL Mechanisms]` | not yet |
-| P-MECH-4 | `scram-sha-256`: client-first in Hello, server-first, client-final, server-final, an empty Answer (RFC 5802, RFC 7677) | `[PROTOCOL Mechanisms]` | not yet |
-| P-MECH-5 | The server's SCRAM signature checked before the last, empty Answer | `[PROTOCOL Mechanisms]` | not yet |
-| P-MECH-6 | `scram-sha-256-plus` bound by `tls-exporter`, as its GS2 header names | `[PROTOCOL Mechanisms]` | not yet |
-| P-MECH-7 | `scram-sha-256-plus` bound by `tls-server-end-point`, as its GS2 header names | `[PROTOCOL Mechanisms]` | not yet |
+| P-MECH-1 | `trust`, accepted at once | `[PROTOCOL Mechanisms]` | done |
+| P-MECH-2 | `password`, the password's UTF-8, only over TLS, a Unix socket or a named pipe | `[PROTOCOL Mechanisms]` | done |
+| P-MECH-3 | `certificate`, by the TLS client certificate's common name | `[PROTOCOL Mechanisms]` | done |
+| P-MECH-4 | `scram-sha-256`: client-first in Hello, server-first, client-final, server-final, an empty Answer (RFC 5802, RFC 7677) | `[PROTOCOL Mechanisms]` | done |
+| P-MECH-5 | The server's SCRAM signature checked before the last, empty Answer | `[PROTOCOL Mechanisms]` | done |
+| P-MECH-6 | `scram-sha-256-plus` bound by `tls-exporter`, as its GS2 header names | `[PROTOCOL Mechanisms]` | done |
+| P-MECH-7 | `scram-sha-256-plus` bound by `tls-server-end-point`, as its GS2 header names | `[PROTOCOL Mechanisms]` | done |
 
 ### Capabilities
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-CAP-1 | `notices` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-2 | `status` | `[PROTOCOL Capabilities]` | not yet |
+| P-CAP-2 | `status` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-3 | `diagnostics` | `[PROTOCOL Capabilities]` | not yet |
 | P-CAP-4 | `describe` | `[PROTOCOL Capabilities]` | not yet |
 | P-CAP-5 | `cursors` | `[PROTOCOL Capabilities]` | not yet |
@@ -273,7 +273,7 @@ cited under the page's section on values.
 | P-CAP-9 | `query-attributes` | `[PROTOCOL Capabilities]` | not yet |
 | P-CAP-10 | `connection-attributes` | `[PROTOCOL Capabilities]` | not yet |
 | P-CAP-11 | `multi-statement` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-12 | `compression` | `[PROTOCOL Capabilities]` | not yet |
+| P-CAP-12 | `compression` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-13 | `commit-position` | `[PROTOCOL Capabilities]` | not yet |
 | P-CAP-14 | `copy` | `[PROTOCOL Capabilities]` | not yet |
 | P-CAP-15 | `row-counts` | `[PROTOCOL Capabilities]` | not yet |
@@ -362,14 +362,14 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-CANCEL-1 | Cancel: the key Ready gave, the first and only message of a connection of its own, closed with no reply | `[PROTOCOL Cancel 'Z']` | not yet |
+| P-CANCEL-1 | Cancel: the key Ready gave, the first and only message of a connection of its own, closed with no reply | `[PROTOCOL Cancel 'Z']` | done |
 | P-CANCEL-2 | The statement cancelled fails with SQLCODE -920, SQLSTATE TB920 | `[PROTOCOL Cancel 'Z']` | not yet |
 
 ### Terminate 'X'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-TERM-1 | Terminate: the session ends, its transaction as SESSION.COMMIT_AT_END says; a failing commit's Error before the close | `[PROTOCOL Terminate 'X']` | not yet |
+| P-TERM-1 | Terminate: the session ends, its transaction as SESSION.COMMIT_AT_END says; a failing commit's Error before the close | `[PROTOCOL Terminate 'X']` | done |
 
 ### Describe 'Y'
 
@@ -432,7 +432,7 @@ cited under the page's section on values.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-READY-1 | Ready: authorization, key (16 bytes), capabilities, server | `[PROTOCOL Ready 'R']` | done |
-| P-READY-2 | The cancel key kept as the client's secret | `[PROTOCOL Ready 'R']` | not yet |
+| P-READY-2 | The cancel key kept as the client's secret | `[PROTOCOL Ready 'R']` | done |
 
 ### Prepared 'P'
 
@@ -474,7 +474,7 @@ cited under the page's section on values.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-ERROR-1 | Error: a failure, its tail 7 to 15 only with `diagnostics` | `[PROTOCOL Error 'E']` | done |
-| P-ERROR-2 | An Error of class 08 but 08003, or of class 28 as the connection is made, ends the connection | `[PROTOCOL Error 'E']` | not yet |
+| P-ERROR-2 | An Error of class 08 but 08003, or of class 28 as the connection is made, ends the connection | `[PROTOCOL Error 'E']` | done |
 
 ### Lob 'L', the reply
 
@@ -495,14 +495,14 @@ cited under the page's section on values.
 |---|---|---|---|
 | P-STATUS-1 | Status: name, value as SQL writes it, empty for a null | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-2 | One of each at login and after Reset or ChangeUser; after a statement, one of each it changed; a setting reset told at the database's value | `[PROTOCOL Status 'T']` | not yet |
-| P-STATUS-3 | AUTHORIZATION | `[PROTOCOL Status 'T']` | not yet |
-| P-STATUS-4 | SCHEMA | `[PROTOCOL Status 'T']` | not yet |
-| P-STATUS-5 | READ_ONLY, YES or NO | `[PROTOCOL Status 'T']` | not yet |
-| P-STATUS-6 | SERVER_VERSION | `[PROTOCOL Status 'T']` | not yet |
-| P-STATUS-7 | SERVER_READ_ONLY, YES or NO (gap G2) | `[PROTOCOL Status 'T']` | not yet |
-| P-STATUS-8 | CATALOG (gap G2) | `[PROTOCOL Status 'T']` | not yet |
-| P-STATUS-9 | OWNER, YES or NO (gap G2) | `[PROTOCOL Status 'T']` | not yet |
-| P-STATUS-10 | Every setting a session may set for itself, SESSION.TIME_ZONE and TRANSACTION.ISOLATION among them | `[PROTOCOL Status 'T']` | not yet |
+| P-STATUS-3 | AUTHORIZATION | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-4 | SCHEMA | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-5 | READ_ONLY, YES or NO | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-6 | SERVER_VERSION | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-7 | SERVER_READ_ONLY, YES or NO (gap G2) | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-8 | CATALOG (gap G2) | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-9 | OWNER, YES or NO (gap G2) | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-10 | Every setting a session may set for itself, SESSION.TIME_ZONE and TRANSACTION.ISOLATION among them | `[PROTOCOL Status 'T']` | done |
 
 ### Pong 'G'
 
@@ -552,31 +552,31 @@ From `doc/client/02-library.md`, The Client Library.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-CONN-1 | Connect over TCP | `[CLIENT Connecting]` | not yet |
-| C-CONN-2 | Connect over a Unix socket, or on Windows the named pipe `\\.\pipe\turborel` | `[CLIENT Connecting]` | not yet |
-| C-CONN-3 | Connect to a target, TCP or local, over TLS or not | `[CLIENT Connecting]` | not yet |
-| C-CONN-4 | SCRAM-SHA-256 of a password, refused (SQLSTATE 08006) unless the server proves it knows the user's verifier | `[CLIENT Connecting]` | not yet |
-| C-CONN-5 | SCRAM only over TLS, a Unix socket or a named pipe, unless the program asks for it in the clear | `[CLIENT Connecting]` | not yet |
-| C-CONN-6 | SCRAM-SHA-256-PLUS over TLS: by `tls-exporter` over TLS 1.3, by the server's certificate over TLS 1.2 | `[CLIENT Connecting]` | not yet |
-| C-CONN-7 | A TLS stream the program opened, bound before SCRAM-SHA-256-PLUS | `[CLIENT Connecting]` | not yet |
-| C-CONN-8 | `password`, sent whole, only over TLS, a Unix socket or a named pipe | `[CLIENT Connecting]` | not yet |
-| C-CONN-9 | `certificate`: TLS trusting a PEM file of authorities, presenting a certificate chain and key from two more | `[CLIENT Connecting]` | not yet |
-| C-CONN-10 | `trust` | `[CLIENT Connecting]` | not yet |
-| C-CONN-11 | A password, or SCRAM, refused over plain TCP before connecting (SQLSTATE 28000) | `[CLIENT Connecting]` | not yet |
-| C-CONN-12 | TLS trusting a file's authorities, the platform's, or both; SSL_CERT_FILE and SSL_CERT_DIR | `[CLIENT Connecting]` | not yet |
-| C-CONN-13 | The server's product and the session's authorization identifier, as Ready told them | `[CLIENT Connecting]` | not yet |
-| C-CONN-14 | Terminate: the transaction as SESSION.COMMIT_AT_END says, a failing commit's failure given, waiting at most the read timeout, else 60 seconds | `[CLIENT Connecting]` | not yet |
+| C-CONN-1 | Connect over TCP | `[CLIENT Connecting]` | done |
+| C-CONN-2 | Connect over a Unix socket, or on Windows the named pipe `\\.\pipe\turborel` | `[CLIENT Connecting]` | done |
+| C-CONN-3 | Connect to a target, TCP or local, over TLS or not | `[CLIENT Connecting]` | done |
+| C-CONN-4 | SCRAM-SHA-256 of a password, refused (SQLSTATE 08006) unless the server proves it knows the user's verifier | `[CLIENT Connecting]` | done |
+| C-CONN-5 | SCRAM only over TLS, a Unix socket or a named pipe, unless the program asks for it in the clear | `[CLIENT Connecting]` | done |
+| C-CONN-6 | SCRAM-SHA-256-PLUS over TLS: by `tls-exporter` over TLS 1.3, by the server's certificate over TLS 1.2 | `[CLIENT Connecting]` | done |
+| C-CONN-7 | A TLS stream the program opened, bound before SCRAM-SHA-256-PLUS | `[CLIENT Connecting]` | done |
+| C-CONN-8 | `password`, sent whole, only over TLS, a Unix socket or a named pipe | `[CLIENT Connecting]` | done |
+| C-CONN-9 | `certificate`: TLS trusting a PEM file of authorities, presenting a certificate chain and key from two more | `[CLIENT Connecting]` | done |
+| C-CONN-10 | `trust` | `[CLIENT Connecting]` | done |
+| C-CONN-11 | A password, or SCRAM, refused over plain TCP before connecting (SQLSTATE 28000) | `[CLIENT Connecting]` | done |
+| C-CONN-12 | TLS trusting a file's authorities, the platform's, or both; SSL_CERT_FILE and SSL_CERT_DIR | `[CLIENT Connecting]` | done |
+| C-CONN-13 | The server's product and the session's authorization identifier, as Ready told them | `[CLIENT Connecting]` | done |
+| C-CONN-14 | Terminate: the transaction as SESSION.COMMIT_AT_END says, a failing commit's failure given, waiting at most the read timeout, else 60 seconds | `[CLIENT Connecting]` | done |
 
 ### Timeouts
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-TIME-1 | The connect timeout, for connecting, TLS and each step of the login: 30 seconds by default | `[CLIENT Timeouts]` | not yet |
-| C-TIME-2 | The read timeout, for each read or write after: none by default | `[CLIENT Timeouts]` | not yet |
-| C-TIME-3 | Timeouts of the program's own, and a connection's read timeout changed | `[CLIENT Timeouts]` | not yet |
-| C-TIME-4 | A wait that runs out loses the connection (SQLSTATE 08006), saying the server did not answer in time | `[CLIENT Timeouts]` | not yet |
-| C-TIME-5 | A named pipe bounded only as it is opened | `[CLIENT Timeouts]` | not yet |
-| C-TIME-6 | Replies taken up to 16 MiB, or as many bytes as the program says; a longer one loses the connection | `[CLIENT Timeouts]` | not yet |
+| C-TIME-1 | The connect timeout, for connecting, TLS and each step of the login: 30 seconds by default | `[CLIENT Timeouts]` | done |
+| C-TIME-2 | The read timeout, for each read or write after: none by default | `[CLIENT Timeouts]` | done |
+| C-TIME-3 | Timeouts of the program's own, and a connection's read timeout changed | `[CLIENT Timeouts]` | done |
+| C-TIME-4 | A wait that runs out loses the connection (SQLSTATE 08006), saying the server did not answer in time | `[CLIENT Timeouts]` | done |
+| C-TIME-5 | A named pipe bounded only as it is opened | `[CLIENT Timeouts]` | done |
+| C-TIME-6 | Replies taken up to 16 MiB, or as many bytes as the program says; a longer one loses the connection | `[CLIENT Timeouts]` | done |
 
 ### Running statements
 
@@ -587,7 +587,7 @@ From `doc/client/02-library.md`, The Client Library.
 | C-RUN-3 | A query's rows given a batch at a time, as they come | `[CLIENT Running statements]` | not yet |
 | C-RUN-4 | Every value: exact, approximate, character, binary, datetime, interval, a plug-in's, null | `[CLIENT Running statements]` | not yet |
 | C-RUN-5 | Whether the session's transaction is active, as the server said after the last statement | `[CLIENT Running statements]` | not yet |
-| C-RUN-6 | Cancel from another thread, giving up after 10 seconds, or a limit of the program's | `[CLIENT Running statements]` | not yet |
+| C-RUN-6 | Cancel from another thread, giving up after 10 seconds, or a limit of the program's | `[CLIENT Running statements]` | done |
 | C-RUN-7 | A transaction begun by the first statement, lasting until COMMIT or ROLLBACK | `[CLIENT Running statements]` | not yet |
 | C-RUN-8 | Autocommit: each statement its own transaction, by `ends`, with no COMMIT sent | `[CLIENT Running statements]` | not yet |
 
@@ -648,16 +648,16 @@ From `doc/client/02-library.md`, The Client Library.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-ASK-1 | Every capability but compression asked for by default | `[CLIENT What a connection asks for]` | not yet |
-| C-ASK-2 | An offer of the program's own: none, compression, connection attributes | `[CLIENT What a connection asks for]` | not yet |
-| C-ASK-3 | What was granted | `[CLIENT What a connection asks for]` | not yet |
+| C-ASK-1 | Every capability but compression asked for by default | `[CLIENT What a connection asks for]` | done |
+| C-ASK-2 | An offer of the program's own: none, compression, connection attributes | `[CLIENT What a connection asks for]` | done |
+| C-ASK-3 | What was granted | `[CLIENT What a connection asks for]` | done |
 | C-ASK-4 | A method needing a capability not granted fails before it sends anything | `[CLIENT What a connection asks for]` | not yet |
 
 ### What the server tells
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-TOLD-1 | A session setting as the server last told it, and all of them, with no round trip | `[CLIENT What the server tells]` | not yet |
+| C-TOLD-1 | A session setting as the server last told it, and all of them, with no round trip | `[CLIENT What the server tells]` | done |
 | C-TOLD-2 | Notices given to a handler as they come; with none, the last 64 kept and taken | `[CLIENT What the server tells]` | not yet |
 | C-TOLD-3 | The last statement's conditions, with `conditions` | `[CLIENT What the server tells]` | not yet |
 | C-TOLD-4 | The rows a statement changed, or a query returned | `[CLIENT What the server tells]` | not yet |
@@ -834,14 +834,14 @@ From `doc/client/02-library-connections.md`, Settings, Pipelines and Pools.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-KEY-1 | The keys a password derived kept after a login the server proved, a later login of the same salt and iterations skipping the derivation | `[CLIENT The SCRAM key cache]` | not yet |
+| C-KEY-1 | The keys a password derived kept after a login the server proved, a later login of the same salt and iterations skipping the derivation | `[CLIENT The SCRAM key cache]` | done |
 | C-KEY-2 | One cache for every connection the same settings make | `[CLIENT The SCRAM key cache]` | not yet |
-| C-KEY-3 | A cache given to a mechanism the program makes | `[CLIENT The SCRAM key cache]` | not yet |
-| C-KEY-4 | Its hits and misses | `[CLIENT The SCRAM key cache]` | not yet |
-| C-KEY-5 | An entry found by the salt, the iterations and a tag of the password under a random secret of the cache's own | `[CLIENT The SCRAM key cache]` | not yet |
-| C-KEY-6 | At most 64 entries, the oldest dropped first | `[CLIENT The SCRAM key cache]` | not yet |
-| C-KEY-7 | An entry dropped when a login that used it fails | `[CLIENT The SCRAM key cache]` | not yet |
-| C-KEY-8 | Held in the process's memory alone | `[CLIENT The SCRAM key cache]` | not yet |
+| C-KEY-3 | A cache given to a mechanism the program makes | `[CLIENT The SCRAM key cache]` | done |
+| C-KEY-4 | Its hits and misses | `[CLIENT The SCRAM key cache]` | done |
+| C-KEY-5 | An entry found by the salt, the iterations and a tag of the password under a random secret of the cache's own | `[CLIENT The SCRAM key cache]` | done |
+| C-KEY-6 | At most 64 entries, the oldest dropped first | `[CLIENT The SCRAM key cache]` | done |
+| C-KEY-7 | An entry dropped when a login that used it fails | `[CLIENT The SCRAM key cache]` | done |
+| C-KEY-8 | Held in the process's memory alone | `[CLIENT The SCRAM key cache]` | done |
 
 ---
 

@@ -1,0 +1,33 @@
+module Turborel
+  module Client
+    # A connection's stream.
+    class Stream
+      type io = IO | OpenSSL::SSL::SSLSocket
+
+      CHUNK: Integer
+      FAILURES: Array[singleton(Exception)]
+
+      @io: untyped
+      @timeout: seconds?
+      @bounded: bool
+      @buffer: String
+
+      attr_accessor timeout: seconds?
+      attr_reader io: untyped
+
+      def initialize: (untyped io, ?timeout: seconds?, ?bounded: bool) -> void
+      def write_all: (String bytes) -> void
+      def read_exactly: (Integer count) -> String
+      def read_to_end: (Integer limit) -> String
+      def close: () -> void
+
+      private
+
+      def fill: (Integer count) -> void
+      def next_chunk: (Integer wanted) -> String?
+      def written: (String bytes) -> Integer
+      def wait: (Symbol why) -> void
+      def guarded: [T] (String what) { () -> T } -> T
+    end
+  end
+end

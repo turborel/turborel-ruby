@@ -1,0 +1,24 @@
+module Turborel
+  module Client
+    # The client's side of scram-sha-256 and scram-sha-256-plus.
+    class Scram < Mechanism
+      BINDINGS: Array[Symbol]
+
+      @password: String
+      @clear: bool
+      @binding: Symbol
+      @cache: KeyCache?
+      @channel: [Symbol, String]
+      @exchange: Protocol::Scram?
+      @used: [String, Integer]?
+
+      def initialize: (String password, ?clear: bool, ?binding: Symbol, ?cache: KeyCache?) -> void
+
+      private
+
+      def prove: (Protocol::Scram exchange, String challenge) -> String
+      def keys: (Protocol::Scram::ServerFirst first) -> Protocol::Scram::Derived
+      def forget: () -> void
+    end
+  end
+end

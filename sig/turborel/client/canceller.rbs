@@ -1,0 +1,13 @@
+module Turborel
+  module Client
+    # What cancels the statement a connection runs.
+    class Canceller
+      @target: Target
+      @key: String
+
+      def initialize: (Target target, String key) -> void
+      def cancel: (?seconds within) -> void
+      def inspect: () -> String
+    end
+  end
+end

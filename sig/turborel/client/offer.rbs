@@ -1,0 +1,22 @@
+module Turborel
+  module Client
+    # What a connection asks for as it opens.
+    class Offer < Data
+      attr_reader capabilities: Array[String]
+      attr_reader attributes: Protocol::Tail::attributes
+      attr_reader compress_from: Integer
+      def self.new: (capabilities: Array[String], attributes: Protocol::Tail::attributes, compress_from: Integer) -> instance
+      def with: (?capabilities: Array[String], ?attributes: Protocol::Tail::attributes, ?compress_from: Integer) -> instance
+    end
+
+    APPLICATION: String
+
+    # The offers turborel-client makes.
+    module Offers
+      def self.default: () -> Offer
+      def self.none: () -> Offer
+      def self.compressed: (Offer offer) -> Offer
+      def self.attribute: (Offer offer, String name, String value) -> Offer
+    end
+  end
+end

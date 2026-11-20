@@ -27,6 +27,22 @@ require_relative "turborel/protocol/replies"
 require_relative "turborel/protocol/requests"
 require_relative "turborel/protocol/scram"
 
+require_relative "turborel/client"
+require_relative "turborel/client/offer"
+require_relative "turborel/client/stream"
+require_relative "turborel/client/target"
+require_relative "turborel/client/timeouts"
+require_relative "turborel/client/tls"
+
+require_relative "turborel/client/canceller"
+require_relative "turborel/client/key_cache"
+require_relative "turborel/client/mechanisms"
+require_relative "turborel/client/transport"
+require_relative "turborel/client/wire"
+
+require_relative "turborel/client/connection"
+require_relative "turborel/client/scram"
+
 # The Ruby driver for turborel, a relational database system. It speaks
 # turborel's native protocol, version 1, itself, in Ruby alone, with no
 # native extension and no client library beneath it (RULES.md D1).

@@ -29,9 +29,10 @@ large objects, bulk copy, import and export, settings from a URI, the
 environment and service and password files, several servers, pipelines
 and pools.
 
-The driver is built in milestones, M0 to M8, and does not connect to a
-server yet. [CONFORMANCE.md](CONFORMANCE.md) shows what is done, row by
-row, and [TODO.md](TODO.md) what is open.
+The driver is built in milestones, M0 to M8. Its low-level client
+connects and logs in today; statements come at M3.
+[CONFORMANCE.md](CONFORMANCE.md) shows what is done, row by row, and
+[TODO.md](TODO.md) what is open.
 
 ## Requirements
 

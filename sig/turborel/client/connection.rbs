@@ -1,0 +1,45 @@
+module Turborel
+  module Client
+    # A connection to a server.
+    class Connection
+      include Wire
+
+      @stream: Stream
+      @target: Target?
+      @timeouts: Timeouts?
+      @max_body: Integer
+      @granted: Array[String]
+      @settings: Hash[String, String]
+      @lost: Error?
+      @key: String?
+      @compress_from: Integer?
+      @authorization: String
+      @server: String
+
+      attr_reader authorization: String
+      attr_reader server: String
+      attr_reader granted: Array[String]
+      attr_reader target: Target?
+      attr_accessor max_body: Integer
+
+      def self.open: (untyped io, user: String, mechanism: Mechanism, ?offer: Offer) -> Connection
+      def initialize: (Stream stream, Target? target, ?Timeouts? timeouts) -> void
+      def log_in: (String user, Mechanism mechanism, Offer offer) -> void
+      def read_timeout=: (seconds? seconds) -> void
+      def read_timeout: () -> seconds?
+      def granted?: (String name) -> bool
+      def setting: (String name) -> String?
+      def settings: () -> Hash[String, String]
+      def lost?: () -> bool
+      def canceller: () -> Canceller?
+      def terminate: () -> void
+      def inspect: () -> String
+
+      private
+
+      def challenged: (Protocol::Replies::reply reply, Mechanism mechanism) -> void
+      def ready: (Protocol::Replies::Ready reply, Mechanism mechanism, Offer offer) -> void
+      def terminated: (String rest) -> void
+    end
+  end
+end

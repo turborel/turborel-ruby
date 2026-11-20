@@ -1,0 +1,19 @@
+module Turborel
+  module Client
+    # A number of seconds.
+    type seconds = Integer | Float
+
+    # How long a connection waits on its server.
+    class Timeouts < Data
+      attr_reader connect: seconds?
+      attr_reader read: seconds?
+      def self.new: (connect: seconds?, read: seconds?) -> instance
+      def with: (?connect: seconds?, ?read: seconds?) -> instance
+    end
+
+    CONNECT_WITHIN: Integer
+    TERMINATE_WITHIN: Integer
+    CANCEL_WITHIN: Integer
+    DEFAULT_TIMEOUTS: Timeouts
+  end
+end

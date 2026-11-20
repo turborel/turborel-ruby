@@ -1,0 +1,32 @@
+module Turborel
+  module Client
+    # A mechanism of authentication.
+    class Mechanism
+      def name: () -> String
+      def initial: () -> String
+      def answer: (String _challenge) -> String
+      def secret?: () -> bool
+      def ready!: () -> void
+      def bind: (TlsChannel _channel) -> void
+      def refused: () -> void
+      def inspect: () -> String
+    end
+
+    # The client's side of trust.
+    class Trust < Mechanism
+      NAME: String
+    end
+
+    # The client's side of password.
+    class Password < Mechanism
+      NAME: String
+      @password: String
+      def initialize: (String password) -> void
+    end
+
+    # The client's side of certificate.
+    class Certificate < Mechanism
+      NAME: String
+    end
+  end
+end

@@ -1,0 +1,24 @@
+module Turborel
+  module Client
+    # A connection's frames.
+    module Wire
+      @stream: Stream
+      @lost: Error?
+      @max_body: Integer
+      @compress_from: Integer?
+      @settings: Hash[String, String]
+
+      def self.ends_connection?: (Failure failure) -> bool
+
+      private
+
+      def send_frame: (String frames) -> void
+      def receive: () -> Protocol::Replies::reply
+      def next_reply: () -> Protocol::Replies::reply
+      def inflated: (String body) -> [Integer, String]
+      def failed: (Failure failure) -> Error
+      def lose: (String message) -> Error
+      def lost_by: (Error error) -> Error
+    end
+  end
+end

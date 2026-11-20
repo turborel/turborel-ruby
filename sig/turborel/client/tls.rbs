@@ -1,0 +1,23 @@
+module Turborel
+  module Client
+    # What a TLS connection's handshake gives a mechanism to bind to.
+    class TlsChannel < Data
+      attr_reader certificate: String?
+      attr_reader exporter: String?
+      def self.new: (certificate: String?, exporter: String?) -> instance
+    end
+
+    # TLS for a client.
+    module TLS
+      EXPORTER_LABEL: String
+      EXPORTER_BYTES: Integer
+      TLS13: String
+
+      def self.context: (?roots: String?, ?platform: bool, ?certificate: String?, ?key: String?) -> OpenSSL::SSL::SSLContext
+      def self.store: (String? roots, bool platform) -> OpenSSL::X509::Store
+      def self.authorities: (String path) -> Array[OpenSSL::X509::Certificate]
+      def self.present: (OpenSSL::SSL::SSLContext context, String certificate, String? key) -> void
+      def self.channel: (OpenSSL::SSL::SSLSocket ssl) -> TlsChannel
+    end
+  end
+end
