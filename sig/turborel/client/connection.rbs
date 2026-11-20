@@ -3,6 +3,8 @@ module Turborel
     # A connection to a server.
     class Connection
       include Wire
+      include Statements
+      include Session
 
       @stream: Stream
       @target: Target?
@@ -15,6 +17,15 @@ module Turborel
       @compress_from: Integer?
       @authorization: String
       @server: String
+      @next_statement: Integer
+      @active: bool
+      @autocommit: bool
+      @warning: String?
+      @commit_position: Integer?
+      @completion: Completion?
+      @notices: Array[Notice]
+      @notice_handler: (^(Notice) -> untyped)?
+      @query_attributes: Array[[String, String]]
 
       attr_reader authorization: String
       attr_reader server: String

@@ -1,0 +1,42 @@
+module Turborel
+  module Client
+    # What a connection's session tells and how it is controlled.
+    module Session : Wire
+      @active: bool
+      @autocommit: bool
+      @warning: String?
+      @commit_position: Integer?
+      @completion: Completion?
+      @notices: Array[Notice]
+      @notice_handler: (^(Notice) -> untyped)?
+      @query_attributes: Array[[String, String]]
+      @authorization: String
+      @server: String
+      @key: String?
+
+      def in_transaction?: () -> bool
+      attr_accessor autocommit: bool
+      attr_reader warning: String?
+      attr_reader commit_position: Integer?
+      attr_reader completion: Completion?
+      def rows_affected: () -> Integer?
+      def server_time: () -> Timing?
+      def last_generated: () -> Array[String]
+      def conditions: () -> Array[Failure]
+      def take_conditions: () -> Array[Failure]
+      attr_writer notice_handler: (^(Notice) -> untyped)?
+      def take_notices: () -> Array[Notice]
+      attr_reader query_attributes: Array[[String, String]]
+      def query_attributes=: (Array[[String, String]] attributes) -> void
+      def ping: () -> nil
+      def reset: () -> nil
+      def change_user: (String user, Mechanism mechanism) -> nil
+      def query_many: (String sql) -> Ran
+
+      private
+
+      def ran: (Array[Rows | Completion] outcomes) -> Ran
+      def renewed: (Protocol::Replies::Ready ready, Mechanism mechanism) -> nil
+    end
+  end
+end

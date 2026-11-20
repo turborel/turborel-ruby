@@ -89,12 +89,18 @@ module Turborel
   class Xml < Data
     attr_reader text: String
     def self.new: (text: String) -> instance
+    def nodes: () -> Array[XmlNodes::node]
   end
 
   # A UUID.
   class Uuid < Data
+    GROUPS: Array[Integer]
+    FORM: Regexp
+
     attr_reader octets: String
     def self.new: (octets: String) -> instance
+    def self.parse: (String text) -> Uuid?
+    def text: () -> String
   end
 
   # A value of a plug-in's type.

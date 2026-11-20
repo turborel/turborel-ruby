@@ -64,11 +64,50 @@ module Turborel
   # true, false, and +nil+ for the JSON null).
   Json = Data.define(:value)
 
-  # An XML value [PROTOCOL Values]: its serialization as CONTENT.
+  # An XML value [PROTOCOL Values]: its serialization as CONTENT, the
+  # text a parameter of an XML type is made of [CLIENT XML values].
   Xml = Data.define(:text)
 
-  # A UUID: its 16 octets (turborel RULES.md D184).
+  # An XML value's nodes.
+  class Xml
+    # Its nodes, parsed from its text.
+    #
+    # @return [Array<XmlNodes::Element, XmlNodes::Text, XmlNodes::Comment,
+    #   XmlNodes::ProcessingInstruction>]
+    # @raise [Error] SQLSTATE 2200N if it is not well-formed XML content
+    def nodes = XmlNodes.parse(text)
+  end
+
+  # A UUID: its 16 octets (turborel RULES.md D184) [CLIENT UUIDs].
   Uuid = Data.define(:octets)
+
+  # A UUID's text.
+  class Uuid
+    # The octets of each group of its text.
+    GROUPS = [4, 2, 2, 2, 6].freeze
+    # Its text's form: 32 hexadecimal digits, a hyphen allowed after each
+    # group of four but the last.
+    FORM = /\A(?:\h{4}-?){7}\h{4}\z/
+
+    # The UUID +text+ writes, as turborel's CAST reads it: 32 hexadecimal
+    # digits in either case, its spaces trimmed, braced or not, a hyphen
+    # allowed after each group of four digits but the last.
+    #
+    # @param text [String]
+    # @return [Uuid, nil] +nil+ if it writes none
+    def self.parse(text)
+      trimmed = text.gsub(/\A[[:space:]]+|[[:space:]]+\z/, "")
+      trimmed = trimmed[1...-1] || "" if trimmed.start_with?("{") && trimmed.end_with?("}") && trimmed.length > 1
+      new(octets: [trimmed.delete("-")].pack("H*")) if FORM.match?(trimmed)
+    end
+
+    # @return [String] its text, as 919108f7-52d1-4320-9bac-f847db4148a8
+    def text
+      hex = octets.unpack1("H*").to_s
+      at = 0
+      GROUPS.map { |n| hex[at, n * 2].tap { at += n * 2 } }.join("-")
+    end
+  end
 
   # A value of a plug-in's type [PROTOCOL Values]: its type's +name+, its
   # +text+ and its +bytes+, kept as they came so it is sent back unchanged.

@@ -7,13 +7,33 @@ module Turborel
       @max_body: Integer
       @compress_from: Integer?
       @settings: Hash[String, String]
+      @notices: Array[Protocol::Replies::Notice]
+      @notice_handler: (^(Protocol::Replies::Notice) -> untyped)?
+      @active: bool
+      @warning: String?
+      @commit_position: Integer?
+      @completion: Protocol::Replies::Complete?
+      @granted: Array[String]
+      @query_attributes: Array[[String, String]]
+
+      KEPT_NOTICES: Integer
+      WARNING_CLASS: String
 
       def self.ends_connection?: (Failure failure) -> bool
 
       private
 
       def send_frame: (String frames) -> void
+      def expect: (*Class kinds) -> untyped
+      def completion_reply: () -> Protocol::Replies::Complete
+      def outcome: () -> [Rows | Protocol::Replies::Complete, bool]
+      def rows_until_end: () -> [Array[Array[value]], Protocol::Replies::Complete?]
+      def needs: (bool allowed, String name) -> void
+      def carried_attributes: () -> Array[[String, String]]
       def receive: () -> Protocol::Replies::reply
+      def notice: (Protocol::Replies::Notice notice) -> void
+      def noted: (Protocol::Replies::reply reply) -> Protocol::Replies::reply
+      def completed: (Protocol::Replies::Complete complete) -> void
       def next_reply: () -> Protocol::Replies::reply
       def inflated: (String body) -> [Integer, String]
       def failed: (Failure failure) -> Error

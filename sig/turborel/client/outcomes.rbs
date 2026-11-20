@@ -1,0 +1,47 @@
+module Turborel
+  module Client
+    # A query's outcome.
+    class Rows < Data
+      attr_reader columns: Array[Column]
+      attr_reader rows: Array[Array[value]]
+      def self.new: (columns: Array[Column], rows: Array[Array[value]]) -> instance
+    end
+
+    # Any other statement's outcome.
+    class Completion = Protocol::Replies::Complete
+
+    # The server's time for a statement.
+    class Timing = Protocol::Replies::Timing
+
+    # A condition or a notice.
+    class Notice = Protocol::Replies::Notice
+
+    # A prepared statement.
+    class Statement < Data
+      attr_reader number: Integer
+      attr_reader parameters: Array[Parameter]
+      attr_reader columns: Array[Column]
+      def self.new: (number: Integer, parameters: Array[Parameter], columns: Array[Column]) -> instance
+    end
+
+    # Rows of a cursor.
+    class Batch < Data
+      attr_reader rows: Array[Array[value]]
+      attr_reader more: bool
+      def self.new: (rows: Array[Array[value]], more: bool) -> instance
+    end
+
+    # What a text of several statements gave.
+    class Ran < Data
+      attr_reader outcomes: Array[Rows | Completion]
+      attr_reader failure: Failure?
+      def self.new: (outcomes: Array[Rows | Completion], failure: Failure?) -> instance
+    end
+
+    # What takes a query's rows as they come.
+    interface _Sink
+      def columns: (Array[Column] columns) -> untyped
+      def rows: (Array[Array[value]] rows) -> untyped
+    end
+  end
+end

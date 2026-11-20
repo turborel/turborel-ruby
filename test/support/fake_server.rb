@@ -69,10 +69,50 @@ module Turborel
       def status(name, value) = write(Protocol::Frame.encode("T".ord, Protocol::Writer.new.str(name).str(value).to_s))
 
       # Writes an Error of +sqlcode+, +sqlstate+ and +message+.
-      def error(sqlcode, sqlstate, message)
-        body = Protocol::Writer.new.i32(sqlcode).str(sqlstate).str(message).flag(false).flag(false).flag(false)
+      def error(sqlcode, sqlstate, message, active: false)
+        body = Protocol::Writer.new.i32(sqlcode).str(sqlstate).str(message).flag(false).flag(false).flag(active)
         write(Protocol::Frame.encode("E".ord, body.to_s))
       end
+
+      # Writes a reply of +kind+, its body +body+.
+      def reply(kind, body = "") = write(Protocol::Frame.encode(kind.ord, body.to_s))
+
+      # Writes Complete of +sqlcode+ and +sqlstate+, whether a transaction
+      # is +active+ after it, then +tail+, its tail's bytes.
+      def complete(sqlcode = 0, sqlstate = "00000", active: false, tail: "")
+        reply("K", Protocol::Writer.new.i32(sqlcode).str(sqlstate).flag(active).raw(tail))
+      end
+
+      # Writes Notice of +sqlstate+ and +message+.
+      def notice(sqlstate, message = "noted") = reply("N", Protocol::Writer.new.str(sqlstate).str(message))
+
+      # Writes Description of INTEGER columns named +names+.
+      def description(*names) = reply("D", columns(names))
+
+      # Writes Rows of +rows+, each an Array of Integers.
+      def rows(*rows)
+        writer = Protocol::Writer.new.u32(rows.size)
+        rows.each { |row| Protocol::ValueWriter.row_values(writer, row) }
+        reply("B", writer)
+      end
+
+      # Writes Prepared of statement +number+, +parameters+ INTEGER
+      # parameters, and INTEGER columns named +names+.
+      def prepared(number, parameters, *names)
+        writer = Protocol::Writer.new.u32(number).u32(parameters)
+        parameters.times { writer.flag(false).raw(INTEGER) }
+        reply("P", writer.raw(columns(names)))
+      end
+
+      # The bytes of a list of INTEGER columns named +names+.
+      def columns(names)
+        writer = Protocol::Writer.new.u32(names.size)
+        names.each { |name| writer.flag(true).str(name).raw(INTEGER).flag(false) }
+        writer.to_s
+      end
     end
+
+    # The data type INTEGER: exact, precision 10, scale 0.
+    INTEGER = "\x02\x0A\x00\x00\x00\x00\x00\x00\x00".b
   end
 end

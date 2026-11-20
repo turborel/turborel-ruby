@@ -1,0 +1,29 @@
+module Turborel
+  module Client
+    # A connection's statements.
+    module Statements : Wire
+      @autocommit: bool
+      @next_statement: Integer
+
+      def query: (String sql) -> (Rows | Completion)
+      def query_into: (String sql, _Sink sink) -> (Integer | Completion)
+      def prepare: (String sql) -> Statement
+      def execute: (Statement statement, ?Array[value] values) -> (Rows | Completion)
+      def open_cursor: (Statement statement, ?Array[value] values, ?Integer rows) -> Batch
+      def open_cursor_numbered: (Statement statement, Integer cursor, ?Array[value] values, ?Integer rows) -> Batch
+      def fetch: (Statement statement, ?Integer rows, ?cursor: Integer) -> Batch
+      def close: (Statement statement, ?cursor: Integer) -> nil
+      def deallocate: (Statement statement) -> nil
+      def describe: (Statement statement) -> Statement
+      def describe_cursor: (Statement statement, ?Integer cursor) -> Array[Column]
+
+      private
+
+      def execute_frame: (Statement statement, Array[value] values, Integer rows, bool ends,
+                          { ?attributes: Protocol::Tail::attributes, ?cursor: Integer } tail) -> void
+      def prepared: () -> Statement
+      def batch: () -> Batch
+      def streamed: (_Sink sink) -> Integer
+    end
+  end
+end

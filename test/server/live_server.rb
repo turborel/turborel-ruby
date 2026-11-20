@@ -61,8 +61,43 @@ module Turborel
       socket = Gem.win_platform? ? PIPE : File.join(dir, "sock")
       pid = spawn_server(dir, port, socket, certificates)
       at_exit { stop(pid, dir) }
+      schema(port)
       Running.new(dir:, port:, socket:, ca: certificates[:ca], client_certificate: certificates[:client],
                   client_key: certificates[:client_key], pid:)
+    end
+
+    # Makes ANN's schema, where the live tests make their tables.
+    def self.schema(port)
+      connection = Client.connect("127.0.0.1", port, user: "ann", mechanism: Client::Trust.new)
+      connection.query("CREATE SCHEMA AUTHORIZATION ANN")
+      connection.query("COMMIT")
+      connection.terminate
+    end
+
+    # What each live test takes: the server, skipped without one, and
+    # connections to it as ANN, each terminated after.
+    module Case
+      def setup = LiveServer.require!(self)
+
+      # @return [Running]
+      def server = LiveServer.running
+
+      # @return [Client::Target] the server's TCP port on loopback
+      def tcp = Client::Targets.tcp("127.0.0.1", server.port)
+
+      # Gives the block a connection to +target+ as +user+, terminated
+      # after unless it is lost.
+      def connect(target = tcp, mechanism = Client::Trust.new, offer: Client::Offers.default, user: "ann")
+        connection = Client.connect_to(target, user:, mechanism:, offer:)
+        yield connection
+      ensure
+        connection&.terminate unless connection&.lost?
+      end
+
+      # An offer of every capability the default asks for but +names+.
+      def without(*names)
+        Client::Offers.default.with(capabilities: Client::Offers.default.capabilities - names)
+      end
     end
 
     # Adds +user+ of +password+ to the database in +dir+, ANN its owner.

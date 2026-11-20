@@ -1,0 +1,109 @@
+module Turborel
+  # The nodes of an XML value's serialization.
+  module XmlNodes
+    type node = Element | Text | Comment | ProcessingInstruction
+
+    # An element.
+    class Element < Data
+      attr_reader name: String
+      attr_reader local_name: String
+      attr_reader namespace: String?
+      attr_reader attributes: Array[Attribute]
+      attr_reader declared: Hash[String, String]
+      attr_reader children: Array[node]
+      def self.new: (name: String, local_name: String, namespace: String?, attributes: Array[Attribute],
+                     declared: Hash[String, String], children: Array[node]) -> instance
+    end
+
+    # An attribute.
+    class Attribute < Data
+      attr_reader name: String
+      attr_reader local_name: String
+      attr_reader namespace: String?
+      attr_reader value: String
+      def self.new: (name: String, local_name: String, namespace: String?, value: String) -> instance
+    end
+
+    # Character data.
+    class Text < Data
+      attr_reader text: String
+      def self.new: (text: String) -> instance
+    end
+
+    # A comment.
+    class Comment < Data
+      attr_reader text: String
+      def self.new: (text: String) -> instance
+    end
+
+    # A processing instruction.
+    class ProcessingInstruction < Data
+      attr_reader target: String
+      attr_reader data: String
+      def self.new: (target: String, data: String) -> instance
+    end
+
+    # An element whose end tag is not yet read.
+    class Open < Data
+      attr_reader name: String
+      attr_reader attributes: Array[[String, String]]
+      attr_reader children: Array[node]
+      attr_reader scope: Hash[String, String]
+      attr_reader declared: Hash[String, String]
+      def self.new: (name: String, attributes: Array[[String, String]], children: Array[node],
+                     scope: Hash[String, String], declared: Hash[String, String]) -> instance
+    end
+
+    INVALID_XML_CONTENT: String
+    XML_NAMESPACE: String
+    XMLNS_NAMESPACE: String
+    START: String
+    NAME: Regexp
+    SPACE: Regexp
+    NOT_CHAR: Regexp
+    PREDEFINED: Hash[String, String]
+    DECLARATION: Regexp
+    TOP_SCOPE: Hash[String, String]
+
+    def self.parse: (String text) -> Array[node]
+
+    # Reads XML content.
+    class Parser
+      @text: String
+      @at: Integer
+
+      def initialize: (String text) -> void
+      def content: () -> Array[node]
+
+      private
+
+      def step: (Array[node] top, Array[Open] stack) -> void
+      def begun: (Array[node] into, Array[Open] stack, Hash[String, String] scope) -> void
+      def fail!: (String why) -> bot
+      def took?: (String text) -> bool
+      def expect: (String text) -> void
+      def through: (String ending, String what) -> String
+      def match: (Regexp pattern) -> String?
+      def name: () -> String
+      def spaced?: () -> bool
+      def chars: () -> String
+      def references: (String raw) -> String
+      def reference: (String ref) -> String
+      def number: (String ref) -> Integer?
+      def quoted: () -> String
+      def start_tag: (String name, Hash[String, String] scope) -> [Open, bool]
+      def attribute: (Array[[String, String]] attributes, Hash[String, String] declared) -> void
+      def opened: (String name, Array[[String, String]] attributes, Hash[String, String] declared,
+                   Hash[String, String] scope) -> Open
+      def element: (Open open) -> Element
+      def resolved: (Open open) -> Array[Attribute]
+      def default_namespace: (Hash[String, String] scope) -> String?
+      def resolve: (String name, Hash[String, String] scope, attribute: bool) -> [String, String?]
+      def add_text: (Array[node] into, String text) -> void
+      def other?: (Array[node] into) -> bool
+      def comment: (Array[node] into) -> void
+      def instruction: (Array[node] into) -> void
+      def end_tag: (Array[Open] stack, Array[node] top) -> void
+    end
+  end
+end

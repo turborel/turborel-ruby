@@ -6,6 +6,8 @@ require_relative "turborel/failure"
 require_relative "turborel/values"
 require_relative "turborel/version"
 
+require_relative "turborel/xml/nodes"
+
 require_relative "turborel/protocol/frame"
 require_relative "turborel/protocol/reader"
 require_relative "turborel/protocol/tail"
@@ -37,6 +39,9 @@ require_relative "turborel/client/tls"
 require_relative "turborel/client/canceller"
 require_relative "turborel/client/key_cache"
 require_relative "turborel/client/mechanisms"
+require_relative "turborel/client/outcomes"
+require_relative "turborel/client/session"
+require_relative "turborel/client/statements"
 require_relative "turborel/client/transport"
 require_relative "turborel/client/wire"
 
@@ -51,6 +56,7 @@ require_relative "turborel/client/scram"
 # its statements run with or without parameters, prepared statements,
 # results and transactions; and an ActiveRecord adapter beside it, under
 # its own require path (RULES.md D2). Until those are built, this module
-# holds the gem's version, its error type and the protocol's codec.
+# holds the gem's version, its error type, the protocol's codec and the
+# low-level client, Turborel::Client.
 module Turborel
 end

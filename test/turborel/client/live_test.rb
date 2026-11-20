@@ -8,22 +8,10 @@ module Turborel
     # Connections to a live server (RULES.md R-TEST-8), skipped without one.
     class LiveTest < Minitest::Test
       include TestSupport
-
-      def setup = LiveServer.require!(self)
-
-      def server = LiveServer.running
-
-      def tcp = Targets.tcp("127.0.0.1", server.port)
+      include LiveServer::Case
 
       def tls_target(context = TLS.context(roots: server.ca))
         Targets.tls("127.0.0.1", server.port, server_name: "localhost", context:)
-      end
-
-      def connect(target, mechanism, offer: Offers.default)
-        connection = Client.connect_to(target, user: "ann", mechanism:, offer:)
-        yield connection
-      ensure
-        connection&.terminate unless connection&.lost?
       end
 
       # Verifies: [PROTOCOL The Native Protocol] a client reaches the server

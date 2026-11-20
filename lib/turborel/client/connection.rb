@@ -9,6 +9,8 @@ module Turborel
     # one of the connection, after which the connection takes no more.
     class Connection
       include Wire
+      include Statements
+      include Session
 
       # @return [String] the session's authorization identifier, as Ready
       #   told it
@@ -58,6 +60,15 @@ module Turborel
         @granted = []
         @settings = {}
         @lost = nil
+        @next_statement = 0
+        @active = false
+        @autocommit = false
+        @warning = nil
+        @commit_position = nil
+        @completion = nil
+        @notices = []
+        @notice_handler = nil
+        @query_attributes = Protocol::Requests::NO_ATTRIBUTES
       end
 
       # Logs in by Hello, then each challenge answered until Ready.

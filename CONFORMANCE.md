@@ -263,39 +263,39 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-CAP-1 | `notices` | `[PROTOCOL Capabilities]` | not yet |
+| P-CAP-1 | `notices` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-2 | `status` | `[PROTOCOL Capabilities]` | done |
-| P-CAP-3 | `diagnostics` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-4 | `describe` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-5 | `cursors` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-6 | `ping` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-7 | `reset` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-8 | `change-user` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-9 | `query-attributes` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-10 | `connection-attributes` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-11 | `multi-statement` | `[PROTOCOL Capabilities]` | not yet |
+| P-CAP-3 | `diagnostics` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-4 | `describe` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-5 | `cursors` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-6 | `ping` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-7 | `reset` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-8 | `change-user` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-9 | `query-attributes` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-10 | `connection-attributes` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-11 | `multi-statement` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-12 | `compression` | `[PROTOCOL Capabilities]` | done |
-| P-CAP-13 | `commit-position` | `[PROTOCOL Capabilities]` | not yet |
+| P-CAP-13 | `commit-position` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-14 | `copy` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-15 | `row-counts` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-16 | `generated-values` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-17 | `fetch-ends` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-18 | `conditions` | `[PROTOCOL Capabilities]` | not yet |
-| P-CAP-19 | No request or tail field of a capability not granted is sent | `[PROTOCOL Capabilities]` | not yet |
+| P-CAP-15 | `row-counts` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-16 | `generated-values` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-17 | `fetch-ends` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-18 | `conditions` | `[PROTOCOL Capabilities]` | done |
+| P-CAP-19 | No request or tail field of a capability not granted is sent | `[PROTOCOL Capabilities]` | done |
 
 ### Requests
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-REQ-1 | A request sent before the last one is answered, the replies read in turn, in order | `[PROTOCOL Requests]` | not yet |
-| P-REQ-2 | Every request but Hello, Answer and Cancel sent only after Ready | `[PROTOCOL Requests]` | not yet |
+| P-REQ-2 | Every request but Hello, Answer and Cancel sent only after Ready | `[PROTOCOL Requests]` | done |
 
 ### Hello 'H'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-HELLO-1 | Hello: version 1, user, mechanism, initial bytes, capabilities, tail 1 attributes | `[PROTOCOL Hello 'H']` | done |
-| P-HELLO-2 | Connection attributes in Hello, which every server reads, granted or not | `[PROTOCOL Hello 'H']` | not yet |
+| P-HELLO-2 | Connection attributes in Hello, which every server reads, granted or not | `[PROTOCOL Hello 'H']` | done |
 
 ### Answer 'A'
 
@@ -308,47 +308,47 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-QUERY-1 | Query: sql, ends flag, tail 1 attributes, 2 multi | `[PROTOCOL Query 'Q']` | done |
-| P-QUERY-2 | A query answered by Description, Rows and Complete; another statement by Complete; a failure by Error | `[PROTOCOL Query 'Q']` | not yet |
-| P-QUERY-3 | A query that returns no row completes with SQLCODE 100, SQLSTATE 02000 | `[PROTOCOL Query 'Q']` | not yet |
-| P-QUERY-4 | `ends`: committed as the statement succeeds, rolled back as it fails, the reply saying no transaction is active; a failing commit's Error in place of the Complete | `[PROTOCOL Query 'Q']` | not yet |
-| P-QUERY-5 | A result that sent a locator keeps its transaction | `[PROTOCOL Query 'Q']` | not yet |
-| P-QUERY-6 | With tag 2, several statements run one by one, `ends` applying to each, tag 5 on each Complete but the last, the first failure's Error ending the replies; text of no statement, one Complete | `[PROTOCOL Query 'Q']` | not yet |
+| P-QUERY-2 | A query answered by Description, Rows and Complete; another statement by Complete; a failure by Error | `[PROTOCOL Query 'Q']` | done |
+| P-QUERY-3 | A query that returns no row completes with SQLCODE 100, SQLSTATE 02000 | `[PROTOCOL Query 'Q']` | done |
+| P-QUERY-4 | `ends`: committed as the statement succeeds, rolled back as it fails, the reply saying no transaction is active; a failing commit's Error in place of the Complete | `[PROTOCOL Query 'Q']` | done |
+| P-QUERY-5 | A result that sent a locator keeps its transaction | `[PROTOCOL Query 'Q']` | done |
+| P-QUERY-6 | With tag 2, several statements run one by one, `ends` applying to each, tag 5 on each Complete but the last, the first failure's Error ending the replies; text of no statement, one Complete | `[PROTOCOL Query 'Q']` | done |
 
 ### Prepare 'P'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-PREP-1 | Prepare: the client's number, sql; answered by Prepared or Error, replacing one of that number | `[PROTOCOL Prepare 'P']` | not yet |
-| P-PREP-2 | A statement whose cursor is open not replaced (SQLSTATE 24000) | `[PROTOCOL Prepare 'P']` | not yet |
+| P-PREP-1 | Prepare: the client's number, sql; answered by Prepared or Error, replacing one of that number | `[PROTOCOL Prepare 'P']` | done |
+| P-PREP-2 | A statement whose cursor is open not replaced (SQLSTATE 24000) | `[PROTOCOL Prepare 'P']` | done |
 
 ### Execute 'E'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-EXEC-1 | Execute: statement, values, rows (0 for all), ends flag, tail 1 attributes, 3 cursor | `[PROTOCOL Execute 'E']` | done |
-| P-EXEC-2 | A query's rows in Rows with no Description, then Suspended if the cursor has more, else Complete, the cursor closed | `[PROTOCOL Execute 'E']` | not yet |
-| P-EXEC-3 | `ends` as a Query's; a cursor left open keeps the transaction, ended with it under `fetch-ends` | `[PROTOCOL Execute 'E']` | not yet |
-| P-EXEC-4 | Cursor 0 unless tag 3 names another, with `cursors`; one already open fails (SQLSTATE 24000) | `[PROTOCOL Execute 'E']` | not yet |
-| P-EXEC-5 | A CALL with a `?` for an OUT or INOUT parameter first sends one Rows reply of one row, of the columns Prepared gave, each such parameter's value once the procedure ran | `[PROTOCOL Execute 'E']` | not yet |
+| P-EXEC-2 | A query's rows in Rows with no Description, then Suspended if the cursor has more, else Complete, the cursor closed | `[PROTOCOL Execute 'E']` | done |
+| P-EXEC-3 | `ends` as a Query's; a cursor left open keeps the transaction, ended with it under `fetch-ends` | `[PROTOCOL Execute 'E']` | done |
+| P-EXEC-4 | Cursor 0 unless tag 3 names another, with `cursors`; one already open fails (SQLSTATE 24000) | `[PROTOCOL Execute 'E']` | done |
+| P-EXEC-5 | A CALL with a `?` for an OUT or INOUT parameter first sends one Rows reply of one row, of the columns Prepared gave, each such parameter's value once the procedure ran | `[PROTOCOL Execute 'E']` | done |
 
 ### Fetch 'F'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-FETCH-1 | Fetch: statement, rows, tail 3 cursor; Suspended if more, else Complete | `[PROTOCOL Fetch 'F']` | not yet |
-| P-FETCH-2 | A cursor not open fails (SQLSTATE 24000) | `[PROTOCOL Fetch 'F']` | not yet |
+| P-FETCH-1 | Fetch: statement, rows, tail 3 cursor; Suspended if more, else Complete | `[PROTOCOL Fetch 'F']` | done |
+| P-FETCH-2 | A cursor not open fails (SQLSTATE 24000) | `[PROTOCOL Fetch 'F']` | done |
 
 ### Close 'C'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-CLOSE-1 | Close: statement, tail 3 cursor; answered by Complete, or Error if not open | `[PROTOCOL Close 'C']` | not yet |
+| P-CLOSE-1 | Close: statement, tail 3 cursor; answered by Complete, or Error if not open | `[PROTOCOL Close 'C']` | done |
 
 ### Deallocate 'D'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-DEALLOC-1 | Deallocate: statement; answered by Complete; none such (SQLSTATE 26000), or a cursor of it open (24000), fails | `[PROTOCOL Deallocate 'D']` | not yet |
+| P-DEALLOC-1 | Deallocate: statement; answered by Complete; none such (SQLSTATE 26000), or a cursor of it open (24000), fails | `[PROTOCOL Deallocate 'D']` | done |
 
 ### Lob 'L', the request
 
@@ -365,7 +365,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-CANCEL-1 | Cancel: the key Ready gave, the first and only message of a connection of its own, closed with no reply | `[PROTOCOL Cancel 'Z']` | done |
-| P-CANCEL-2 | The statement cancelled fails with SQLCODE -920, SQLSTATE TB920 | `[PROTOCOL Cancel 'Z']` | not yet |
+| P-CANCEL-2 | The statement cancelled fails with SQLCODE -920, SQLSTATE TB920 | `[PROTOCOL Cancel 'Z']` | done |
 
 ### Terminate 'X'
 
@@ -377,8 +377,8 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-DESC-1 | Describe a prepared statement, cursor 0, answered by Prepared | `[PROTOCOL Describe 'Y']` | not yet |
-| P-DESC-2 | Describe an open cursor, answered by Description | `[PROTOCOL Describe 'Y']` | not yet |
+| P-DESC-1 | Describe a prepared statement, cursor 0, answered by Prepared | `[PROTOCOL Describe 'Y']` | done |
+| P-DESC-2 | Describe an open cursor, answered by Description | `[PROTOCOL Describe 'Y']` | done |
 
 ### Ping 'G'
 
@@ -390,16 +390,16 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-RESET-1 | Reset: the transaction rolled back; prepared statements, cursors, a copy, temporary tables and settings gone; the authentication and cancel key kept | `[PROTOCOL Reset 'W']` | not yet |
-| P-RESET-2 | Its replies: Notice 01T01 if a transaction was active, with `notices`; a Status of each setting, with `status`; a Complete saying no transaction is active | `[PROTOCOL Reset 'W']` | not yet |
+| P-RESET-1 | Reset: the transaction rolled back; prepared statements, cursors, a copy, temporary tables and settings gone; the authentication and cancel key kept | `[PROTOCOL Reset 'W']` | done |
+| P-RESET-2 | Its replies: Notice 01T01 if a transaction was active, with `notices`; a Status of each setting, with `status`; a Complete saying no transaction is active | `[PROTOCOL Reset 'W']` | done |
 
 ### ChangeUser 'U'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-CHUSER-1 | ChangeUser: user, mechanism, initial bytes, then the same Challenge and Answer steps as Hello's | `[PROTOCOL ChangeUser 'U']` | not yet |
-| P-CHUSER-2 | Accepted: the session renewed as by Reset, under a new cancel key; the Notice and Statuses, then Ready with the same capabilities | `[PROTOCOL ChangeUser 'U']` | not yet |
-| P-CHUSER-3 | Refused: the connection fails | `[PROTOCOL ChangeUser 'U']` | not yet |
+| P-CHUSER-1 | ChangeUser: user, mechanism, initial bytes, then the same Challenge and Answer steps as Hello's | `[PROTOCOL ChangeUser 'U']` | done |
+| P-CHUSER-2 | Accepted: the session renewed as by Reset, under a new cancel key; the Notice and Statuses, then Ready with the same capabilities | `[PROTOCOL ChangeUser 'U']` | done |
+| P-CHUSER-3 | Refused: the connection fails | `[PROTOCOL ChangeUser 'U']` | done |
 
 ### CopyIn 'I'
 
@@ -441,7 +441,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-PREPD-1 | Prepared: statement, parameters in the order of their `?` marks, columns (none of a statement not a query) | `[PROTOCOL Prepared 'P']` | done |
-| P-PREPD-2 | Parameters are a statement's inputs alone; a CALL's columns are one for each `?` of an OUT or INOUT parameter, in the procedure's parameter order, named and typed as each; an INOUT `?` is both a parameter and a column | `[PROTOCOL Prepared 'P']` | not yet |
+| P-PREPD-2 | Parameters are a statement's inputs alone; a CALL's columns are one for each `?` of an OUT or INOUT parameter, in the procedure's parameter order, named and typed as each; an INOUT `?` is both a parameter and a column | `[PROTOCOL Prepared 'P']` | done |
 
 ### Description 'D'
 
@@ -466,11 +466,11 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-COMPL-1 | Complete: SQLCODE 0 or 100, SQLSTATE, active flag, tail 4, 5, 6, 16, 17, 18 | `[PROTOCOL Complete 'K']` | done |
-| P-COMPL-2 | Tag 4, the log position of the commit the statement made | `[PROTOCOL Complete 'K']` | not yet |
-| P-COMPL-3 | Tag 6, the rows a statement changed, or a query's rows in all at its end | `[PROTOCOL Complete 'K']` | not yet |
-| P-COMPL-4 | Tag 16, each identity value an INSERT generated, as SQL writes it, in the order of its rows | `[PROTOCOL Complete 'K']` | not yet |
-| P-COMPL-5 | Tag 17, each condition the statement raised, a failure as bytes, its own tail ending where its length does | `[PROTOCOL Complete 'K']` | not yet |
-| P-COMPL-6 | Tag 18, with `row-counts`, the server's time in microseconds: total, queued, locks | `[PROTOCOL Complete 'K']` | not yet |
+| P-COMPL-2 | Tag 4, the log position of the commit the statement made | `[PROTOCOL Complete 'K']` | done |
+| P-COMPL-3 | Tag 6, the rows a statement changed, or a query's rows in all at its end | `[PROTOCOL Complete 'K']` | done |
+| P-COMPL-4 | Tag 16, each identity value an INSERT generated, as SQL writes it, in the order of its rows | `[PROTOCOL Complete 'K']` | done |
+| P-COMPL-5 | Tag 17, each condition the statement raised, a failure as bytes, its own tail ending where its length does | `[PROTOCOL Complete 'K']` | done |
+| P-COMPL-6 | Tag 18, with `row-counts`, the server's time in microseconds: total, queued, locks | `[PROTOCOL Complete 'K']` | done |
 
 ### Error 'E'
 
@@ -497,7 +497,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-STATUS-1 | Status: name, value as SQL writes it, empty for a null | `[PROTOCOL Status 'T']` | done |
-| P-STATUS-2 | One of each at login and after Reset or ChangeUser; after a statement, one of each it changed; a setting reset told at the database's value | `[PROTOCOL Status 'T']` | not yet |
+| P-STATUS-2 | One of each at login and after Reset or ChangeUser; after a statement, one of each it changed; a setting reset told at the database's value | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-3 | AUTHORIZATION | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-4 | SCHEMA | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-5 | READ_ONLY, YES or NO | `[PROTOCOL Status 'T']` | done |
@@ -506,7 +506,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-STATUS-8 | CATALOG (gap G2) | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-9 | OWNER, YES or NO (gap G2) | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-10 | Every setting a session may set for itself, SESSION.TIME_ZONE and TRANSACTION.ISOLATION among them | `[PROTOCOL Status 'T']` | done |
-| P-STATUS-11 | At login before Ready, and after Reset or ChangeUser before the reply that ends it, one of each name in the page's table, in its order, then the session's own settings; after a statement only what it changed, before its completion; CATALOG empty if null | `[PROTOCOL Status 'T']` | not yet |
+| P-STATUS-11 | At login before Ready, and after Reset or ChangeUser before the reply that ends it, one of each name in the page's table, in its order, then the session's own settings; after a statement only what it changed, before its completion; CATALOG empty if null | `[PROTOCOL Status 'T']` | done |
 
 ### Pong 'G'
 
@@ -518,21 +518,21 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-CONV-1 | A statement's replies in their order: Rows, then Notices, then Statuses, then Complete, Error or Suspended | `[PROTOCOL Conversations]` | not yet |
-| P-CONV-2 | A statement under autocommit, one Query with `ends` set | `[PROTOCOL Conversations]` | not yet |
-| P-CONV-3 | A cursor read in parts, its transaction ended by the Fetch with `fetch-ends` | `[PROTOCOL Conversations]` | not yet |
+| P-CONV-1 | A statement's replies in their order: Rows, then Notices, then Statuses, then Complete, Error or Suspended | `[PROTOCOL Conversations]` | done |
+| P-CONV-2 | A statement under autocommit, one Query with `ends` set | `[PROTOCOL Conversations]` | done |
+| P-CONV-3 | A cursor read in parts, its transaction ended by the Fetch with `fetch-ends` | `[PROTOCOL Conversations]` | done |
 | P-CONV-4 | A copy | `[PROTOCOL Conversations]` | not yet |
 | P-CONV-5 | A copy whose row breaks a constraint | `[PROTOCOL Conversations]` | not yet |
-| P-CONV-6 | A reset of a session in a transaction | `[PROTOCOL Conversations]` | not yet |
+| P-CONV-6 | A reset of a session in a transaction | `[PROTOCOL Conversations]` | done |
 
 ### Errors and notices
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-ERRN-1 | Severity ERROR, FATAL, WARNING or NOTICE | `[PROTOCOL Errors and notices]` | not yet |
-| P-ERRN-2 | A statement's conditions told one way: in Complete with `conditions`, else as Notices with `notices`, else not at all; a failing statement's as Notices | `[PROTOCOL Errors and notices]` | not yet |
-| P-ERRN-3 | The server's own notices always as a Notice | `[PROTOCOL Errors and notices]` | not yet |
-| P-ERRN-4 | SQLSTATE 01T01, Reset or ChangeUser rolled back the transaction, a Notice of severity NOTICE | `[PROTOCOL Errors and notices]` | not yet |
+| P-ERRN-1 | Severity ERROR, FATAL, WARNING or NOTICE | `[PROTOCOL Errors and notices]` | done |
+| P-ERRN-2 | A statement's conditions told one way: in Complete with `conditions`, else as Notices with `notices`, else not at all; a failing statement's as Notices | `[PROTOCOL Errors and notices]` | done |
+| P-ERRN-3 | The server's own notices always as a Notice | `[PROTOCOL Errors and notices]` | done |
+| P-ERRN-4 | SQLSTATE 01T01, Reset or ChangeUser rolled back the transaction, a Notice of severity NOTICE | `[PROTOCOL Errors and notices]` | done |
 | P-ERRN-5 | SQLSTATE TBR01, SQLCODE -920, a replica that had not applied REPLICATION.READ_AFTER's position in time | `[PROTOCOL Errors and notices]` | not yet |
 | P-ERRN-6 | A malformed message, a request not granted, a frame too long or a request out of turn fails the connection (SQLCODE -919, SQLSTATE 08006) | `[PROTOCOL Errors and notices]` | done |
 
@@ -586,25 +586,25 @@ From `doc/client/02-library.md`, The Client Library.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-RUN-1 | Run a statement: a query's columns and rows, or another statement's completion, its SQLCODE and SQLSTATE | `[CLIENT Running statements]` | not yet |
-| C-RUN-2 | A failure: SQLCODE, SQLSTATE, message, the rule it cites apart, its position | `[CLIENT Running statements]` | not yet |
-| C-RUN-3 | A query's rows given a batch at a time, as they come | `[CLIENT Running statements]` | not yet |
-| C-RUN-4 | Every value: exact, approximate, character, binary, datetime, interval, a plug-in's, null | `[CLIENT Running statements]` | not yet |
-| C-RUN-5 | Whether the session's transaction is active, as the server said after the last statement | `[CLIENT Running statements]` | not yet |
+| C-RUN-1 | Run a statement: a query's columns and rows, or another statement's completion, its SQLCODE and SQLSTATE | `[CLIENT Running statements]` | done |
+| C-RUN-2 | A failure: SQLCODE, SQLSTATE, message, the rule it cites apart, its position | `[CLIENT Running statements]` | done |
+| C-RUN-3 | A query's rows given a batch at a time, as they come | `[CLIENT Running statements]` | done |
+| C-RUN-4 | Every value: exact, approximate, character, binary, datetime, interval, a plug-in's, null | `[CLIENT Running statements]` | done |
+| C-RUN-5 | Whether the session's transaction is active, as the server said after the last statement | `[CLIENT Running statements]` | done |
 | C-RUN-6 | Cancel from another thread, giving up after 10 seconds, or a limit of the program's | `[CLIENT Running statements]` | done |
-| C-RUN-7 | A transaction begun by the first statement, lasting until COMMIT or ROLLBACK | `[CLIENT Running statements]` | not yet |
-| C-RUN-8 | Autocommit: each statement its own transaction, by `ends`, with no COMMIT sent | `[CLIENT Running statements]` | not yet |
+| C-RUN-7 | A transaction begun by the first statement, lasting until COMMIT or ROLLBACK | `[CLIENT Running statements]` | done |
+| C-RUN-8 | Autocommit: each statement its own transaction, by `ends`, with no COMMIT sent | `[CLIENT Running statements]` | done |
 
 ### Prepared statements
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-PREP-1 | Prepare, its dynamic parameters written `?` | `[CLIENT Prepared statements]` | not yet |
-| C-PREP-2 | Execute with values, as many times as wanted | `[CLIENT Prepared statements]` | not yet |
-| C-PREP-3 | The type each parameter takes, and a query's columns | `[CLIENT Prepared statements]` | not yet |
-| C-PREP-4 | Open a cursor and take its first rows, fetch the next batch, close it | `[CLIENT Prepared statements]` | not yet |
-| C-PREP-5 | Deallocate | `[CLIENT Prepared statements]` | not yet |
-| C-PREP-6 | A prepared statement valid across transactions | `[CLIENT Prepared statements]` | not yet |
+| C-PREP-1 | Prepare, its dynamic parameters written `?` | `[CLIENT Prepared statements]` | done |
+| C-PREP-2 | Execute with values, as many times as wanted | `[CLIENT Prepared statements]` | done |
+| C-PREP-3 | The type each parameter takes, and a query's columns | `[CLIENT Prepared statements]` | done |
+| C-PREP-4 | Open a cursor and take its first rows, fetch the next batch, close it | `[CLIENT Prepared statements]` | done |
+| C-PREP-5 | Deallocate | `[CLIENT Prepared statements]` | done |
+| C-PREP-6 | A prepared statement valid across transactions | `[CLIENT Prepared statements]` | done |
 
 ### Large objects
 
@@ -624,17 +624,17 @@ From `doc/client/02-library.md`, The Client Library.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-XML-1 | An XML value read as its serialization, its text | `[CLIENT XML values]` | not yet |
-| C-XML-2 | Its nodes parsed from it | `[CLIENT XML values]` | not yet |
-| C-XML-3 | An XML parameter made of its text | `[CLIENT XML values]` | not yet |
-| C-XML-4 | A value the server cannot serialize fails the fetch (SQLSTATE 2200W) | `[CLIENT XML values]` | not yet |
+| C-XML-1 | An XML value read as its serialization, its text | `[CLIENT XML values]` | done |
+| C-XML-2 | Its nodes parsed from it | `[CLIENT XML values]` | done |
+| C-XML-3 | An XML parameter made of its text | `[CLIENT XML values]` | done |
+| C-XML-4 | A value the server cannot serialize fails the fetch (SQLSTATE 2200W) | `[CLIENT XML values]` | done |
 
 ### UUIDs
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-UUID-1 | A UUID read, whatever types the program registered: its 16 octets and its text | `[CLIENT UUIDs]` | not yet |
-| C-UUID-2 | A UUID parameter made of its octets or of its text | `[CLIENT UUIDs]` | not yet |
+| C-UUID-1 | A UUID read, whatever types the program registered: its 16 octets and its text | `[CLIENT UUIDs]` | done |
+| C-UUID-2 | A UUID parameter made of its octets or of its text | `[CLIENT UUIDs]` | done |
 
 ### Importing
 
@@ -655,35 +655,35 @@ From `doc/client/02-library.md`, The Client Library.
 | C-ASK-1 | Every capability but compression asked for by default | `[CLIENT What a connection asks for]` | done |
 | C-ASK-2 | An offer of the program's own: none, compression, connection attributes | `[CLIENT What a connection asks for]` | done |
 | C-ASK-3 | What was granted | `[CLIENT What a connection asks for]` | done |
-| C-ASK-4 | A method needing a capability not granted fails before it sends anything | `[CLIENT What a connection asks for]` | not yet |
+| C-ASK-4 | A method needing a capability not granted fails before it sends anything | `[CLIENT What a connection asks for]` | done |
 
 ### What the server tells
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | C-TOLD-1 | A session setting as the server last told it, and all of them, with no round trip | `[CLIENT What the server tells]` | done |
-| C-TOLD-2 | Notices given to a handler as they come; with none, the last 64 kept and taken | `[CLIENT What the server tells]` | not yet |
-| C-TOLD-3 | The last statement's conditions, with `conditions` | `[CLIENT What the server tells]` | not yet |
-| C-TOLD-4 | The rows a statement changed, or a query returned | `[CLIENT What the server tells]` | not yet |
-| C-TOLD-5 | The identity values an INSERT generated, in the order of its rows | `[CLIENT What the server tells]` | not yet |
-| C-TOLD-6 | The server's time for the statement: total, queued, locks | `[CLIENT What the server tells]` | not yet |
-| C-TOLD-7 | The log position of the last commit | `[CLIENT What the server tells]` | not yet |
-| C-TOLD-8 | A failure's diagnostics: severity, detail, hint, context, schema, table, column, data type, constraint | `[CLIENT What the server tells]` | not yet |
-| C-TOLD-9 | Under autocommit with `fetch-ends`, a cursor's transaction ended as it ends: the last row's fetch commits, a failing fetch rolls back, close commits | `[CLIENT What the server tells]` | not yet |
+| C-TOLD-2 | Notices given to a handler as they come; with none, the last 64 kept and taken | `[CLIENT What the server tells]` | done |
+| C-TOLD-3 | The last statement's conditions, with `conditions` | `[CLIENT What the server tells]` | done |
+| C-TOLD-4 | The rows a statement changed, or a query returned | `[CLIENT What the server tells]` | done |
+| C-TOLD-5 | The identity values an INSERT generated, in the order of its rows | `[CLIENT What the server tells]` | done |
+| C-TOLD-6 | The server's time for the statement: total, queued, locks | `[CLIENT What the server tells]` | done |
+| C-TOLD-7 | The log position of the last commit | `[CLIENT What the server tells]` | done |
+| C-TOLD-8 | A failure's diagnostics: severity, detail, hint, context, schema, table, column, data type, constraint | `[CLIENT What the server tells]` | done |
+| C-TOLD-9 | Under autocommit with `fetch-ends`, a cursor's transaction ended as it ends: the last row's fetch commits, a failing fetch rolls back, close commits | `[CLIENT What the server tells]` | done |
 
 ### Controlling the session
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-CTRL-1 | Ping | `[CLIENT Controlling the session]` | not yet |
-| C-CTRL-2 | Reset | `[CLIENT Controlling the session]` | not yet |
-| C-CTRL-3 | Change user | `[CLIENT Controlling the session]` | not yet |
-| C-CTRL-4 | A transaction either rolls back told by notice 01T01 | `[CLIENT Controlling the session]` | not yet |
-| C-CTRL-5 | Query attributes carried by every later statement, until set again | `[CLIENT Controlling the session]` | not yet |
-| C-CTRL-6 | Several statements as one request: each outcome, and the failure that stopped the rest | `[CLIENT Controlling the session]` | not yet |
-| C-CTRL-7 | Describe a prepared statement again | `[CLIENT Controlling the session]` | not yet |
-| C-CTRL-8 | Several numbered cursors of one statement open at once | `[CLIENT Controlling the session]` | not yet |
-| C-CTRL-9 | Describe an open cursor's columns | `[CLIENT Controlling the session]` | not yet |
+| C-CTRL-1 | Ping | `[CLIENT Controlling the session]` | done |
+| C-CTRL-2 | Reset | `[CLIENT Controlling the session]` | done |
+| C-CTRL-3 | Change user | `[CLIENT Controlling the session]` | done |
+| C-CTRL-4 | A transaction either rolls back told by notice 01T01 | `[CLIENT Controlling the session]` | done |
+| C-CTRL-5 | Query attributes carried by every later statement, until set again | `[CLIENT Controlling the session]` | done |
+| C-CTRL-6 | Several statements as one request: each outcome, and the failure that stopped the rest | `[CLIENT Controlling the session]` | done |
+| C-CTRL-7 | Describe a prepared statement again | `[CLIENT Controlling the session]` | done |
+| C-CTRL-8 | Several numbered cursors of one statement open at once | `[CLIENT Controlling the session]` | done |
+| C-CTRL-9 | Describe an open cursor's columns | `[CLIENT Controlling the session]` | done |
 
 ### Copying and exporting
 
