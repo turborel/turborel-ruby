@@ -4,15 +4,27 @@
 # must pass (RULES.md R-PROC-1). Tasks are Ruby, never shell scripts
 # (R-PROC-5), so each runs alike on Linux, macOS and Windows.
 
-require "minitest/test_task"
+require "open3"
 require "rubocop/rake_task"
 
-# The tests (R-TEST-1), with Ruby's warnings on; test_helper.rb makes a
-# warning about lib/ fail its test (R-LINT-1).
-Minitest::TestTask.create(:test) do |t|
-  t.libs << "lib"
-  t.warning = true
-  t.test_globs = ["test/**/*_test.rb"]
+# The most lines of a failed run's output told as an annotation.
+ANNOTATED_LINES = 40
+
+desc "Run the tests, with Ruby's warnings on (R-TEST-1, R-LINT-1)"
+task :test do
+  # A process of its own, its arguments given as a list, so no shell reads
+  # them on any platform; test_helper.rb makes a warning about lib/ fail
+  # its test.
+  files = Dir.glob("test/**/*_test.rb")
+  script = "ARGV.each { |file| require File.expand_path(file) }"
+  output, status = Open3.capture2e(Gem.ruby, "-w", "-Ilib", "-Itest", "-rminitest/autorun", "-e", script, *files)
+  $stdout.write(output)
+  next if status.success?
+
+  # A job's log is not public on GitHub's runners, its annotations are.
+  tail = output.lines.last(ANNOTATED_LINES).join.gsub("%", "%25").gsub(/\r?\n/, "%0A")
+  puts "::error title=tests on #{RUBY_PLATFORM} #{RUBY_VERSION}::#{tail}" if ENV.fetch("GITHUB_ACTIONS", nil)
+  abort "the tests failed"
 end
 
 # Lint and format, in one (R-STYLE-1, R-LINT-1).
