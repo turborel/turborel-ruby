@@ -1,0 +1,30 @@
+module Turborel
+  def self.connect: (?(String | Client::Settings)? uri, **untyped options) ?{ (String name) -> String? } -> Connection
+
+  # A connection of the plain API.
+  class Connection
+    @prepared: Hash[String, Client::Statement]
+
+    attr_reader client: Client::Connection
+
+    def initialize: (Client::Connection client) -> void
+    def exec: (String sql) -> Result
+    def exec_params: (String sql, Array[untyped] params) -> Result
+    def prepare: (String name, String sql) -> Result
+    def exec_prepared: (String name, ?Array[untyped] params) -> Result
+    def deallocate: (String name) -> void
+    def transaction: [T] () { (Connection connection) -> T } -> T
+    def autocommit: () -> bool
+    def autocommit=: (bool on) -> void
+    def in_transaction?: () -> bool
+    def finished?: () -> bool
+    def close: () -> void
+    alias finish close
+    def inspect: () -> String
+
+    private
+
+    def prepared: (String name) -> Client::Statement
+    def params_of: (untyped params) -> Array[untyped]
+  end
+end

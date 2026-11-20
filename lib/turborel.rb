@@ -66,6 +66,9 @@ require_relative "turborel/client/failover"
 require_relative "turborel/client/pool"
 require_relative "turborel/client/scram"
 
+require_relative "turborel/api/connection"
+require_relative "turborel/api/result"
+
 require_relative "turborel/import"
 require_relative "turborel/import/assign"
 require_relative "turborel/import/copied"

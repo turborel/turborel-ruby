@@ -1,0 +1,28 @@
+module Turborel
+  # What a statement of the plain API gave.
+  class Result
+    include Enumerable[Hash[String?, untyped]]
+
+    attr_reader columns: Array[Column]
+    attr_reader values: Array[Array[untyped]]
+    attr_reader completion: Client::Completion?
+
+    def initialize: (Client::Rows | Client::Completion outcome) -> void
+    def fields: () -> Array[String?]
+    def ntuples: () -> Integer
+    def nfields: () -> Integer
+    def cmd_tuples: () -> Integer?
+    def sqlstate: () -> String
+    def each: () { (Hash[String?, untyped] row) -> void } -> self
+            | () -> Enumerator[Hash[String?, untyped], self]
+    def []: (Integer index) -> Hash[String?, untyped]?
+    def getvalue: (Integer row, Integer column) -> untyped
+    def column_values: (Integer column) -> Array[untyped]
+    def field_values: (String name) -> Array[untyped]
+    def inspect: () -> String
+
+    private
+
+    def outside: (String what, Integer index) -> Error
+  end
+end
