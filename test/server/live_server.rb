@@ -5,7 +5,10 @@ require "tmpdir"
 
 module Turborel
   # A turboreld of the live tests' own (RULES.md R-TEST-7, R-TEST-8): the
-  # binary TURBOREL_TEST_SERVER names, started once on loopback on its own
+  # binary TURBOREL_TEST_SERVER names, or a container of the image it names
+  # after "docker:", as docker:ghcr.io/turborel/turborel:nightly, run with
+  # the host's network and the data directory mounted at its own path;
+  # started once on loopback on its own
   # port and data directory, with test certificates made here, users that
   # prove themselves by SCRAM, a password or a certificate, and
   # SERVER.TRUST_LOCAL ON; stopped as the tests end. Without
@@ -24,6 +27,8 @@ module Turborel
     PIPE = "\\\\.\\pipe\\turborel-ruby-test"
     # What the server says once it listens.
     LISTENING = "listening at"
+    # What names an image rather than a binary.
+    DOCKER = "docker:"
 
     # A live server that cannot be set up.
     class Failed < StandardError; end
@@ -62,8 +67,8 @@ module Turborel
 
     # Adds +user+ of +password+ to the database in +dir+, ANN its owner.
     def self.add_user(dir, user, password)
-      args = [ENV.fetch(BINARY), "--dir", File.join(dir, "db"), "--set", "SERVER.PASSWORD_ITERATIONS=10000",
-              "user", "add", user]
+      args = command(dir, "--dir", File.join(dir, "db"), "--set", "SERVER.PASSWORD_ITERATIONS=10000",
+                     "user", "add", user)
       args << "--owner" if user == "ann"
       IO.popen(args, "r+", err: File::NULL) do |io|
         io.puts(password, password)
@@ -82,11 +87,25 @@ module Turborel
                    "TLS_CERTIFICATE" => certificates[:server], "TLS_KEY" => certificates[:server_key],
                    "TLS_CLIENT_CA" => certificates[:ca] }
       sets = settings.flat_map { |name, value| ["--set", "SERVER.#{name}=#{value}"] }
-      pid = Process.spawn(ENV.fetch(BINARY), "--dir", File.join(dir, "db"), *sets,
-                          "--log", File.join(dir, "server.log"), out: log, err: log)
+      pid = Process.spawn(*command(dir, "--dir", File.join(dir, "db"), *sets, "--log", File.join(dir, "server.log")),
+                          out: log, err: log)
       wait_listening(pid, log)
       pid
     end
+
+    # The command that runs turboreld with +args+: the binary itself, or a
+    # container of the image named, as the user running the tests so the
+    # files it writes in +dir+ are theirs, and named so it can be stopped.
+    def self.command(dir, *args)
+      server = ENV.fetch(BINARY)
+      return [server, *args] unless server.start_with?(DOCKER)
+
+      ["docker", "run", "--rm", "-i", "--network", "host", "--user", "#{Process.uid}:#{Process.gid}",
+       "-v", "#{dir}:#{dir}", "--name", container, server.delete_prefix(DOCKER), *args]
+    end
+
+    # The name of the server's container, of this process.
+    def self.container = "turborel-ruby-#{Process.pid}"
 
     # Waits until the server's output says it listens.
     def self.wait_listening(pid, log)
@@ -101,7 +120,11 @@ module Turborel
 
     # Stops the server, waiting on its own process, and removes its files.
     def self.stop(pid, dir)
-      Process.kill(Gem.win_platform? ? :KILL : :TERM, pid)
+      if ENV.fetch(BINARY).start_with?(DOCKER)
+        system("docker", "kill", container, out: File::NULL, err: File::NULL)
+      else
+        Process.kill(Gem.win_platform? ? :KILL : :TERM, pid)
+      end
       Process.wait(pid)
     rescue Errno::ESRCH, Errno::ECHILD
       nil

@@ -2,6 +2,14 @@
 # driver claims to run on and each Ruby it supports (D3, R-PLAT-1), plus
 # coverage and its floors (R-COV). setup-ruby installs the gems
 # Gemfile.lock pins (D10), and caches them.
+#
+# The live tests (R-TEST-8) run on Linux, against Turborel's nightly image,
+# started by test/server/live_server.rb with the host's network, its
+# certificates made for the run. macOS and Windows runners have no Linux
+# container engine, and the nightly pre-release's binaries are built only
+# when Turborel's main passes its checks, so they may predate the protocol
+# this driver speaks; there the live tests skip, as they do wherever
+# TURBOREL_TEST_SERVER is not set.
 name: verify
 
 # A pull request is checked once, through pull_request, and main again once
@@ -19,6 +27,9 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  NIGHTLY: ghcr.io/turborel/turborel:nightly
+
 jobs:
   verify:
     strategy:
@@ -33,33 +44,11 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      # The live tests' server (R-TEST-8): turboreld of Turborel's nightly
-      # pre-release, built for each platform from the same commit of main as
-      # the image ghcr.io/turborel/turborel:nightly, run here natively by
-      # the tests' own set-up (test/server/live_server.rb) on this runner,
-      # so the same live tests run on Linux, macOS and Windows.
-      - name: Fetch turboreld (Linux, macOS)
-        if: runner.os != 'Windows'
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Take the nightly server (Linux)
+        if: runner.os == 'Linux'
         run: |
-          case "$RUNNER_OS" in
-            Linux) target=x86_64-unknown-linux-gnu ;;
-            macOS) target=aarch64-apple-darwin ;;
-          esac
-          gh release download nightly -R turborel/turborel -p "turborel-nightly-$target.tar.gz" -D "$RUNNER_TEMP"
-          tar -xzf "$RUNNER_TEMP/turborel-nightly-$target.tar.gz" -C "$RUNNER_TEMP"
-          echo "TURBOREL_TEST_SERVER=$RUNNER_TEMP/turborel-nightly-$target/turboreld" >> "$GITHUB_ENV"
-      - name: Fetch turboreld (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          $target = "x86_64-pc-windows-msvc"
-          gh release download nightly -R turborel/turborel -p "turborel-nightly-$target.zip" -D $env:RUNNER_TEMP
-          Expand-Archive -Path "$env:RUNNER_TEMP/turborel-nightly-$target.zip" -DestinationPath $env:RUNNER_TEMP
-          "TURBOREL_TEST_SERVER=$env:RUNNER_TEMP/turborel-nightly-$target/turboreld.exe" | Out-File -Append $env:GITHUB_ENV
+          docker pull "$NIGHTLY"
+          echo "TURBOREL_TEST_SERVER=docker:$NIGHTLY" >> "$GITHUB_ENV"
       # The checks of `rake verify`, a step each, so a failure names its
       # check.
       - name: RuboCop
@@ -84,21 +73,9 @@ jobs:
         with:
           ruby-version: "3.3"
           bundler-cache: true
-      # The live tests' server (R-TEST-8): turboreld of Turborel's nightly
-      # pre-release, built for each platform from the same commit of main as
-      # the image ghcr.io/turborel/turborel:nightly, run here natively by
-      # the tests' own set-up (test/server/live_server.rb) on this runner,
-      # so the same live tests run on Linux, macOS and Windows.
-      - name: Fetch turboreld (Linux, macOS)
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Take the nightly server
         run: |
-          case "$RUNNER_OS" in
-            Linux) target=x86_64-unknown-linux-gnu ;;
-            macOS) target=aarch64-apple-darwin ;;
-          esac
-          gh release download nightly -R turborel/turborel -p "turborel-nightly-$target.tar.gz" -D "$RUNNER_TEMP"
-          tar -xzf "$RUNNER_TEMP/turborel-nightly-$target.tar.gz" -C "$RUNNER_TEMP"
-          echo "TURBOREL_TEST_SERVER=$RUNNER_TEMP/turborel-nightly-$target/turboreld" >> "$GITHUB_ENV"
+          docker pull "$NIGHTLY"
+          echo "TURBOREL_TEST_SERVER=docker:$NIGHTLY" >> "$GITHUB_ENV"
       - name: Coverage
         run: bundle exec rake coverage

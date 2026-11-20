@@ -19,6 +19,7 @@ module Turborel
         server = FakeServer.new do |peer|
           kind, body = peer.frame
           peer.ready
+          peer.frame
           [kind, body]
         end
         connect(server).terminate
@@ -61,6 +62,7 @@ module Turborel
           peer.write(Protocol::Frame.encode("C".ord, Protocol::Writer.new.bytes("ab").to_s))
           answer = peer.frame
           peer.ready
+          peer.frame
           answer
         end
         connect(server, mechanism:).terminate
