@@ -1,0 +1,30 @@
+module Turborel
+  # What a failure says beyond its SQLSTATE and message.
+  class Diagnostics < Data
+    attr_reader severity: String?
+    attr_reader detail: String?
+    attr_reader hint: String?
+    attr_reader context: String?
+    attr_reader schema: String?
+    attr_reader table: String?
+    attr_reader column: String?
+    attr_reader data_type: String?
+    attr_reader constraint: String?
+    def self.new: (severity: String?, detail: String?, hint: String?, context: String?, schema: String?,
+                   table: String?, column: String?, data_type: String?, constraint: String?) -> instance
+                | (**String?) -> instance
+  end
+
+  # A failure as turborel reports one.
+  class Failure < Data
+    attr_reader sqlcode: Integer
+    attr_reader sqlstate: String
+    attr_reader message: String
+    attr_reader rule: String?
+    attr_reader position: Integer?
+    attr_reader active: bool
+    attr_reader diagnostics: Diagnostics?
+    def self.new: (sqlcode: Integer, sqlstate: String, message: String, rule: String?, position: Integer?,
+                   active: bool, diagnostics: Diagnostics?) -> instance
+  end
+end

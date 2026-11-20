@@ -3,14 +3,26 @@ module Turborel
   class Error < StandardError
     CONNECTION_FAILURE_SQLCODE: Integer
     CONNECTION_FAILURE_SQLSTATE: String
+    DATA_EXCEPTION_SQLCODE: Integer
+    OUT_OF_RANGE_SQLSTATE: String
+    NOT_IN_REPERTOIRE_SQLSTATE: String
+    DYNAMIC_SQL_SQLCODE: Integer
+    RESTRICTED_TYPE_SQLSTATE: String
 
-    attr_reader sqlcode: Integer
-    attr_reader sqlstate: String
-    attr_reader rule: String?
-    attr_reader position: Integer?
+    attr_reader failure: Failure
 
-    def initialize: (String message, sqlcode: Integer, sqlstate: String, ?rule: String?, ?position: Integer?) -> void
+    def initialize: (Failure failure) -> void
+    def sqlcode: () -> Integer
+    def sqlstate: () -> String
+    def rule: () -> String?
+    def position: () -> Integer?
+    def active: () -> bool
+    def diagnostics: () -> Diagnostics?
 
+    def self.of: (Integer sqlcode, String sqlstate, String message) -> Error
     def self.connection_failure: (String message) -> Error
+    def self.out_of_range: (String message) -> Error
+    def self.not_in_repertoire: (String message) -> Error
+    def self.unsupported: (String message) -> Error
   end
 end

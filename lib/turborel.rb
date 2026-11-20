@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
+# Each group needs only those above it as it loads.
 require_relative "turborel/error"
-require_relative "turborel/protocol/frame"
+require_relative "turborel/failure"
 require_relative "turborel/version"
+
+require_relative "turborel/protocol/frame"
 
 # The Ruby driver for turborel, a relational database system. It speaks
 # turborel's native protocol, version 1, itself, in Ruby alone, with no
