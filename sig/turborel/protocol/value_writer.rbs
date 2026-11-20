@@ -6,6 +6,7 @@ module Turborel
 
       def self.write: (Writer writer, untyped value, ?Integer depth) -> void
       def self.row_values: (Writer writer, Array[untyped] values, ?Integer depth) -> void
+      def self.contained: (Writer writer, Array[untyped] values, Integer depth) -> void
       def self.null: (Writer writer, nil _value, Integer _depth) -> void
       def self.string: (Writer writer, String value, Integer _depth) -> void
       def self.integer: (Writer writer, Integer value, Integer _depth) -> void

@@ -29,14 +29,13 @@ module Turborel
       #
       # @param writer [Writer]
       # @param value [Object] a Ruby value
-      # @param depth [Integer] how deep within arrays and rows it is
+      # @param depth [Integer] how many arrays, rows, multisets and
+      #   structured values it is within
       # @return [void]
       # @raise [Error] SQLSTATE 22000 of a value of no class the driver
-      #   sends; 0A000 of one nested too deep; 22003 of a number out of
-      #   range
+      #   sends; 0A000 of one nested deeper than a reader takes; 22003 of a
+      #   number out of range
       def self.write(writer, value, depth = 0)
-        raise Error.beyond("a value's arrays and rows are nested too deep") if depth > Reader::MAX_NESTING
-
         klass = value.class.ancestors.find { |ancestor| WRITERS.key?(ancestor) }
         raise Error.data_exception("a value of #{value.class} cannot be sent") unless klass
 
@@ -52,7 +51,19 @@ module Turborel
       # @return [void]
       def self.row_values(writer, values, depth = 0)
         writer.u32(values.size)
-        values.each { |value| write(writer, value, depth + 1) }
+        values.each { |value| write(writer, value, depth) }
+      end
+
+      # Writes +values+, the parts of an array, row, multiset or structured
+      # value at +depth+, a level within it: refused where a reader would
+      # refuse them, the container itself MAX_NESTING deep.
+      #
+      # @api private
+      # @return [void]
+      def self.contained(writer, values, depth)
+        raise Error.beyond("a value's arrays and rows are nested too deep") if depth >= Reader::MAX_NESTING
+
+        row_values(writer, values, depth + 1)
       end
 
       # @return [void]
@@ -107,7 +118,7 @@ module Turborel
       # @return [void]
       def self.array(writer, value, depth)
         writer.u8(Values::ARRAY)
-        row_values(writer, value, depth)
+        contained(writer, value, depth)
       end
 
       # @return [void]
@@ -177,19 +188,19 @@ module Turborel
       # @return [void]
       def self.row(writer, value, depth)
         writer.u8(Values::ROW)
-        row_values(writer, value.values, depth)
+        contained(writer, value.values, depth)
       end
 
       # @return [void]
       def self.multiset(writer, value, depth)
         writer.u8(Values::MULTISET)
-        row_values(writer, value.values, depth)
+        contained(writer, value.values, depth)
       end
 
       # @return [void]
       def self.structured(writer, value, depth)
         writer.u8(Values::STRUCTURED).str(value.schema).str(value.name)
-        row_values(writer, value.attributes, depth)
+        contained(writer, value.attributes, depth)
       end
 
       # @return [void]

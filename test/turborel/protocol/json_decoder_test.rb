@@ -100,8 +100,12 @@ module Turborel
         128.times { deep = [deep] }
 
         assert_equal deep, JsonBinary.decode(JsonBinary.encode(deep))
-        too_deep = JsonBinary.encode(deep).sub("\x01".b, "\x01\x0A\x01\x00\x00\x00".b)
-        assert_fails { JsonBinary.decode(too_deep) }
+        assert_fails(BEYOND) { JsonBinary.encode([deep]) }
+        # A document one array deeper, built past the encoder's own bound.
+        too_deep = [JsonBinary::FORMAT_VERSION].pack("C") + JsonBinary.encoded([deep], -1)
+        refused = assert_fails { JsonBinary.decode(too_deep) }
+
+        assert_match(/nest too deep/, refused.message)
       end
     end
   end

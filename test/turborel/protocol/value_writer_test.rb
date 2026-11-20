@@ -98,9 +98,27 @@ module Turborel
         assert_fails(DATA_EXCEPTION) { bytes(Lob.new(kind: :text, data: "", locator: nil, octets: 0, characters: 0)) }
         assert_fails(OUT_OF_RANGE) { bytes(DecFloat.new(coefficient: 10, exponent: 0)) }
         assert_fails(OUT_OF_RANGE) { bytes(Uuid.new(octets: "\x00".b * 15)) }
-        nested = nil
-        17.times { nested = [nested] }
+        nested = []
+        16.times { nested = [nested] }
         assert_fails(BEYOND) { bytes(nested) }
+      end
+
+      # Verifies: [PROTOCOL Values] arrays, rows, multisets and structured
+      # values nested as deep as a reader takes them, 16 within each other,
+      # written, and one deeper refused (0A000), in a value alone and in a
+      # row's values alike.
+      def test_nesting_written_as_read
+        deep = 1
+        16.times { deep = [deep] }
+        written = bytes(deep)
+
+        assert_equal deep, ValueReader.read(reader(written))
+        row = Writer.new
+        ValueWriter.row_values(row, [deep])
+        read = reader(row.to_s)
+
+        assert_equal [1, deep], [read.u32, ValueReader.read(read)]
+        assert_fails(BEYOND) { ValueWriter.row_values(Writer.new, [Row.new(values: [deep])]) }
       end
 
       # Verifies: [PROTOCOL Values] a value of a subclass of a class the
