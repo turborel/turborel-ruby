@@ -1,0 +1,107 @@
+module Turborel
+  module Client
+    # Where a server is.
+    class Host < Data
+      attr_reader name: String?
+      attr_reader port: Integer?
+      attr_reader path: String?
+      def self.new: (name: String?, port: Integer?, path: String?) -> instance
+      def self.tcp: (String name, Integer port) -> Host
+      def self.local: (String path) -> Host
+      def local?: () -> bool
+    end
+
+    # The files a connection's TLS is made of.
+    class TlsFiles < Data
+      attr_reader roots: String?
+      attr_reader system_roots: bool
+      attr_reader certificate: String?
+      attr_reader key: String?
+      attr_reader server_name: String?
+      def self.new: (roots: String?, system_roots: bool, certificate: String?, key: String?, server_name: String?) -> instance
+    end
+
+    # How to connect, as settings say.
+    class Settings
+      DEFAULT_HOST: String
+      DEFAULT_SERVICE_FILE: String
+      DEFAULT_PASSFILE: String
+      UNABLE_TO_CONNECT: String
+      WORDS: Hash[String, Array[String]]
+      DEFAULTS: Hash[String, String]
+
+      @hosts: Array[Host]
+      @user: String
+      @password: String?
+      @tls_mode: Symbol
+      @channel_binding: Symbol
+      @application_name: String?
+      @connect_timeout: Integer?
+      @passfile: String?
+      @target: Symbol
+      @load_balance: Symbol
+      @tls: TlsFiles
+      @key_cache: KeyCache
+
+      attr_reader hosts: Array[Host]
+      attr_reader user: String
+      attr_reader password: String?
+      attr_reader tls_mode: Symbol
+      attr_reader channel_binding: Symbol
+      attr_reader application_name: String?
+      attr_reader connect_timeout: Integer?
+      attr_reader passfile: String?
+      attr_reader target: Symbol
+      attr_reader load_balance: Symbol
+      attr_reader tls: TlsFiles
+      attr_reader key_cache: KeyCache
+
+      def self.resolve: (?Options explicit) ?{ (String name) -> String? } -> Settings
+      def self.from_uri: (String uri) ?{ (String name) -> String? } -> Settings
+      def self.service: (untyped file, String name) -> Options
+      def self.invalid: (String message) -> Error
+      def self.at_home: (String name) -> String?
+      def self.hosts: (String text, String ports) -> Array[Host]
+      def self.port_at: (Array[Integer] numbers, Integer index) -> Integer
+      def self.user_of: (Options options) -> String
+      def self.host: (String name, Integer fallback) -> Host
+      def self.bracketed: (String name, Integer fallback) -> Host
+      def self.port: (String key, String text) -> Integer
+      def self.seconds: (String? text) -> Integer?
+      def self.none_kept: (Array[[String, Failure]] tried) -> Error
+      def initialize: (Options options) -> void
+      def password_for: (Host host) -> String?
+      def inspect: () -> String
+      def connect: () -> Connection
+
+      private
+
+      def files: (Options options) -> TlsFiles
+      def words: (Options options) -> void
+      def word: (Options options, String key) -> Symbol
+      def first_of: (Host host, OpenSSL::SSL::SSLContext? context, Array[[String, Failure]] tried) -> Connection?
+      def targets: (Host host, OpenSSL::SSL::SSLContext? context) -> Array[[String, Target | Error]]
+      def target_of: (String address, Integer? port, String server, OpenSSL::SSL::SSLContext? context) -> Target
+      def addresses: (Host host) -> Array[[String, String | Error]]
+      def attempt: (Host host, Target | Error target) -> Connection
+      def opened: (Target target, Timeouts timeouts) -> [Stream, TlsChannel?, Target]
+      def logged_in: (Host host, Target target, [Stream, TlsChannel?] opened, Timeouts timeouts) -> Connection
+      def proof: (Host host, Target target) -> Mechanism
+      def offer: () -> Offer
+      def of_role: (Connection connection) -> void
+    end
+
+    # What a server is to a connection's session.
+    module Role
+      ROLE_QUERY: String
+      SERVER_READ_ONLY: String
+      NO_SUCH_TABLE: Array[String]
+      WORDS: Hash[Symbol, String]
+
+      def self.of: (Connection connection) -> Symbol
+      def self.answer: (Connection connection) -> Symbol
+      def self.asked: (Connection connection) -> Array[Array[value]]?
+      def self.queried: (Connection connection) -> Array[Array[value]]?
+    end
+  end
+end

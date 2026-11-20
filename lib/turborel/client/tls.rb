@@ -81,6 +81,45 @@ module Turborel
         context.key = OpenSSL::PKey.read(File.read(key || certificate))
       end
 
+      # The context of TLS by +mode+ [CLIENT TLS by mode], trusting and
+      # presenting what +files+ name: none of +:disable+; of +:prefer+ and
+      # +:require+ any certificate, the handshake's signatures checked
+      # against its key; of +:verify_ca+ one signed by an authority
+      # trusted, of any name; of +:verify_full+ one signed so and of the
+      # server's name.
+      #
+      # @param mode [Symbol]
+      # @param files [TlsFiles]
+      # @return [OpenSSL::SSL::SSLContext, nil]
+      # @raise [Error] a connection failure if a file cannot be read, a
+      #   verifying mode is asked with no authority trusted, or a client
+      #   certificate is named without its key
+      def self.of_mode(mode, files)
+        return nil if mode == :disable
+
+        if files.certificate && !files.key
+          raise Error.connection_failure("a client certificate is presented with its key, and none is named")
+        end
+        return unverified(files) unless %i[verify_ca verify_full].include?(mode)
+
+        context(roots: files.roots, platform: files.system_roots, certificate: files.certificate, key: files.key)
+          .tap { |made| made.verify_hostname = mode == :verify_full }
+      end
+
+      # A context of prefer and require: no certificate checked against an
+      # authority, the client's presented where named.
+      #
+      # @return [OpenSSL::SSL::SSLContext]
+      def self.unverified(files)
+        context = OpenSSL::SSL::SSLContext.new
+        context.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        certificate = files.certificate
+        present(context, certificate, files.key) if certificate
+        context
+      rescue OpenSSL::OpenSSLError, SystemCallError, IOError => e
+        raise Error.connection_failure("cannot make TLS: #{e.message}")
+      end
+
       # What the handshake of +ssl+ gives a mechanism to bind to.
       #
       # @param ssl [OpenSSL::SSL::SSLSocket]

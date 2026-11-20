@@ -82,8 +82,36 @@ module Turborel
       # its channel.
       #
       # @return [Array(Stream, TlsChannel)]
-      def self.tls(target, within)
-        ssl = OpenSSL::SSL::SSLSocket.new(tcp(target.host.to_s, target.port || DEFAULT_PORT, within), target.context)
+      def self.tls(target, within) = secured(tcp(target.host.to_s, target.port || DEFAULT_PORT, within), target, within)
+
+      # As open's, but of a TLS +target+ whose handshake fails, a stream
+      # over plain TCP made again in its place [CLIENT TLS by mode]; a
+      # server that cannot be reached is not tried twice. Gives the stream,
+      # its channel and the target it reached.
+      #
+      # @return [Array(Stream, TlsChannel, Target)]
+      def self.preferring(target, within)
+        reached = target
+        unless target.kind == :tls
+          stream, channel = Transport.open(target, within)
+          return [stream, channel, reached]
+        end
+
+        socket = tcp(target.host.to_s, target.port || DEFAULT_PORT, within)
+        begin
+          stream, channel = secured(socket, target, within)
+        rescue Error
+          reached = Targets.tcp(target.host.to_s, target.port || DEFAULT_PORT)
+          stream, channel = Transport.open(reached, within)
+        end
+        [stream, channel, reached]
+      end
+
+      # The TLS stream over +socket+ to +target+, and its channel.
+      #
+      # @return [Array(Stream, TlsChannel)]
+      def self.secured(socket, target, within)
+        ssl = OpenSSL::SSL::SSLSocket.new(socket, target.context)
         ssl.sync_close = true
         ssl.hostname = target.server_name.to_s
         handshake(ssl, within)

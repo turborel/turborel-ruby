@@ -53,6 +53,13 @@ require_relative "turborel/client/transport"
 require_relative "turborel/client/wire"
 
 require_relative "turborel/client/connection"
+
+require_relative "turborel/client/settings/options"
+require_relative "turborel/client/settings/sources"
+
+require_relative "turborel/client/settings"
+
+require_relative "turborel/client/failover"
 require_relative "turborel/client/scram"
 
 require_relative "turborel/import"

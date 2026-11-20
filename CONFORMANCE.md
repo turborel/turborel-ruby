@@ -533,7 +533,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-ERRN-2 | A statement's conditions told one way: in Complete with `conditions`, else as Notices with `notices`, else not at all; a failing statement's as Notices | `[PROTOCOL Errors and notices]` | done |
 | P-ERRN-3 | The server's own notices always as a Notice | `[PROTOCOL Errors and notices]` | done |
 | P-ERRN-4 | SQLSTATE 01T01, Reset or ChangeUser rolled back the transaction, a Notice of severity NOTICE | `[PROTOCOL Errors and notices]` | done |
-| P-ERRN-5 | SQLSTATE TBR01, SQLCODE -920, a replica that had not applied REPLICATION.READ_AFTER's position in time | `[PROTOCOL Errors and notices]` | not yet |
+| P-ERRN-5 | SQLSTATE TBR01, SQLCODE -920, a replica that had not applied REPLICATION.READ_AFTER's position in time | `[PROTOCOL Errors and notices]` | done |
 | P-ERRN-6 | A malformed message, a request not granted, a frame too long or a request out of turn fails the connection (SQLCODE -919, SQLSTATE 08006) | `[PROTOCOL Errors and notices]` | done |
 
 ### A worked example
@@ -719,85 +719,85 @@ From `doc/client/02-library-connections.md`, Settings, Pipelines and Pools.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-SET-1 | Connect as settings say, giving a connection like a target's | `[CLIENT Connecting by settings]` | not yet |
-| C-SET-2 | A password proved by SCRAM-SHA-256, else sent by `password`; with none, the certificate named, else trust | `[CLIENT Connecting by settings]` | not yet |
-| C-SET-3 | A secret mechanism refused over plain TCP before anything is sent (SQLSTATE 28000) | `[CLIENT Connecting by settings]` | not yet |
+| C-SET-1 | Connect as settings say, giving a connection like a target's | `[CLIENT Connecting by settings]` | done |
+| C-SET-2 | A password proved by SCRAM-SHA-256, else sent by `password`; with none, the certificate named, else trust | `[CLIENT Connecting by settings]` | done |
+| C-SET-3 | A secret mechanism refused over plain TCP before anything is sent (SQLSTATE 28000) | `[CLIENT Connecting by settings]` | done |
 
 ### Where settings come from
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-OPT-1 | `host`: the servers, comma-separated, each with its port, an IPv6 address in brackets, a path a Unix socket or named pipe; `localhost` | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-2 | `port`: one for all, or one each; 7422 | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-3 | `user`: none: it must be given | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-4 | `password`: the password file's | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-5 | `tls_mode`: `prefer` | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-6 | `channel_binding`: `prefer` | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-7 | `application_name`: sent as the connection attribute `application`; none | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-8 | `connect_timeout`: whole seconds, 0 for no limit; 30 | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-9 | `service`: none | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-10 | `service_file`: `~/.turborel_service.conf` | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-11 | `passfile`: `~/.turborel_pass` | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-12 | `target`: `any`, `read-write` or `read-only`; `any` | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-13 | `load_balance`: `disable` or `random`; `disable` | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-14 | `tls_roots`: none | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-15 | `tls_system_roots`: `false` | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-16 | `tls_certificate` and `tls_key`: none | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-17 | `server_name`: the host's | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-18 | Layers: the program's options or URI, then the service file's section, then the environment, then the defaults | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-19 | TURBOREL_HOST, _PORT, _USER, _PASSWORD, _TLS_MODE, _APPLICATION_NAME, _CONNECT_TIMEOUT, _SERVICE, _SERVICE_FILE and _PASSFILE; one set but empty gives nothing | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-20 | The environment read through a function the program gives | `[CLIENT Where settings come from]` | not yet |
-| C-OPT-21 | A setting that cannot be read, a service file unread or without the section, or no user, refused (SQLSTATE 08001) | `[CLIENT Where settings come from]` | not yet |
+| C-OPT-1 | `host`: the servers, comma-separated, each with its port, an IPv6 address in brackets, a path a Unix socket or named pipe; `localhost` | `[CLIENT Where settings come from]` | done |
+| C-OPT-2 | `port`: one for all, or one each; 7422 | `[CLIENT Where settings come from]` | done |
+| C-OPT-3 | `user`: none: it must be given | `[CLIENT Where settings come from]` | done |
+| C-OPT-4 | `password`: the password file's | `[CLIENT Where settings come from]` | done |
+| C-OPT-5 | `tls_mode`: `prefer` | `[CLIENT Where settings come from]` | done |
+| C-OPT-6 | `channel_binding`: `prefer` | `[CLIENT Where settings come from]` | done |
+| C-OPT-7 | `application_name`: sent as the connection attribute `application`; none | `[CLIENT Where settings come from]` | done |
+| C-OPT-8 | `connect_timeout`: whole seconds, 0 for no limit; 30 | `[CLIENT Where settings come from]` | done |
+| C-OPT-9 | `service`: none | `[CLIENT Where settings come from]` | done |
+| C-OPT-10 | `service_file`: `~/.turborel_service.conf` | `[CLIENT Where settings come from]` | done |
+| C-OPT-11 | `passfile`: `~/.turborel_pass` | `[CLIENT Where settings come from]` | done |
+| C-OPT-12 | `target`: `any`, `read-write` or `read-only`; `any` | `[CLIENT Where settings come from]` | done |
+| C-OPT-13 | `load_balance`: `disable` or `random`; `disable` | `[CLIENT Where settings come from]` | done |
+| C-OPT-14 | `tls_roots`: none | `[CLIENT Where settings come from]` | done |
+| C-OPT-15 | `tls_system_roots`: `false` | `[CLIENT Where settings come from]` | done |
+| C-OPT-16 | `tls_certificate` and `tls_key`: none | `[CLIENT Where settings come from]` | done |
+| C-OPT-17 | `server_name`: the host's | `[CLIENT Where settings come from]` | done |
+| C-OPT-18 | Layers: the program's options or URI, then the service file's section, then the environment, then the defaults | `[CLIENT Where settings come from]` | done |
+| C-OPT-19 | TURBOREL_HOST, _PORT, _USER, _PASSWORD, _TLS_MODE, _APPLICATION_NAME, _CONNECT_TIMEOUT, _SERVICE, _SERVICE_FILE and _PASSFILE; one set but empty gives nothing | `[CLIENT Where settings come from]` | done |
+| C-OPT-20 | The environment read through a function the program gives | `[CLIENT Where settings come from]` | done |
+| C-OPT-21 | A setting that cannot be read, a service file unread or without the section, or no user, refused (SQLSTATE 08001) | `[CLIENT Where settings come from]` | done |
 
 ### The connection URI
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-URI-1 | `turborel://` with user, password, hosts and ports, and settings | `[CLIENT The connection URI]` | not yet |
-| C-URI-2 | Its parts percent-encoded; an IPv6 address in brackets; a Unix socket's path | `[CLIENT The connection URI]` | not yet |
-| C-URI-3 | Another scheme, a path, a setting not in the table or a pair without `=` refused (SQLSTATE 08001) | `[CLIENT The connection URI]` | not yet |
+| C-URI-1 | `turborel://` with user, password, hosts and ports, and settings | `[CLIENT The connection URI]` | done |
+| C-URI-2 | Its parts percent-encoded; an IPv6 address in brackets; a Unix socket's path | `[CLIENT The connection URI]` | done |
+| C-URI-3 | Another scheme, a path, a setting not in the table or a pair without `=` refused (SQLSTATE 08001) | `[CLIENT The connection URI]` | done |
 
 ### The service file
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-SVC-1 | Sections `[name]`, lines `setting = value`, `#` comments and blank lines skipped | `[CLIENT The service file]` | not yet |
-| C-SVC-2 | A section cannot set `service` or `service_file` | `[CLIENT The service file]` | not yet |
-| C-SVC-3 | A malformed line refused, its file and line named | `[CLIENT The service file]` | not yet |
+| C-SVC-1 | Sections `[name]`, lines `setting = value`, `#` comments and blank lines skipped | `[CLIENT The service file]` | done |
+| C-SVC-2 | A section cannot set `service` or `service_file` | `[CLIENT The service file]` | done |
+| C-SVC-3 | A malformed line refused, its file and line named | `[CLIENT The service file]` | done |
 
 ### The password file
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-PASS-1 | Lines `host:port:user:password`; `*` matching anything; `\` escaping; `#` comments | `[CLIENT The password file]` | not yet |
-| C-PASS-2 | Looked up by the server and user of each connection, the first line that matches taken; a Unix socket matched by its path and the default port | `[CLIENT The password file]` | not yet |
-| C-PASS-3 | Read only if a regular file, or a link to one | `[CLIENT The password file]` | not yet |
+| C-PASS-1 | Lines `host:port:user:password`; `*` matching anything; `\` escaping; `#` comments | `[CLIENT The password file]` | done |
+| C-PASS-2 | Looked up by the server and user of each connection, the first line that matches taken; a Unix socket matched by its path and the default port | `[CLIENT The password file]` | done |
+| C-PASS-3 | Read only if a regular file, or a link to one | `[CLIENT The password file]` | done |
 
 ### Several servers
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-HOSTS-1 | Hosts tried in the order given, or in a random order for each connection with `load_balance=random` | `[CLIENT Several servers]` | not yet |
-| C-HOSTS-2 | Each address a name resolves to tried, each step within the connect timeout | `[CLIENT Several servers]` | not yet |
-| C-HOSTS-3 | A server unreachable, refusing the user, or not of the role asked passed for the next | `[CLIENT Several servers]` | not yet |
-| C-HOSTS-4 | With none kept, a failure naming each address and why (SQLSTATE 08001; 28000 if the last refused the user) | `[CLIENT Several servers]` | not yet |
-| C-HOSTS-5 | `target=read-write`, a server alone or its group's primary | `[CLIENT Several servers]` | not yet |
-| C-HOSTS-6 | `target=read-only`, a replica that follows its group | `[CLIENT Several servers]` | not yet |
-| C-HOSTS-7 | The role told by SERVER_READ_ONLY; of a server that does not tell it, read from INFORMATION_SCHEMA.REPLICAS | `[CLIENT Several servers]` | not yet |
-| C-HOSTS-8 | The role a connection's session sees | `[CLIENT Several servers]` | not yet |
+| C-HOSTS-1 | Hosts tried in the order given, or in a random order for each connection with `load_balance=random` | `[CLIENT Several servers]` | done |
+| C-HOSTS-2 | Each address a name resolves to tried, each step within the connect timeout | `[CLIENT Several servers]` | done |
+| C-HOSTS-3 | A server unreachable, refusing the user, or not of the role asked passed for the next | `[CLIENT Several servers]` | done |
+| C-HOSTS-4 | With none kept, a failure naming each address and why (SQLSTATE 08001; 28000 if the last refused the user) | `[CLIENT Several servers]` | done |
+| C-HOSTS-5 | `target=read-write`, a server alone or its group's primary | `[CLIENT Several servers]` | done |
+| C-HOSTS-6 | `target=read-only`, a replica that follows its group | `[CLIENT Several servers]` | done |
+| C-HOSTS-7 | The role told by SERVER_READ_ONLY; of a server that does not tell it, read from INFORMATION_SCHEMA.REPLICAS | `[CLIENT Several servers]` | done |
+| C-HOSTS-8 | The role a connection's session sees | `[CLIENT Several servers]` | done |
 
 ### TLS by mode
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| C-TLS-1 | `disable` | `[CLIENT TLS by mode]` | not yet |
-| C-TLS-2 | `prefer`: TLS if the server takes it, else plain TCP, connecting again after a failed handshake | `[CLIENT TLS by mode]` | not yet |
-| C-TLS-3 | `require` | `[CLIENT TLS by mode]` | not yet |
-| C-TLS-4 | `verify-ca`, needing the authorities trusted | `[CLIENT TLS by mode]` | not yet |
-| C-TLS-5 | `verify-full`, against `server_name`, else the host's | `[CLIENT TLS by mode]` | not yet |
-| C-TLS-6 | No TLS over a Unix socket or a named pipe | `[CLIENT TLS by mode]` | not yet |
-| C-TLS-7 | `channel_binding` `disable` and `prefer` | `[CLIENT TLS by mode]` | not yet |
-| C-TLS-8 | `channel_binding` `require`, refusing before any connection settings that cannot bind (SQLSTATE 28000) | `[CLIENT TLS by mode]` | not yet |
+| C-TLS-1 | `disable` | `[CLIENT TLS by mode]` | done |
+| C-TLS-2 | `prefer`: TLS if the server takes it, else plain TCP, connecting again after a failed handshake | `[CLIENT TLS by mode]` | done |
+| C-TLS-3 | `require` | `[CLIENT TLS by mode]` | done |
+| C-TLS-4 | `verify-ca`, needing the authorities trusted | `[CLIENT TLS by mode]` | done |
+| C-TLS-5 | `verify-full`, against `server_name`, else the host's | `[CLIENT TLS by mode]` | done |
+| C-TLS-6 | No TLS over a Unix socket or a named pipe | `[CLIENT TLS by mode]` | done |
+| C-TLS-7 | `channel_binding` `disable` and `prefer` | `[CLIENT TLS by mode]` | done |
+| C-TLS-8 | `channel_binding` `require`, refusing before any connection settings that cannot bind (SQLSTATE 28000) | `[CLIENT TLS by mode]` | done |
 
 ### Pipelines
 
@@ -839,7 +839,7 @@ From `doc/client/02-library-connections.md`, Settings, Pipelines and Pools.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | C-KEY-1 | The keys a password derived kept after a login the server proved, a later login of the same salt and iterations skipping the derivation | `[CLIENT The SCRAM key cache]` | done |
-| C-KEY-2 | One cache for every connection the same settings make | `[CLIENT The SCRAM key cache]` | not yet |
+| C-KEY-2 | One cache for every connection the same settings make | `[CLIENT The SCRAM key cache]` | done |
 | C-KEY-3 | A cache given to a mechanism the program makes | `[CLIENT The SCRAM key cache]` | done |
 | C-KEY-4 | Its hits and misses | `[CLIENT The SCRAM key cache]` | done |
 | C-KEY-5 | An entry found by the salt, the iterations and a tag of the password under a random secret of the cache's own | `[CLIENT The SCRAM key cache]` | done |

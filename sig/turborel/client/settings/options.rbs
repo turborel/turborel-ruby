@@ -1,0 +1,21 @@
+module Turborel
+  module Client
+    # A layer of connection settings as text.
+    class Options
+      KEYS: Array[String]
+      ENVIRONMENT: Hash[String, String]
+
+      @values: Hash[String, String]
+
+      def initialize: (?Hash[String, String] values) -> void
+      def self.environment: () ?{ (String name) -> String? } -> Options
+      def set: (String key, untyped value) -> Options
+      def []: (String key) -> String?
+      def empty?: () -> bool
+      def over: (Options lower) -> Options
+      def to_h: () -> Hash[String, String]
+      def ==: (untyped other) -> bool
+      def inspect: () -> String
+    end
+  end
+end

@@ -209,6 +209,24 @@ module Turborel
         connection.instance_variable_get(:@stream).close
         server.join
       end
+
+      # Verifies: [PROTOCOL Errors and notices] SQLSTATE TBR01, SQLCODE
+      # -920, of a replica that had not applied REPLICATION.READ_AFTER's
+      # position in time, comes as the statement's failure, the connection
+      # kept, so the program may ask again or ask the primary.
+      def test_a_replica_behind_read_after
+        connection, = scripted do |peer, frames|
+          frames << peer.frame
+          peer.error(-920, "TBR01", "the replica had not applied the position in time")
+          frames << peer.frame
+          peer.complete
+        end
+
+        assert_fails([-920, "TBR01"]) { connection.query("SELECT * FROM T") }
+        refute_predicate connection, :lost?
+        assert_equal "00000", connection.query("VALUES 1").sqlstate
+        connection.terminate
+      end
     end
   end
 end

@@ -17,6 +17,8 @@ module Turborel
       def self.store: (String? roots, bool platform) -> OpenSSL::X509::Store
       def self.authorities: (String path) -> Array[OpenSSL::X509::Certificate]
       def self.present: (OpenSSL::SSL::SSLContext context, String certificate, String? key) -> void
+      def self.of_mode: (Symbol mode, TlsFiles files) -> OpenSSL::SSL::SSLContext?
+      def self.unverified: (TlsFiles files) -> OpenSSL::SSL::SSLContext
       def self.channel: (OpenSSL::SSL::SSLSocket ssl) -> TlsChannel
     end
   end

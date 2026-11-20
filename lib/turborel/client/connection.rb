@@ -149,6 +149,16 @@ module Turborel
         terminated(rest)
       end
 
+      # Leaves the connection with no Terminate: its stream closed, as a
+      # connection dropped is; it takes no more.
+      #
+      # @api private
+      # @return [void]
+      def abandon
+        @stream.close
+        @lost = Error.connection_failure("the connection was left")
+      end
+
       # Where it reached, as whom, and whether it is lost: never its
       # cancel key.
       #

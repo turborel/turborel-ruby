@@ -1,0 +1,28 @@
+module Turborel
+  module Client
+    # Where settings are read from beside the program.
+    module Sources
+      SCHEME: String
+      COMMENT: String
+      ANY: String
+      FIELDS: Integer
+      SERVICE_KEYS: Array[String]
+
+      def self.uri: (String uri) -> Options
+      def self.authority_options: (String authority) -> Options
+      def self.user_options: (Options options, String userinfo) -> void
+      def self.query_pair: (Options options, String pair) -> void
+      def self.decode: (String text) -> String
+      def self.service: (String text, String name, untyped file) -> Options
+      def self.skipped?: (String line) -> bool
+      def self.section_name: (String line, untyped file, Integer number) -> String
+      def self.setting: (String line, String? section, untyped file, Integer number) -> Options
+      def self.set_in_service: (String key, String value, untyped file, Integer number) -> Options
+      def self.at: (untyped file, Integer number, String why) -> Error
+      def self.password: (String text, String host, String port, String user) -> String?
+      def self.fields: (String line) -> Array[[String, bool]]
+      def self.matches?: ([String, bool] field, String wanted) -> bool
+      def self.regular: (String path) -> String?
+    end
+  end
+end

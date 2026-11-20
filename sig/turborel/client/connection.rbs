@@ -48,6 +48,7 @@ module Turborel
       def lost?: () -> bool
       def canceller: () -> Canceller?
       def terminate: () -> void
+      def abandon: () -> void
       def inspect: () -> String
 
       private

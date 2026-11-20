@@ -11,6 +11,8 @@ module Turborel
       def self.pipe: (String path, seconds? within) -> File
       def self.past?: (Float began, seconds? within) -> bool
       def self.tls: (Target target, seconds? within) -> [Stream, TlsChannel]
+      def self.preferring: (Target target, seconds? within) -> [Stream, TlsChannel?, Target]
+      def self.secured: (Socket socket, Target target, seconds? within) -> [Stream, TlsChannel]
       def self.handshake: (OpenSSL::SSL::SSLSocket ssl, seconds? within) -> void
     end
   end
