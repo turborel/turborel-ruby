@@ -41,6 +41,19 @@ module Turborel
     SPACE = /[ \t\n]+/
     # A character no document may hold [XML 1.0 §2.2].
     NOT_CHAR = /[^\t\n -퟿-�\u{10000}-\u{10FFFF}]/
+    # A character no XML 1.1 document may hold, by a reference or as it is
+    # [XML 1.1 §2.2, production 2].
+    NOT_CHAR_11 = /[^\u0001-\uD7FF\uE000-\uFFFD\u{10000}-\u{10FFFF}]/
+    # A character an XML 1.1 document may not hold as it is: no Char, or a
+    # restricted one, held only by a reference [XML 1.1 §2.2, production
+    # 2a]; its line ends normalized already.
+    NOT_LITERAL_11 = /[^\t\n\u0020-\u007E\u00A0-\uD7FF\uE000-\uFFFD\u{10000}-\u{10FFFF}]/
+    # An XML declaration of version 1.1 [XML 1.1 §2.8, productions 23-26].
+    VERSION_11 = /\A<\?xml[ \t\r\n]+version[ \t\r\n]*=[ \t\r\n]*(["'])1\.1\1/
+    # The line ends of XML 1.0, each a line feed [XML 1.0 §2.11].
+    LINE_ENDS = /\r\n?/
+    # The line ends of XML 1.1, NEL and LS among them [XML 1.1 §2.11].
+    LINE_ENDS_11 = /\r[\n\u0085]?|[\u0085\u2028]/
     # The five entities every document knows [XML 1.0 §4.6].
     PREDEFINED = { "lt" => "<", "gt" => ">", "amp" => "&", "apos" => "'", "quot" => '"' }.freeze
     # The start of an XML declaration [XML 1.0 §2.8, production 23].
@@ -57,7 +70,8 @@ module Turborel
     # @return [Array<Element, Text, Comment, ProcessingInstruction>]
     # @raise [Error] SQLSTATE 2200N if it is not well-formed XML content
     def self.parse(text)
-      Parser.new(text.gsub(/\r\n?/, "\n")).content
+      eleven = VERSION_11.match?(text)
+      Parser.new(text.gsub(eleven ? LINE_ENDS_11 : LINE_ENDS, "\n"), eleven:).content
     end
 
     # Reads XML content.
@@ -65,14 +79,17 @@ module Turborel
     # @api private
     class Parser
       # @param text [String] the content, its line ends normalized
-      def initialize(text)
+      # @param eleven [Boolean] whether it is of XML 1.1, as its
+      #   declaration says
+      def initialize(text, eleven: false)
         @text = text
         @at = 0
+        @literal, @referred = eleven ? [NOT_LITERAL_11, NOT_CHAR_11] : [NOT_CHAR, NOT_CHAR]
       end
 
       # @return [Array] its nodes
       def content
-        fail!("a character XML does not take") if NOT_CHAR.match?(@text)
+        fail!("a character XML does not take") if @literal.match?(@text)
         through("?>", "the XML declaration") if match(DECLARATION)
         top = [] #: Array[XmlNodes::node]
         stack = [] #: Array[Open]
@@ -168,7 +185,7 @@ module Turborel
 
         code = number(ref) || fail!("the entity &#{ref}; is not declared")
         char = code <= 0x10FFFF && !code.between?(0xD800, 0xDFFF) ? [code].pack("U") : "\u0000"
-        fail!("&#{ref}; is no character") if code.zero? || NOT_CHAR.match?(char.tr("\r", "\n"))
+        fail!("&#{ref}; is no character") if code.zero? || @referred.match?(char.tr("\r", "\n"))
         char
       end
 

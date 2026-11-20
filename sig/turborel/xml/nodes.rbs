@@ -61,6 +61,11 @@ module Turborel
     NAME: Regexp
     SPACE: Regexp
     NOT_CHAR: Regexp
+    NOT_CHAR_11: Regexp
+    NOT_LITERAL_11: Regexp
+    VERSION_11: Regexp
+    LINE_ENDS: Regexp
+    LINE_ENDS_11: Regexp
     PREDEFINED: Hash[String, String]
     DECLARATION: Regexp
     TOP_SCOPE: Hash[String, String]
@@ -72,7 +77,10 @@ module Turborel
       @text: String
       @at: Integer
 
-      def initialize: (String text) -> void
+      @literal: Regexp
+      @referred: Regexp
+
+      def initialize: (String text, ?eleven: bool) -> void
       def content: () -> Array[node]
 
       private

@@ -59,5 +59,21 @@ module Turborel
     def test_an_xml_values_nodes
       assert_equal [XmlNodes::Text.new(text: "t")], Xml.new(text: "t").nodes
     end
+
+    # Verifies: [CLIENT XML values] a serialization of XML 1.1, as the
+    # server writes one that XML 1.0 cannot hold, read by XML 1.1's rules:
+    # a restricted character by its reference, never as it is; NEL and LS
+    # line ends, as a carriage return before them; XML 1.0 refusing the
+    # reference, and keeping NEL as it is.
+    def test_xml_one_one
+      text = ->(xml) { parse(xml).first.children.first.text }
+
+      assert_equal "\u0001", text.call(%(<?xml version="1.1" encoding="UTF-8"?><a>&#x1;</a>))
+      assert_equal "1\n2\n3\n4\n", text.call(%(<?xml version='1.1'?><a>1\u00852\r\u00853\u20284\r</a>))
+      assert_fails(INVALID) { parse(%(<?xml version="1.1"?><a>\u0001</a>)) }
+      assert_fails(INVALID) { parse(%(<?xml version="1.1"?><a>&#x0;</a>)) }
+      assert_fails(INVALID) { parse("<a>&#x1;</a>") }
+      assert_equal "1\u00852", text.call("<a>1\u00852</a>")
+    end
   end
 end
