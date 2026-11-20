@@ -1,0 +1,63 @@
+area/codec:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/protocol.rb", "lib/turborel/protocol/**", "sig/turborel/protocol.rbs", "sig/turborel/protocol/**", "test/turborel/protocol/**"]
+
+area/transport:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/transport.rb", "lib/turborel/transport/**", "sig/turborel/transport.rbs", "sig/turborel/transport/**", "test/turborel/transport/**"]
+
+area/auth:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/auth.rb", "lib/turborel/auth/**", "sig/turborel/auth.rbs", "sig/turborel/auth/**", "test/turborel/auth/**"]
+
+area/tls:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/tls.rb", "lib/turborel/tls/**", "sig/turborel/tls.rbs", "sig/turborel/tls/**", "test/turborel/tls/**"]
+
+area/session:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/session.rb", "lib/turborel/session/**", "sig/turborel/session.rbs", "sig/turborel/session/**", "test/turborel/session/**"]
+
+area/statements:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/statements.rb", "lib/turborel/statements/**", "sig/turborel/statements.rbs", "sig/turborel/statements/**", "test/turborel/statements/**"]
+
+area/lobs:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/lobs.rb", "lib/turborel/lobs/**", "sig/turborel/lobs.rbs", "sig/turborel/lobs/**", "test/turborel/lobs/**"]
+
+area/copy:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/copy.rb", "lib/turborel/copy/**", "sig/turborel/copy.rbs", "sig/turborel/copy/**", "test/turborel/copy/**"]
+
+area/settings:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/settings.rb", "lib/turborel/settings/**", "sig/turborel/settings.rbs", "sig/turborel/settings/**", "test/turborel/settings/**"]
+
+area/pipeline:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/pipeline.rb", "lib/turborel/pipeline/**", "sig/turborel/pipeline.rbs", "sig/turborel/pipeline/**", "test/turborel/pipeline/**"]
+
+area/pool:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel/pool.rb", "lib/turborel/pool/**", "sig/turborel/pool.rbs", "sig/turborel/pool/**", "test/turborel/pool/**"]
+
+area/api:
+  - changed-files:
+      - any-glob-to-any-file: ["lib/turborel.rb", "lib/turborel/connection.rb", "lib/turborel/connection/**", "lib/turborel/result.rb", "lib/turborel/error.rb", "lib/active_record/**", "sig/turborel.rbs", "sig/turborel/error.rbs", "test/active_record/**"]
+
+area/doc:
+  - changed-files:
+      - any-glob-to-any-file: ["doc/**", "README.md", "RULES.md", "CONFORMANCE.md", "TODO.md", "AGENTS.md", "CLAUDE.md", "CONTRIBUTING.md", "SECURITY.md", "TRADEMARK.md", "VERSIONING.md"]
+
+area/ci:
+  - changed-files:
+      - any-glob-to-any-file: [".github/**", ".githooks/**"]
+
+area/build:
+  - changed-files:
+      - any-glob-to-any-file: ["turborel.gemspec", "Gemfile", "Rakefile", "rakelib/**", "Steepfile", ".rubocop.yml", ".simplecov", ".yardopts", ".gitattributes", ".gitignore", "lib/turborel/version.rb"]
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file: ["Gemfile", "Gemfile.lock", "turborel.gemspec"]

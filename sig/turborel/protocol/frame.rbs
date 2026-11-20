@@ -1,0 +1,17 @@
+module Turborel
+  # The native protocol, version 1, without I/O.
+  module Protocol
+    # A frame's header [PROTOCOL Frames].
+    module Frame
+      HEADER_BYTES: Integer
+      MAX_BODY: Integer
+      MAX_KIND: Integer
+      MAX_LENGTH: Integer
+      LAYOUT: String
+
+      def self.encode_header: (Integer kind, Integer length) -> String
+
+      def self.decode_header: (String header, ?Integer max) -> [Integer, Integer]
+    end
+  end
+end

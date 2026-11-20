@@ -1,0 +1,92 @@
+name: Bug
+description: The driver fails, crashes, hangs, or reads or sends a value wrongly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Try the latest `main` first, and search the issues: add to one that matches.
+        A vulnerability is never reported here: see SECURITY.md.
+        Put a severe impact first in the title: `[WRONG RESULT]`, `[CRASH]` or `[REGRESSION]`.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happens
+      description: The impact first, in a short paragraph. Then one sentence that sums it up.
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      options:
+        - A value or a row read or sent wrongly
+        - An exception that is not a Turborel::Error, an abort or a hang
+        - Wrong error, SQLCODE or SQLSTATE
+        - Connection or TLS fails where it should not
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: |
+        The smallest Ruby program that shows it: how it connects (passwords left out), and the schema, data and statements it uses.
+        With more than one connection or thread, number them and give the order of what each does.
+      render: ruby
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+      description: What should happen, and why. Cite the protocol or turborel-client if it says, e.g. `[PROTOCOL Frames]`.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+      description: What happens instead. Give the error's class, SQLCODE, SQLSTATE and message, and the backtrace.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: regression
+    attributes:
+      label: Regression
+      description: If it worked before, give the last good commit and, if you ran `git bisect`, the first bad one.
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: "`git rev-parse --short=12 HEAD`"
+    validations:
+      required: true
+  - type: input
+    id: ruby
+    attributes:
+      label: Ruby
+      description: "`ruby -v`"
+    validations:
+      required: true
+  - type: input
+    id: server
+    attributes:
+      label: Server
+      description: The turborel server's version and commit, or the image and its tag.
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      description: The operating system and version, and the architecture, e.g. "Ubuntu 24.04, x86_64".
+    validations:
+      required: true
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: How often it happens, what you ruled out, the settings the program connects with.

@@ -1,0 +1,14 @@
+# Bundler's local settings and the gems it installs for this clone.
+/.bundle/
+/vendor/bundle/
+# What the tasks build: the gem, coverage, the API reference, YARD's cache.
+/pkg/
+/coverage/
+/doc/api/
+/.yardoc/
+# Steep's and RuboCop's caches.
+/.steep/
+/.rubocop-cache/
+.idea/
+.DS_Store
+.claude/

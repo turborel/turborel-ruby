@@ -1,0 +1,49 @@
+# Every check a change must pass (RULES.md R-PROC-1), on each platform the
+# driver claims to run on and each Ruby it supports (D3, R-PLAT-1), plus
+# coverage and its floors (R-COV). setup-ruby installs the gems
+# Gemfile.lock pins (D5), and caches them.
+name: verify
+
+# A pull request is checked once, through pull_request, and main again once
+# it is merged.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A newer push to a pull request replaces its checks still running.
+concurrency:
+  group: verify-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        ruby: ["3.3", "3.4", "4.0"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Every check
+        timeout-minutes: 30
+        run: bundle exec rake verify
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - name: Coverage
+        run: bundle exec rake coverage

@@ -1,0 +1,14 @@
+# Updates proposed weekly: the gems Gemfile.lock pins (RULES.md D5), and
+# the actions the workflows pin by commit.
+version: 2
+updates:
+  - package-ecosystem: bundler
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels: ["dependencies", "area/ci"]

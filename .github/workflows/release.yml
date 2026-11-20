@@ -1,0 +1,44 @@
+# Builds and checks the gem, run by hand only, and publishes nothing
+# (VERSIONING.md, RULES.md R-PROC-4). The gem is kept as the run's
+# artifact. Its publishing step is written but disabled: the owner
+# enables it once every turborel driver is done.
+name: release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - name: Every check
+        run: bundle exec rake verify
+      - name: Coverage
+        run: bundle exec rake coverage
+      - name: Build the gem
+        run: bundle exec rake build
+      - name: Check the gem
+        run: |
+          gem specification pkg/turborel-*.gem
+          gem install --local --ignore-dependencies --no-document --install-dir "$RUNNER_TEMP/gems" pkg/turborel-*.gem
+          GEM_PATH="$RUNNER_TEMP/gems" ruby -e 'gem "turborel"; require "turborel"; puts Turborel::VERSION'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: turborel-gem
+          path: pkg/turborel-*.gem
+          if-no-files-found: error
+      # Disabled until the owner enables it, by removing `if: false` and
+      # adding the RUBYGEMS_API_KEY secret, once every driver is done.
+      - name: Publish to RubyGems
+        if: false
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        run: gem push pkg/turborel-*.gem

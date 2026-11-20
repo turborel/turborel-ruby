@@ -1,0 +1,16 @@
+module Turborel
+  # Every failure the driver raises (RULES.md R-ERR-1).
+  class Error < StandardError
+    CONNECTION_FAILURE_SQLCODE: Integer
+    CONNECTION_FAILURE_SQLSTATE: String
+
+    attr_reader sqlcode: Integer
+    attr_reader sqlstate: String
+    attr_reader rule: String?
+    attr_reader position: Integer?
+
+    def initialize: (String message, sqlcode: Integer, sqlstate: String, ?rule: String?, ?position: Integer?) -> void
+
+    def self.connection_failure: (String message) -> Error
+  end
+end

@@ -1,0 +1,42 @@
+name: Feature
+description: Something the driver should do that it does not.
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check TODO.md and CONFORMANCE.md first: it may be planned already.
+        The driver matches turborel-client; a feature turborel-client lacks is proposed to turborel first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What you need to do, and why the driver cannot do it today, or not well.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - The plain API
+        - The ActiveRecord adapter
+        - Connecting, TLS or authentication
+        - Statements, values or large objects
+        - Copy, import or export
+        - Settings, pipelines or pools
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you propose
+      description: How it would work, and the methods or settings it would add, citing turborel-client where it has the same.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: What else would solve the problem, and why this is better.

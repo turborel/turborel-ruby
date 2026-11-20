@@ -1,0 +1,69 @@
+# RuboCop, strictly (RULES.md R-STYLE-1, R-STYLE-2): every offense fails
+# `rake verify`, and cops new in a later RuboCop are on as they come.
+plugins:
+  - rubocop-minitest
+  - rubocop-performance
+  - rubocop-rake
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+  ExtraDetails: true
+  Exclude:
+    - "vendor/**/*"
+    - "pkg/**/*"
+    - "doc/api/**/*"
+    - "coverage/**/*"
+    - ".claude/**/*"
+
+# R-STYLE-3: one quoting, as the Ruby community's most common style has it.
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+# R-SIZE-1 and R-SIZE-3: at most 50 lines and 5 parameters, keywords
+# counted. Files are held to 600 lines by `rake rules` (R-SIZE-2).
+Metrics/MethodLength:
+  Max: 50
+Metrics/ParameterLists:
+  Max: 5
+  CountKeywordArgs: true
+Metrics/ClassLength:
+  Max: 600
+Metrics/ModuleLength:
+  Max: 600
+Metrics/BlockLength:
+  Exclude:
+    - "*.gemspec"
+
+# R-DOC-1: every public class, module and method is documented.
+Style/Documentation:
+  Enabled: true
+Style/DocumentationMethod:
+  Enabled: true
+
+# R-DEV-1: a cop is never disabled in source, only here, with its reason.
+Style/DisableCopsWithinSourceCodeDirective:
+  Enabled: true
+
+# R-ERR-5: an error raised names its class, never a bare RuntimeError.
+Style/ImplicitRuntimeError:
+  Enabled: true
+
+# R-NUM: a conversion that would read garbage as 0 is not written.
+Lint/NumberConversion:
+  Enabled: true
+
+Style/RequireOrder:
+  Enabled: true
+Style/TopLevelMethodDefinition:
+  Enabled: true
+Style/MethodCalledOnDoEndBlock:
+  Enabled: true
+
+# A test asserts what one behaviour gives, at each edge of it (R-TEST-2).
+Minitest/MultipleAssertions:
+  Max: 8

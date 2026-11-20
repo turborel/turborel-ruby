@@ -1,0 +1,5 @@
+# The Ruby driver for turborel, over its native protocol (RULES.md D1).
+module Turborel
+  # The gem's version.
+  VERSION: String
+end

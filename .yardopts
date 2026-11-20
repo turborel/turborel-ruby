@@ -1,0 +1,8 @@
+--output-dir doc/api
+--readme README.md
+--no-private
+--hide-api private
+lib/**/*.rb
+-
+LICENSE
+TRADEMARK.md
