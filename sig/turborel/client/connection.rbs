@@ -8,6 +8,7 @@ module Turborel
       include Lobs
       include Copy
       include Export
+      include Pipelines
 
       @stream: Stream
       @target: Target?

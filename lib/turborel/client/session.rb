@@ -97,6 +97,19 @@ module Turborel
         @query_attributes = attributes.dup.freeze
       end
 
+      # @api private
+      # @return [Integer] the number the next prepared statement takes: how
+      #   many the session may hold
+      def prepared_count = @next_statement
+
+      # Forgets the session's prepared statements, gone with it.
+      #
+      # @api private
+      # @return [void]
+      def forget_prepared
+        @next_statement = 0
+      end
+
       # Whether the server answers, with no worker of its taken.
       #
       # @return [void]

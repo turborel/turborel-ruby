@@ -3,6 +3,7 @@ module Turborel
     # What a connection's session tells and how it is controlled.
     module Session : Wire
       @active: bool
+      @next_statement: Integer
       @autocommit: bool
       @warning: String?
       @commit_position: Integer?
@@ -28,6 +29,8 @@ module Turborel
       def take_notices: () -> Array[Notice]
       attr_reader query_attributes: Array[[String, String]]
       def query_attributes=: (Array[[String, String]] attributes) -> void
+      def prepared_count: () -> Integer
+      def forget_prepared: () -> void
       def ping: () -> nil
       def reset: () -> nil
       def change_user: (String user, Mechanism mechanism) -> nil

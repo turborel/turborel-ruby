@@ -14,6 +14,7 @@ module Turborel
       include Lobs
       include Copy
       include Export
+      include Pipelines
 
       # @return [String] the session's authorization identifier, as Ready
       #   told it

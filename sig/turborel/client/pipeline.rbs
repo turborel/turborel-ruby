@@ -1,0 +1,55 @@
+module Turborel
+  module Client
+    # The outcome of one request of a pipeline.
+    class Piped < Data
+      attr_reader done: (Rows | Completion)?
+      attr_reader failed: Failure?
+      attr_reader skipped: bool
+      def self.new: (done: (Rows | Completion)?, failed: Failure?, skipped: bool) -> instance
+      def self.of: (Rows | Completion outcome) -> Piped
+      def self.failure: (Failure failure) -> Piped
+      def self.skip: () -> Piped
+    end
+
+    # Requests queued on a connection.
+    class Pipeline
+      PIPELINE_WINDOW: Integer
+      SAVEPOINT: String
+      ON_ERRORS: Array[Symbol]
+
+      @connection: Connection
+      @queued: Array[Array[untyped]]
+      @on_error: Symbol
+
+      def initialize: (Connection connection) -> void
+      def query: (String sql) -> Pipeline
+      def execute: (Statement statement, ?Array[value] values) -> Pipeline
+      def release: (Integer number) -> Pipeline
+      def on_error: (Symbol choice) -> Pipeline
+      def size: () -> Integer
+      def empty?: () -> bool
+      def run: () -> Array[Piped]
+
+      private
+
+      def run_windows: (Array[Array[untyped]] sent, bool skip) -> Array[Piped]
+      def guarded: (Array[Array[untyped]] queued) -> Array[Array[untyped]]
+      def windows: (Array[Array[untyped]] queued, bool ends, Array[[String, String]] attributes) -> Array[Array[[Array[untyped], String]]]
+      def request: (Array[untyped] queued, bool ends, Array[[String, String]] attributes) -> String
+      def settle: (Array[Array[untyped]] sent, Array[Piped] outcomes, bool began) -> void
+      def savepoint_set: (Array[Array[untyped]] sent, Array[Piped] outcomes, Integer at) -> String?
+      def undone: (Array[Array[untyped]] sent, Array[Piped] outcomes) -> Array[String]
+    end
+
+    # A connection's pipelines.
+    module Pipelines : Wire
+      def pipeline: () -> Pipeline
+
+      private
+
+      def piped_window: (Array[[Array[untyped], String]] window) -> Array[Piped]
+      def piped_reply: (Array[untyped] queued) -> (Rows | Protocol::Replies::Complete)
+      def within_batch: (String sql) -> nil
+    end
+  end
+end

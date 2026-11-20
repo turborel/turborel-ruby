@@ -1,0 +1,76 @@
+module Turborel
+  module Client
+    # How a pool keeps its connections.
+    class PoolConfig < Data
+      attr_reader max: Integer
+      attr_reader max_idle: Integer
+      attr_reader idle_timeout: seconds?
+      attr_reader max_lifetime: seconds?
+      attr_reader wait: seconds
+      attr_reader check: bool
+      attr_reader reset: Array[String]
+      def self.new: (max: Integer, max_idle: Integer, idle_timeout: seconds?, max_lifetime: seconds?, wait: seconds,
+                     check: bool, reset: Array[String]) -> instance
+      def self.default: () -> PoolConfig
+      def with: (?max: Integer, ?max_idle: Integer, ?idle_timeout: seconds?, ?max_lifetime: seconds?, ?wait: seconds,
+                 ?check: bool, ?reset: Array[String]) -> PoolConfig
+    end
+
+    # A pool of connections.
+    class Pool
+      @source: untyped
+      @config: PoolConfig
+      @lock: Thread::Mutex
+      @returned: Thread::ConditionVariable
+      @idle: Array[[Connection, Float, Float]]
+      @made: Integer
+
+      attr_reader config: PoolConfig
+
+      def initialize: (untyped source, ?PoolConfig config) -> void
+      def get: () -> Pooled
+             | [T] () { (Connection connection) -> T } -> T
+      def counts: () -> [Integer, Integer]
+      def give_back: (Connection connection, Float made) -> void
+      def lived?: (Float made) -> bool
+
+      private
+
+      def taken: () -> Pooled
+      def next_one: (Float deadline) -> [Symbol, [Connection, Float, Float]?]
+      def fresh_idle: () -> [Connection, Float, Float]?
+      def fresh?: ([Connection, Float, Float] idle) -> bool
+      def checked: ([Connection, Float, Float] idle) -> Pooled?
+      def made_one: () -> Pooled
+      def unmade: (Connection? connection) -> void
+      def none_back: () -> Error
+      def now: () -> Float
+    end
+
+    # A connection handed out by a pool.
+    class Pooled
+      @pool: Pool
+      @connection: Connection?
+      @made: Float
+
+      def initialize: (Pool pool, Connection connection, Float made) -> void
+      def connection: () -> Connection
+      def release: () -> void
+    end
+
+    # A pooled connection's check and reset.
+    module Resets
+      RESET_WITHIN: Integer
+      RESET_MOST_STATEMENTS: Integer
+
+      def self.answers?: (Connection connection) -> bool
+      def self.reset: (Connection connection, Array[String] more) -> bool
+      def self.reset_now: (Connection connection, Array[String] more) -> void
+      def self.renewed: (Connection connection, Array[String] more) -> void
+      def self.by_statements: (Connection connection, Array[String] more) -> void
+      def self.reset_pipeline: (Connection connection, Integer prepared, Array[String] more) -> Pipeline
+      def self.bounded: [T] (Connection connection) { () -> T } -> T
+      def self.limit: (Connection connection, seconds within) -> bool
+    end
+  end
+end

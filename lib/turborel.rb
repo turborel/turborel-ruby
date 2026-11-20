@@ -47,6 +47,7 @@ require_relative "turborel/client/lob_streams"
 require_relative "turborel/client/lobs"
 require_relative "turborel/client/mechanisms"
 require_relative "turborel/client/outcomes"
+require_relative "turborel/client/pipeline"
 require_relative "turborel/client/session"
 require_relative "turborel/client/statements"
 require_relative "turborel/client/transport"
@@ -59,7 +60,10 @@ require_relative "turborel/client/settings/sources"
 
 require_relative "turborel/client/settings"
 
+require_relative "turborel/client/agent"
+require_relative "turborel/client/connection_statement"
 require_relative "turborel/client/failover"
+require_relative "turborel/client/pool"
 require_relative "turborel/client/scram"
 
 require_relative "turborel/import"

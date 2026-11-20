@@ -1,0 +1,77 @@
+module Turborel
+  module Client
+    # An SQL-agent.
+    class Agent
+      SYNTAX_ERROR: String
+
+      @connector: untyped
+      @held: Array[[String?, Connection]]
+      @current: Integer?
+
+      def initialize: (untyped connector, ?Connection? connection) -> void
+      def current: () -> Connection
+      def current_connection: () -> Connection?
+      def current_name: () -> String?
+      def canceller: () -> Canceller?
+      def warning: () -> String?
+      def lost?: () -> bool
+      def query: (String sql) -> (Rows | Completion)
+      def query_into: (String sql, _Sink sink) -> (Integer | Completion)
+      def connection_statement: (String sql) -> Completion?
+      def terminate: () -> void
+      def self.exception: (String state, String message) -> Error
+      def self.syntax: (String message) -> Error
+      def self.syntax_rule: (String message) -> Error
+
+      private
+
+      def connect: (untyped server, untyped name, untyped user) -> Completion
+      def connection_name: (String? named) -> String?
+      def established: (String? name) -> void
+      def connected: (String? address, String? user) -> Connection
+      def choose: (untyped name) -> Completion
+      def disconnect: (untyped object) -> Completion
+      def active_among?: (Array[Integer] places) -> bool
+      def ended_all: (Array[Integer] places) -> bool
+      def ended_quietly?: (Connection connection) -> bool
+      def ended_by: (untyped object) -> Array[Integer]
+      def named_index: (untyped object) -> Integer
+      def missing: (String what) -> Error
+      def not_in_transaction: () -> void
+      def find: (String? name) -> Integer?
+      def done: (?String state) -> Completion
+    end
+
+    # SQL-92's connection statements.
+    module ConnectionStatement
+      STRING: Regexp
+      OTHER_VALUE: Regexp
+
+      def self.parse: (String sql) -> Array[untyped]?
+      def self.statement_of: (Reader reader) -> Array[untyped]
+      def self.connect: (Reader reader) -> Array[untyped]
+      def self.disconnect: (Reader reader) -> Array[untyped]
+      def self.text: (untyped value) -> String?
+      def self.identifier: (String text) -> String?
+
+      # Reads a statement's words and values.
+      class Reader
+        @rest: String
+
+        def initialize: (String sql) -> void
+        def word: () -> String?
+        def took?: (String word) -> bool
+        def expect: (String word) -> void
+        def value: () -> (String | Symbol)
+        def finish: () -> void
+
+        private
+
+        def string: (MatchData literal) -> String
+        def other: () -> Symbol
+        def skip: () -> String
+        def shown: () -> String
+      end
+    end
+  end
+end
