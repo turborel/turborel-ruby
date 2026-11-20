@@ -132,11 +132,13 @@ module Turborel
       end
 
       # Verifies: [CLIENT Importing] tab-separated text: fields at tabs,
-      # never quoted; an empty field null; its own text for null.
+      # never quoted; an empty field null, an empty line one; its own text
+      # for null.
       def test_tab_separated
         assert_equal [%w[a b], ["\"c", "\"d\""]], fields("a\tb\r\n\"c\t\"d\"\n", Dialect.tsv)
         assert_equal [["a", nil, "b,c"]], fields("a\t\tb,c", Dialect.tsv)
         assert_equal [["a", nil]], fields("a\t\\N", Dialect.tsv.with_null("\\N"))
+        assert_equal [["a"], [nil], ["b"]], fields("a\n\nb\n", Dialect.tsv)
       end
 
       # Verifies: [CLIENT Importing] a delimiter is one ASCII character, not

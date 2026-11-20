@@ -221,11 +221,13 @@ module Turborel
           end
         end
 
-        # The fields of a record of a dialect with no quoting.
+        # The fields of a record of a dialect with no quoting: an empty
+        # record one empty field, as Rust's split gives it.
         #
         # @api private
         def unquoted(bytes, dialect)
-          bytes.split(dialect.delimiter.b, -1).each_with_index.map { |b, n| [text(b, n), false] }
+          parts = bytes.split(dialect.delimiter.b, -1)
+          (parts.empty? ? ["".b] : parts).each_with_index.map { |b, n| [text(b, n), false] }
         end
 
         # Where the field after the field +number+, ending at +at+, begins:
