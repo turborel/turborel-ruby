@@ -1,0 +1,40 @@
+module Turborel
+  module Protocol
+    # Data types as the server writes them [PROTOCOL Data types].
+    module Types
+      KINDS: Hash[Integer, Symbol]
+      PARAMS: Hash[Symbol, Symbol]
+      UNITS: Hash[Integer, Symbol]
+      FIELDS: Array[Symbol]
+      XML_PRIMARY: Hash[Integer, Symbol]
+      XML_SECONDARY: Hash[Integer, Symbol]
+      MAX_ARRAY_CARDINALITY: Integer
+      MAX_EXTENSION_PARAMS: Integer
+      ABSENT_PARAM: Integer
+
+      type params = Hash[Symbol, untyped]
+
+      def self.read: (Reader reader) -> DataType
+      def self.tag: (Symbol kind) -> Integer
+      def self.nothing: (Reader _reader) -> params
+      def self.length_units: (Reader reader) -> params
+      def self.precision_scale: (Reader reader) -> params
+      def self.precision: (Reader reader) -> params
+      def self.length: (Reader reader) -> params
+      def self.lob_length: (Reader reader) -> params
+      def self.qualifier: (Reader reader) -> params
+      def self.array: (Reader reader) -> params
+      def self.multiset: (Reader reader) -> params
+      def self.row: (Reader reader) -> params
+      def self.structured: (Reader reader) -> params
+      def self.reference: (Reader reader) -> params
+      def self.xml: (Reader reader) -> params
+      def self.extension: (Reader reader) -> params
+      def self.units: (Reader reader) -> Symbol
+      def self.field: (Reader reader) -> Symbol
+      def self.modifier: (Reader reader, Hash[Integer, Symbol] modifiers, String which) -> Symbol
+      def self.xml_schema: (Reader reader) -> params
+      def self.optional: (Reader reader) -> String?
+    end
+  end
+end

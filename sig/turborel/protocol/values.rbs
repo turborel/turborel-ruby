@@ -1,0 +1,45 @@
+module Turborel
+  module Protocol
+    # Values as the protocol writes them [PROTOCOL Values].
+    module Values
+      NULL: Integer
+      CHARACTER: Integer
+      EXACT: Integer
+      APPROXIMATE: Integer
+      EXTENSION: Integer
+      BINARY: Integer
+      DATE: Integer
+      TIME: Integer
+      TIMESTAMP: Integer
+      INTERVAL: Integer
+      BOOLEAN: Integer
+      DECFLOAT: Integer
+      ARRAY: Integer
+      ROW: Integer
+      LOB_WHOLE: Integer
+      LOB_LOCATOR: Integer
+      MULTISET: Integer
+      STRUCTURED: Integer
+      REFERENCE: Integer
+      JSON: Integer
+      XML: Integer
+      UUID: Integer
+      MOMENTS: Hash[Integer, Symbol]
+      LOB_KINDS: Hash[Integer, Symbol]
+      UUID_OCTETS: Integer
+      MAX_MULTISET_CARDINALITY: Integer
+      MAX_ZONE_FIELD: Integer
+      I16_BIAS: Integer
+      MAX_I16: Integer
+      DECFLOAT_DIGITS: Integer
+      DECFLOAT_ADJUSTED: Range[Integer]
+      RADIX: Integer
+      I128_DIGITS: Integer
+      I32_SIGN: Integer
+      I32_BIAS: Integer
+      READERS: Hash[Integer, Symbol]
+
+      def self.decfloat?: (Integer coefficient, Integer exponent) -> bool
+    end
+  end
+end

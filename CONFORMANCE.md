@@ -116,62 +116,62 @@ From `doc/client/05-protocol.md`, The Native Protocol.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-TYPE-1 | 1 CHARACTER: length `u32`, units `u8` (0 characters, 1 octets) | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-2 | 2 exact numeric: precision `u32`, scale `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-3 | 3 approximate numeric: precision `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-4 | 4 a plug-in's type: its name, its parameters as a list of `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-5 | 5 CHARACTER VARYING: length `u32`, units `u8` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-6 | 6 BINARY: length `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-7 | 7 BINARY VARYING: length `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-8 | 8 DATE: precision `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-9 | 9 TIME: precision `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-10 | 10 TIME WITH TIME ZONE: precision `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-11 | 11 TIMESTAMP: precision `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-12 | 12 TIMESTAMP WITH TIME ZONE: precision `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-13 | 13 INTERVAL: start field, end field, leading precision, fractional precision, each `u32`; fields 0 YEAR, 1 MONTH, 2 DAY, 3 HOUR, 4 MINUTE, 5 SECOND | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-14 | 14 BOOLEAN: nothing | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-15 | 15 DECFLOAT: precision `u32` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-16 | 16 array: maximum cardinality `u32`, then the element type | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-17 | 17 row: a list of each field's name, then its type | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-18 | 18 CHARACTER LARGE OBJECT: length `u64`, units `u8` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-19 | 19 BINARY LARGE OBJECT: length `u64`, units `u8` | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-22 | 22 multiset: the element type | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-23 | 23 structured type: its schema and name; its proper supertypes, each schema and name | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-24 | 24 reference type: the referenced type's names; scoped `u8`, and if 1 the scope's schema and name | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-25 | 25 JSON: nothing | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-26 | 26 XML: primary modifier `u8` (DOCUMENT, CONTENT, SEQUENCE), secondary `u8` (UNTYPED, ANY, XMLSCHEMA); of XMLSCHEMA, the schema's schema and name, its namespace and its element | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-27 | 27 UUID: nothing (gap G1) | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-100 | A distinct type written as its source type | `[PROTOCOL Data types]` | not yet |
-| P-TYPE-101 | A plug-in's type the client does not have read by its name, its values shown by their text | `[PROTOCOL Data types]` | not yet |
+| P-TYPE-1 | 1 CHARACTER: length `u32`, units `u8` (0 characters, 1 octets) | `[PROTOCOL Data types]` | done |
+| P-TYPE-2 | 2 exact numeric: precision `u32`, scale `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-3 | 3 approximate numeric: precision `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-4 | 4 a plug-in's type: its name, its parameters as a list of `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-5 | 5 CHARACTER VARYING: length `u32`, units `u8` | `[PROTOCOL Data types]` | done |
+| P-TYPE-6 | 6 BINARY: length `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-7 | 7 BINARY VARYING: length `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-8 | 8 DATE: precision `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-9 | 9 TIME: precision `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-10 | 10 TIME WITH TIME ZONE: precision `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-11 | 11 TIMESTAMP: precision `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-12 | 12 TIMESTAMP WITH TIME ZONE: precision `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-13 | 13 INTERVAL: start field, end field, leading precision, fractional precision, each `u32`; fields 0 YEAR, 1 MONTH, 2 DAY, 3 HOUR, 4 MINUTE, 5 SECOND | `[PROTOCOL Data types]` | done |
+| P-TYPE-14 | 14 BOOLEAN: nothing | `[PROTOCOL Data types]` | done |
+| P-TYPE-15 | 15 DECFLOAT: precision `u32` | `[PROTOCOL Data types]` | done |
+| P-TYPE-16 | 16 array: maximum cardinality `u32`, then the element type | `[PROTOCOL Data types]` | done |
+| P-TYPE-17 | 17 row: a list of each field's name, then its type | `[PROTOCOL Data types]` | done |
+| P-TYPE-18 | 18 CHARACTER LARGE OBJECT: length `u64`, units `u8` | `[PROTOCOL Data types]` | done |
+| P-TYPE-19 | 19 BINARY LARGE OBJECT: length `u64`, units `u8` | `[PROTOCOL Data types]` | done |
+| P-TYPE-22 | 22 multiset: the element type | `[PROTOCOL Data types]` | done |
+| P-TYPE-23 | 23 structured type: its schema and name; its proper supertypes, each schema and name | `[PROTOCOL Data types]` | done |
+| P-TYPE-24 | 24 reference type: the referenced type's names; scoped `u8`, and if 1 the scope's schema and name | `[PROTOCOL Data types]` | done |
+| P-TYPE-25 | 25 JSON: nothing | `[PROTOCOL Data types]` | done |
+| P-TYPE-26 | 26 XML: primary modifier `u8` (DOCUMENT, CONTENT, SEQUENCE), secondary `u8` (UNTYPED, ANY, XMLSCHEMA); of XMLSCHEMA, the schema's schema and name, its namespace and its element | `[PROTOCOL Data types]` | done |
+| P-TYPE-27 | 27 UUID: nothing (gap G1) | `[PROTOCOL Data types]` | done |
+| P-TYPE-100 | A distinct type written as its source type | `[PROTOCOL Data types]` | done |
+| P-TYPE-101 | A plug-in's type the client does not have read by its name, its values shown by their text | `[PROTOCOL Data types]` | done |
 
 ### Values
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-VAL-0 | 0 null: nothing | `[PROTOCOL Values]` | not yet |
-| P-VAL-1 | 1 character string: string, of a CHARACTER or a CHARACTER VARYING column alike | `[PROTOCOL Values]` | not yet |
-| P-VAL-2 | 2 exact number: units `i128`, then scale `u32`, units divided by ten to the scale; at the limits of `i128` and of scale | `[PROTOCOL Values]` | not yet |
-| P-VAL-3 | 3 approximate number: an IEEE 754 double's bits, `u64`; NaN and -0.0 kept | `[PROTOCOL Values]` | not yet |
-| P-VAL-4 | 4 a plug-in's value: its type's name, its text, its bytes | `[PROTOCOL Values]` | not yet |
-| P-VAL-6 | 6 binary string: bytes | `[PROTOCOL Values]` | not yet |
-| P-VAL-8 | 8 date, written as a timestamp | `[PROTOCOL Values]` | not yet |
-| P-VAL-9 | 9 time, written as a timestamp | `[PROTOCOL Values]` | not yet |
-| P-VAL-11 | 11 timestamp: zoned `u8`; precision `u8`; the displacement in minutes, an `i16` in the low half of a `u32`, -12:59 to +14:00; the instant, microseconds in UTC, `i64 as u64` | `[PROTOCOL Values]` | not yet |
-| P-VAL-13 | 13 interval: its qualifier as the INTERVAL type writes it, then units `i128`, months or microseconds; every qualifier | `[PROTOCOL Values]` | not yet |
-| P-VAL-14 | 14 truth value: `u8`, 0 false, 1 true; unknown as null | `[PROTOCOL Values]` | not yet |
-| P-VAL-15 | 15 decimal floating point: coefficient `i128`, then exponent `i32 as u32` | `[PROTOCOL Values]` | not yet |
-| P-VAL-16 | 16 array: a list of values, nested | `[PROTOCOL Values]` | not yet |
-| P-VAL-17 | 17 row: a list of values, one for each field | `[PROTOCOL Values]` | not yet |
-| P-VAL-20 | 20 large object, whole: kind `u8` (0 character, 1 binary), then its octets | `[PROTOCOL Values]` | not yet |
-| P-VAL-21 | 21 large object, by locator: kind `u8`, locator `u32`, its octets `u64`, its characters `u64` | `[PROTOCOL Values]` | not yet |
-| P-VAL-22 | 22 multiset: a list of values, in no set order | `[PROTOCOL Values]` | not yet |
-| P-VAL-23 | 23 structured value: its most specific type's schema and name, then its attributes | `[PROTOCOL Values]` | not yet |
-| P-VAL-24 | 24 reference: bytes | `[PROTOCOL Values]` | not yet |
-| P-VAL-25 | 25 JSON: bytes, the binary tree of Turborel's RULES.md D89 (gap G3), read to the language's JSON value or text and written from one; its nodes are the P-JSON rows | `[PROTOCOL Values]` | not yet |
-| P-VAL-26 | 26 XML: its serialization as CONTENT, string | `[PROTOCOL Values]` | not yet |
-| P-VAL-27 | 27 UUID: bytes, a count of 16, then the 16 octets (gap G1) | `[PROTOCOL Values]` | not yet |
-| P-VAL-100 | A value's tag says how it is written, not its column's type: CHARACTER VARYING written with tag 1 | `[PROTOCOL Values]` | not yet |
-| P-VAL-101 | A datetime's zoned byte 1 for a type WITH TIME ZONE; without a zone, the displacement the value is shown in | `[PROTOCOL Values]` | not yet |
+| P-VAL-0 | 0 null: nothing | `[PROTOCOL Values]` | done |
+| P-VAL-1 | 1 character string: string, of a CHARACTER or a CHARACTER VARYING column alike | `[PROTOCOL Values]` | done |
+| P-VAL-2 | 2 exact number: units `i128`, then scale `u32`, units divided by ten to the scale; at the limits of `i128` and of scale | `[PROTOCOL Values]` | done |
+| P-VAL-3 | 3 approximate number: an IEEE 754 double's bits, `u64`; NaN and -0.0 kept | `[PROTOCOL Values]` | done |
+| P-VAL-4 | 4 a plug-in's value: its type's name, its text, its bytes | `[PROTOCOL Values]` | done |
+| P-VAL-6 | 6 binary string: bytes | `[PROTOCOL Values]` | done |
+| P-VAL-8 | 8 date, written as a timestamp | `[PROTOCOL Values]` | done |
+| P-VAL-9 | 9 time, written as a timestamp | `[PROTOCOL Values]` | done |
+| P-VAL-11 | 11 timestamp: zoned `u8`; precision `u8`; the displacement in minutes, an `i16` in the low half of a `u32`, -12:59 to +14:00; the instant, microseconds in UTC, `i64 as u64` | `[PROTOCOL Values]` | done |
+| P-VAL-13 | 13 interval: its qualifier as the INTERVAL type writes it, then units `i128`, months or microseconds; every qualifier | `[PROTOCOL Values]` | done |
+| P-VAL-14 | 14 truth value: `u8`, 0 false, 1 true; unknown as null | `[PROTOCOL Values]` | done |
+| P-VAL-15 | 15 decimal floating point: coefficient `i128`, then exponent `i32 as u32` | `[PROTOCOL Values]` | done |
+| P-VAL-16 | 16 array: a list of values, nested | `[PROTOCOL Values]` | done |
+| P-VAL-17 | 17 row: a list of values, one for each field | `[PROTOCOL Values]` | done |
+| P-VAL-20 | 20 large object, whole: kind `u8` (0 character, 1 binary), then its octets | `[PROTOCOL Values]` | done |
+| P-VAL-21 | 21 large object, by locator: kind `u8`, locator `u32`, its octets `u64`, its characters `u64` | `[PROTOCOL Values]` | done |
+| P-VAL-22 | 22 multiset: a list of values, in no set order | `[PROTOCOL Values]` | done |
+| P-VAL-23 | 23 structured value: its most specific type's schema and name, then its attributes | `[PROTOCOL Values]` | done |
+| P-VAL-24 | 24 reference: bytes | `[PROTOCOL Values]` | done |
+| P-VAL-25 | 25 JSON: bytes, the binary tree of Turborel's RULES.md D89 (gap G3), read to the language's JSON value or text and written from one; its nodes are the P-JSON rows | `[PROTOCOL Values]` | done |
+| P-VAL-26 | 26 XML: its serialization as CONTENT, string | `[PROTOCOL Values]` | done |
+| P-VAL-27 | 27 UUID: bytes, a count of 16, then the 16 octets (gap G1) | `[PROTOCOL Values]` | done |
+| P-VAL-100 | A value's tag says how it is written, not its column's type: CHARACTER VARYING written with tag 1 | `[PROTOCOL Values]` | done |
+| P-VAL-101 | A datetime's zoned byte 1 for a type WITH TIME ZONE; without a zone, the displacement the value is shown in | `[PROTOCOL Values]` | done |
 | P-VAL-102 | A large object of at most SERVER.LOB_INLINE_BYTES, 64 KiB by default, read whole; a longer one by its locator, valid until its transaction ends | `[PROTOCOL Values]` | not yet |
 | P-VAL-103 | A large object sent whole, or as a locator the client made with Lob requests | `[PROTOCOL Values]` | not yet |
 
@@ -183,20 +183,20 @@ cited under the page's section on values.
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
-| P-JSON-0 | Node 0 null | `[PROTOCOL Values]` | not yet |
-| P-JSON-1 | Node 1 false | `[PROTOCOL Values]` | not yet |
-| P-JSON-2 | Node 2 true | `[PROTOCOL Values]` | not yet |
-| P-JSON-3 | Node 3 integer: `i64` | `[PROTOCOL Values]` | not yet |
-| P-JSON-4 | Node 4 decimal: units `i64`, scale `u8` | `[PROTOCOL Values]` | not yet |
-| P-JSON-5 | Node 5 wide decimal: units `i128`, scale `u32` | `[PROTOCOL Values]` | not yet |
-| P-JSON-6 | Node 6 decimal floating point: coefficient `i128`, exponent `i32` | `[PROTOCOL Values]` | not yet |
-| P-JSON-7 | Node 7 approximate: `f64` bits | `[PROTOCOL Values]` | not yet |
-| P-JSON-8 | Node 8 string: octets `u32`, UTF-8 | `[PROTOCOL Values]` | not yet |
-| P-JSON-9 | Node 9 datetime: moment `u8` (date, time, timestamp), UTC `i64`, zone minutes `i16`, zoned `u8`, precision `u8` | `[PROTOCOL Values]` | not yet |
-| P-JSON-10 | Node 10 array: count `u32`, size `u32`, an offset `u32` of each element, the elements | `[PROTOCOL Values]` | not yet |
-| P-JSON-11 | Node 11 object: count `u32`, size `u32`, an offset `u32` of each member in key order, the members in written order, each key and value | `[PROTOCOL Values]` | not yet |
-| P-JSON-100 | A document: a version octet, 1, then its root node; another version refused | `[PROTOCOL Values]` | not yet |
-| P-JSON-101 | An object's directory sorted by key octets, members of one key in written order; written order kept | `[PROTOCOL Values]` | not yet |
+| P-JSON-0 | Node 0 null | `[PROTOCOL Values]` | done |
+| P-JSON-1 | Node 1 false | `[PROTOCOL Values]` | done |
+| P-JSON-2 | Node 2 true | `[PROTOCOL Values]` | done |
+| P-JSON-3 | Node 3 integer: `i64` | `[PROTOCOL Values]` | done |
+| P-JSON-4 | Node 4 decimal: units `i64`, scale `u8` | `[PROTOCOL Values]` | done |
+| P-JSON-5 | Node 5 wide decimal: units `i128`, scale `u32` | `[PROTOCOL Values]` | done |
+| P-JSON-6 | Node 6 decimal floating point: coefficient `i128`, exponent `i32` | `[PROTOCOL Values]` | done |
+| P-JSON-7 | Node 7 approximate: `f64` bits | `[PROTOCOL Values]` | done |
+| P-JSON-8 | Node 8 string: octets `u32`, UTF-8 | `[PROTOCOL Values]` | done |
+| P-JSON-9 | Node 9 datetime: moment `u8` (date, time, timestamp), UTC `i64`, zone minutes `i16`, zoned `u8`, precision `u8` | `[PROTOCOL Values]` | done |
+| P-JSON-10 | Node 10 array: count `u32`, size `u32`, an offset `u32` of each element, the elements | `[PROTOCOL Values]` | done |
+| P-JSON-11 | Node 11 object: count `u32`, size `u32`, an offset `u32` of each member in key order, the members in written order, each key and value | `[PROTOCOL Values]` | done |
+| P-JSON-100 | A document: a version octet, 1, then its root node; another version refused | `[PROTOCOL Values]` | done |
+| P-JSON-101 | An object's directory sorted by key octets, members of one key in written order; written order kept | `[PROTOCOL Values]` | done |
 
 ### Composite fields
 

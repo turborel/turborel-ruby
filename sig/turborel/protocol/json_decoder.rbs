@@ -1,0 +1,59 @@
+module Turborel
+  module Protocol
+    # Reads a JSON value's stored form into Ruby values.
+    class JsonDecoder
+      WORD: Integer
+      LONG: Integer
+      I128_BYTES: Integer
+      HEAD_BYTES: Integer
+      DECIMAL_BYTES: Integer
+      WIDE_BYTES: Integer
+      UTC_AT: Integer
+      ZONE_AT: Integer
+      ZONED_AT: Integer
+      PRECISION_AT: Integer
+      DATETIME_BYTES: Integer
+      HALF_BITS: Integer
+      I64: String
+      U64: String
+      U32: String
+      I16: String
+      F64: String
+      I16_BYTES: Integer
+      CONSTANTS: Hash[Integer, bool?]
+      READERS: Hash[Integer, Symbol]
+
+      @bytes: String
+
+      def initialize: (String bytes) -> void
+      def document: () -> json
+
+      private
+
+      def node: (Integer at, Integer depth) -> [json, Integer]
+      def integer: (Integer at, Integer _depth) -> [Integer, Integer]
+      def approximate: (Integer at, Integer _depth) -> [Float, Integer]
+      def decimal: (Integer at, Integer _depth) -> [Integer | BigDecimal, Integer]
+      def wide: (Integer at, Integer _depth) -> [Integer | BigDecimal, Integer]
+      def decfloat: (Integer at, Integer _depth) -> [DecFloat, Integer]
+      def string: (Integer at, Integer _depth) -> [String, Integer]
+      def datetime: (Integer at, Integer _depth) -> [Datetime, Integer]
+      def array: (Integer at, Integer depth) -> [Array[json], Integer]
+      def object: (Integer at, Integer depth) -> [Hash[String, json], Integer]
+      def first_of_each_key: (Array[[String, json]] members) -> Hash[String, json]
+      def members: (Integer first, Integer count, Integer depth) -> [Array[[String, json]], Array[Integer], Integer]
+      def check_directory: (Integer at, Integer first, Array[Integer] starts) -> void
+      def entry: (Integer at, Integer first, Hash[Integer, bool] known, Integer index) -> [String, Integer]
+      def offset: (Integer at, Integer index) -> Integer
+      def head: (Integer at) -> [Integer, Integer, Integer]
+      def text_at: (Integer at) -> [String, Integer]
+      def exact: (Integer units, Integer scale) -> (Integer | BigDecimal)
+      def i128: (Integer at) -> Integer
+      def word: (Integer at) -> Integer
+      def byte: (Integer at) -> Integer
+      def unpack: (Integer at, Integer count, String directive) -> untyped
+      def slice: (Integer at, Integer count) -> String
+      def corrupt: (String why) -> Error
+    end
+  end
+end

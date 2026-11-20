@@ -1,0 +1,120 @@
+module Turborel
+  # A Ruby value the protocol carries.
+  type value = nil | String | Integer | BigDecimal | Float | bool | Array[value] | Datetime | Interval | DecFloat
+             | Lob | Row | Multiset | Structured | Reference | Json | Xml | Uuid | Extension
+
+  # A Ruby value of a JSON item.
+  type json = nil | bool | Integer | BigDecimal | Float | String | Symbol | DecFloat | Datetime | Array[json]
+            | Hash[String | Symbol, json]
+
+  # A date, a time or a timestamp.
+  class Datetime < Data
+    attr_reader moment: Symbol
+    attr_reader utc: Integer
+    attr_reader zone: Integer
+    attr_reader zoned: bool
+    attr_reader precision: Integer
+    def self.new: (moment: Symbol, utc: Integer, zone: Integer, zoned: bool, precision: Integer) -> instance
+  end
+
+  # An interval.
+  class Interval < Data
+    attr_reader start: Symbol
+    attr_reader finish: Symbol
+    attr_reader leading: Integer
+    attr_reader fraction: Integer
+    attr_reader units: Integer
+    def self.new: (start: Symbol, finish: Symbol, leading: Integer, fraction: Integer, units: Integer) -> instance
+  end
+
+  # A decimal floating point number.
+  class DecFloat < Data
+    attr_reader coefficient: Integer
+    attr_reader exponent: Integer
+    def self.new: (coefficient: Integer, exponent: Integer) -> instance
+  end
+
+  # A large object.
+  class Lob < Data
+    attr_reader kind: Symbol
+    attr_reader data: String?
+    attr_reader locator: Integer?
+    attr_reader octets: Integer
+    attr_reader characters: Integer?
+    def self.new: (kind: Symbol, data: String?, locator: Integer?, octets: Integer, characters: Integer?) -> instance
+  end
+
+  # A row value.
+  class Row < Data
+    attr_reader values: Array[value]
+    def self.new: (values: Array[value]) -> instance
+  end
+
+  # A multiset.
+  class Multiset < Data
+    attr_reader values: Array[value]
+    def self.new: (values: Array[value]) -> instance
+  end
+
+  # A value of a structured type.
+  class Structured < Data
+    attr_reader schema: String
+    attr_reader name: String
+    attr_reader attributes: Array[value]
+    def self.new: (schema: String, name: String, attributes: Array[value]) -> instance
+  end
+
+  # A reference.
+  class Reference < Data
+    attr_reader octets: String
+    def self.new: (octets: String) -> instance
+  end
+
+  # A value of the JSON type.
+  class Json < Data
+    attr_reader value: json
+    def self.new: (value: json) -> instance
+  end
+
+  # An XML value.
+  class Xml < Data
+    attr_reader text: String
+    def self.new: (text: String) -> instance
+  end
+
+  # A UUID.
+  class Uuid < Data
+    attr_reader octets: String
+    def self.new: (octets: String) -> instance
+  end
+
+  # A value of a plug-in's type.
+  class Extension < Data
+    attr_reader name: String
+    attr_reader text: String
+    attr_reader bytes: String
+    def self.new: (name: String, text: String, bytes: String) -> instance
+  end
+
+  # A data type.
+  class DataType < Data
+    attr_reader kind: Symbol
+    attr_reader params: Hash[Symbol, untyped]
+    def self.new: (kind: Symbol, params: Hash[Symbol, untyped]) -> instance
+  end
+
+  # A column of a result.
+  class Column < Data
+    attr_reader name: String?
+    attr_reader type: DataType
+    attr_reader not_null: bool
+    def self.new: (name: String?, type: DataType, not_null: bool) -> instance
+  end
+
+  # A dynamic parameter.
+  class Parameter < Data
+    attr_reader varying: bool
+    attr_reader type: DataType
+    def self.new: (varying: bool, type: DataType) -> instance
+  end
+end

@@ -3,11 +3,20 @@
 # Each group needs only those above it as it loads.
 require_relative "turborel/error"
 require_relative "turborel/failure"
+require_relative "turborel/values"
 require_relative "turborel/version"
 
 require_relative "turborel/protocol/frame"
 require_relative "turborel/protocol/reader"
 require_relative "turborel/protocol/writer"
+
+require_relative "turborel/protocol/json_binary"
+require_relative "turborel/protocol/types"
+require_relative "turborel/protocol/values"
+
+require_relative "turborel/protocol/json_decoder"
+require_relative "turborel/protocol/value_reader"
+require_relative "turborel/protocol/value_writer"
 
 require_relative "turborel/protocol/compression"
 

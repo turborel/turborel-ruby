@@ -1,0 +1,34 @@
+module Turborel
+  module Protocol
+    # Writes Ruby values as the protocol's values [PROTOCOL Values].
+    module ValueWriter
+      WRITERS: Hash[Module, Symbol]
+
+      def self.write: (Writer writer, untyped value, ?Integer depth) -> void
+      def self.row_values: (Writer writer, Array[untyped] values, ?Integer depth) -> void
+      def self.null: (Writer writer, nil _value, Integer _depth) -> void
+      def self.string: (Writer writer, String value, Integer _depth) -> void
+      def self.integer: (Writer writer, Integer value, Integer _depth) -> void
+      def self.big_decimal: (Writer writer, BigDecimal value, Integer _depth) -> void
+      def self.exact_parts: (BigDecimal value) -> [Integer, Integer]
+      def self.float: (Writer writer, Float value, Integer _depth) -> void
+      def self.boolean: (Writer writer, bool value, Integer _depth) -> void
+      def self.array: (Writer writer, Array[untyped] value, Integer depth) -> void
+      def self.datetime: (Writer writer, Datetime value, Integer _depth) -> void
+      def self.zone_field: (Integer zone) -> Integer
+      def self.interval: (Writer writer, Interval value, Integer _depth) -> void
+      def self.decfloat: (Writer writer, DecFloat value, Integer _depth) -> void
+      def self.lob: (Writer writer, Lob value, Integer _depth) -> void
+      def self.locator: (Writer writer, Lob value) -> void
+      def self.lob_octets: (Symbol kind, String data) -> String
+      def self.row: (Writer writer, Row value, Integer depth) -> void
+      def self.multiset: (Writer writer, Multiset value, Integer depth) -> void
+      def self.structured: (Writer writer, Structured value, Integer depth) -> void
+      def self.reference: (Writer writer, Reference value, Integer _depth) -> void
+      def self.json: (Writer writer, Json value, Integer _depth) -> void
+      def self.xml: (Writer writer, Xml value, Integer _depth) -> void
+      def self.uuid: (Writer writer, Uuid value, Integer _depth) -> void
+      def self.extension: (Writer writer, Extension value, Integer _depth) -> void
+    end
+  end
+end

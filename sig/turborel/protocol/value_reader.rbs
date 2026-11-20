@@ -1,0 +1,32 @@
+module Turborel
+  module Protocol
+    # Reads values into Ruby values [PROTOCOL Values].
+    module ValueReader
+      def self.read: (Reader reader) -> value
+      def self.row_values: (Reader reader) -> Array[value]
+      def self.null: (Reader _reader, Integer _tag) -> nil
+      def self.character: (Reader reader, Integer _tag) -> String
+      def self.exact: (Reader reader, Integer _tag) -> (Integer | BigDecimal)
+      def self.approximate: (Reader reader, Integer _tag) -> Float
+      def self.extension: (Reader reader, Integer _tag) -> Extension
+      def self.binary: (Reader reader, Integer _tag) -> String
+      def self.datetime: (Reader reader, Integer tag) -> Datetime
+      def self.interval: (Reader reader, Integer _tag) -> Interval
+      def self.boolean: (Reader reader, Integer _tag) -> bool
+      def self.decfloat: (Reader reader, Integer _tag) -> DecFloat
+      def self.array: (Reader reader, Integer _tag) -> Array[value]
+      def self.row: (Reader reader, Integer _tag) -> Row
+      def self.multiset: (Reader reader, Integer _tag) -> Multiset
+      def self.lob_whole: (Reader reader, Integer _tag) -> Lob
+      def self.lob_locator: (Reader reader, Integer _tag) -> Lob
+      def self.structured: (Reader reader, Integer _tag) -> Structured
+      def self.reference: (Reader reader, Integer _tag) -> Reference
+      def self.json: (Reader reader, Integer _tag) -> Json
+      def self.xml: (Reader reader, Integer _tag) -> Xml
+      def self.uuid: (Reader reader, Integer _tag) -> Uuid
+      def self.lob_kind: (Reader reader) -> Symbol
+      def self.signed32: (Integer word) -> Integer
+      def self.displacement: (Reader reader) -> Integer
+    end
+  end
+end

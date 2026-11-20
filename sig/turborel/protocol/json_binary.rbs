@@ -1,0 +1,48 @@
+module Turborel
+  module Protocol
+    # A JSON value's stored form (turborel RULES.md D89).
+    module JsonBinary
+      FORMAT_VERSION: Integer
+      MAX_DOCUMENT_OCTETS: Integer
+      MAX_NESTING: Integer
+      NULL: Integer
+      FALSE_NODE: Integer
+      TRUE_NODE: Integer
+      INTEGER: Integer
+      DECIMAL: Integer
+      WIDE: Integer
+      DECFLOAT: Integer
+      APPROXIMATE: Integer
+      STRING: Integer
+      DATETIME: Integer
+      ARRAY: Integer
+      OBJECT: Integer
+      MOMENTS: Hash[Integer, Symbol]
+      I64_RANGE: Range[Integer]
+      MAX_DECIMAL_SCALE: Integer
+      WORD: Integer
+      ENCODERS: Hash[Module, Symbol]
+
+      def self.encode: (untyped value) -> String
+      def self.decode: (String bytes) -> json
+      def self.node: (Writer writer, untyped value, Integer depth) -> void
+      def self.null: (Writer writer, nil _value, Integer _depth) -> void
+      def self.truth: (Writer writer, bool value, Integer _depth) -> void
+      def self.integer: (Writer writer, Integer value, Integer _depth) -> void
+      def self.big_decimal: (Writer writer, BigDecimal value, Integer _depth) -> void
+      def self.exact: (Writer writer, Integer units, Integer scale) -> void
+      def self.float: (Writer writer, Float value, Integer _depth) -> void
+      def self.string: (Writer writer, String | Symbol value, Integer _depth) -> void
+      def self.decfloat: (Writer writer, DecFloat value, Integer _depth) -> void
+      def self.datetime: (Writer writer, Datetime value, Integer _depth) -> void
+      def self.array: (Writer writer, Array[untyped] value, Integer depth) -> void
+      def self.object: (Writer writer, Hash[untyped, untyped] value, Integer depth) -> void
+      def self.member_bytes: (String key, untyped member, Integer depth) -> String
+      def self.directory: (Array[String] keys, Array[Integer] offsets) -> Array[Integer]
+      def self.key_text: (untyped key) -> String
+      def self.encoded: (untyped value, Integer depth) -> String
+      def self.offsets_of: (Array[String] parts) -> Array[Integer]
+      def self.container: (Writer writer, Integer tag, Array[String] parts, Array[Integer] offsets) -> void
+    end
+  end
+end
