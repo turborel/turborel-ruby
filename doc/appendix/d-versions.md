@@ -9,4 +9,4 @@ it speaks the native protocol's version 1, the only version, which grows
 by capabilities rather than by new versions. Until 1.0.0 anything these
 manuals describe may change in any release. How releases are numbered
 and published is in
-[VERSIONING.md](https://github.com/turborel/turborel-ruby/blob/main/VERSIONING.md).
+[VERSIONING.md](../../VERSIONING.md).

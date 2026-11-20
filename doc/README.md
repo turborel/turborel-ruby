@@ -48,7 +48,7 @@ library chapters,
 and
 [Settings, Pipelines and Pools](https://github.com/turborel/turborel/blob/main/doc/client/02-library-connections.md).
 The rows each page fulfils are those of the driver's parity matrix,
-[CONFORMANCE.md](https://github.com/turborel/turborel-ruby/blob/main/CONFORMANCE.md).
+[CONFORMANCE.md](../CONFORMANCE.md).
 
 **Errors** are given by SQLSTATE, the code the SQL standard defines, and
 SQLCODE, the older number, as Turborel gives them;

@@ -84,8 +84,10 @@ program sees updates each page of [doc/](doc/README.md) that states it,
 with its examples run again. The manual is laid out as Turborel's,
 since turborel.com's documentation site reads it from every repository:
 a chapter begins with its `# Title` and a line `[Contents](README.md)`,
-links between its pages are relative `.md` links, a link out of `doc/`
-is a full URL, and each volume's README.md lists its chapters.
+links between its pages and to this repository's other files are
+relative links, a link to Turborel's manual is its GitHub address,
+`user/01-installing.md` keeps its name, `doc/` holds no images, and each
+volume's README.md lists its chapters.
 
 Some rules deserve a reminder.
 

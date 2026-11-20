@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
     "source_code_uri" => spec.homepage,
     "bug_tracker_uri" => "#{spec.homepage}/issues",
     "changelog_uri" => "#{spec.homepage}/commits/main",
-    "documentation_uri" => "#{spec.homepage}/blob/main/doc/README.md",
+    "documentation_uri" => "https://turborel.com/docs/drivers/ruby/",
     "rubygems_mfa_required" => "true"
   }
 

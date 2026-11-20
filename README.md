@@ -78,7 +78,8 @@ conn.close
 ## The manual
 
 [doc/](doc/README.md) is the manual: a User's Guide, an API Reference
-and Appendices, published on turborel.com's documentation site too. Each
+and Appendices, published at
+https://turborel.com/docs/drivers/ruby/. Each
 chapter is written as the milestone that fills it lands. The SQL a
 program sends, and the server, are described in Turborel's own manual,
 [The Turborel Documentation Set](https://github.com/turborel/turborel/blob/main/doc/README.md).

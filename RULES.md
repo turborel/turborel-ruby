@@ -113,7 +113,7 @@ The tools named by "the formatter", "the linters", "the type checker" and
 | R-DOC-4 | Behaviour the protocol or turborel-client governs **shall** cite it by its heading, `[PROTOCOL Frames]`, `[CLIENT Pools]`; the driver's own choices cite their decision (D6). | review; the checks tool |
 | R-DOC-5 | No commented-out code, and no `TODO`, `FIXME` or `XXX` comments: open work goes in TODO.md, and code never cites TODO.md. | the linters or the checks tool |
 | R-DOC-6 | Every source file **shall** begin with a doc comment giving its responsibility and the sections it implements. | review |
-| R-DOC-7 | A change a program can see **shall** update the manual, `doc/`, in the same commit; every claim is checked against the code, and every example is run. The manual keeps Turborel's layout, which turborel.com's documentation site reads: each page opens with its `# Title` and a line holding only `[Contents](README.md)`, each volume's README.md lists its pages, links within `doc/` are relative `.md` links that resolve, and a link out of `doc/` is a full URL. | review; the checks tool |
+| R-DOC-7 | A change a program can see **shall** update the manual, `doc/`, in the same commit; every claim is checked against the code, and every example is run. The manual keeps Turborel's layout, which turborel.com's documentation site reads: each page opens with its `# Title` and a line holding only `[Contents](README.md)`, each volume's README.md lists its pages, links within `doc/` and to other files of this repository are relative links that resolve (the site points the latter at GitHub, at the same tag), a link to Turborel's own manual is its GitHub address under `https://github.com/turborel/turborel/blob/main/doc/`, `user/01-installing.md` keeps its name, and `doc/` holds no images. | review; the checks tool |
 
 ### R-CONST: no magic numbers or strings
 
@@ -494,7 +494,7 @@ branches of `lib/`, and fails below the floor `.simplecov` keeps (D7).
 #### D15. The API reference is YARD's, with nothing undocumented
 
 Doc comments are YARD's, the format RubyGems' documentation sites read.
-`rake doc` builds the reference into `doc/api/`, failing on any warning
+`rake doc` builds the reference into `api/`, failing on any warning
 or on any class, module, method or constant with no documentation
 (R-DOC-1, R-DOC-3). Classes and modules internal to the driver are
 marked `@api private` and left out of the reference (R-STYLE-4).

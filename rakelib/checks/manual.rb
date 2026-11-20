@@ -5,8 +5,9 @@ module Checks
   # and every relative link of the documents (RULES.md R-DOC-7): each page
   # opens with its `# Title`; a chapter's next line holds only
   # `[Contents](README.md)`; each volume's README.md links the set and
-  # lists its pages; a link within doc/ is a relative `.md` link that
-  # resolves, and a link out of doc/ is a full URL.
+  # lists its pages; every relative link resolves, a link from doc/ to
+  # the repository's own files too, which the site points at GitHub; and
+  # doc/ holds no image.
   module Manual
     # The documents whose relative links must resolve.
     DOCUMENTS = ["*.md", "doc/**/*.md", ".github/**/*.md"].freeze
@@ -18,28 +19,32 @@ module Checks
     CONTENTS = "[Contents](README.md)"
     # A volume's line back to the set.
     SET = "[The documentation set](../README.md)"
-    # The manual's directory.
-    ROOT = File.expand_path("doc")
+    # An image, in Markdown or HTML.
+    IMAGE = /!\[|<img\b/i
 
     # @return [Array<String>] every problem of the manual and the links
     def self.problems
       Dir.glob(DOCUMENTS).flat_map { |path| links(path) } + Dir.glob("doc/**/*.md").flat_map { |path| page(path) } +
-        Dir.glob("doc/*/README.md").flat_map { |path| volume(path) }
+        Dir.glob("doc/*/README.md").flat_map { |path| volume(path) } + images
     end
 
     # @return [Array<String>] relative links of +path+ that resolve to no
-    #   file, or that leave doc/ from a page of it
+    #   file
     def self.links(path)
       File.read(path).scan(LINK).flatten.filter_map do |target|
         next if target.match?(EXTERNAL)
 
         file = File.expand_path(target.sub(/#.*/, ""), File.dirname(path))
-        next "#{path}: the link #{target} resolves to no file" unless File.exist?(file)
-
-        if path.start_with?("doc/") && !file.start_with?(ROOT)
-          "#{path}: the link #{target} leaves doc/; write it as a full URL"
-        end
+        "#{path}: the link #{target} resolves to no file" unless File.exist?(file)
       end
+    end
+
+    # @return [Array<String>] images in doc/: a file not of Markdown, or an
+    #   image in a page
+    def self.images
+      others = Dir.glob("doc/**/*").reject { |path| File.directory?(path) || path.end_with?(".md") }
+      others.map { |path| "#{path}: doc/ holds Markdown pages alone, no image" } +
+        Dir.glob("doc/**/*.md").select { |path| File.read(path).match?(IMAGE) }.map { |path| "#{path}: holds an image" }
     end
 
     # @return [Array<String>] a page without its title, or a chapter

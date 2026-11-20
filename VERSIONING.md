@@ -50,9 +50,15 @@ refuses the connection (SQLSTATE 08004).
 - `Turborel::VERSION`, in `lib/turborel/version.rb` holds the number, written once. Everything else
   that carries it, the package's metadata and what the library tells a
   program, takes it from there or is held to it by a test.
-- A release is tagged `v` and its number, as `v0.0.0`. turborel.com's
+- A release is tagged with exactly the tag Turborel's own release
+  uses, the same name with the same `v` prefix, as `v0.1.0`, on the
+  commit whose `doc/` describes that release. turborel.com's
   documentation site reads the manual, `doc/`, from `main` while there
-  is no release, and at each release's tag once there are.
+  is no release, and at each release's tag once there are. A Turborel
+  release this repository has no tag for is left out of the driver's
+  docs for that version; it never falls back to `main`. If this tag is
+  pushed after the server's release, run the docs-site workflow by
+  hand so the site picks it up.
 
 ## Publishing
 

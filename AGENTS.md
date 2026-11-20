@@ -135,9 +135,10 @@ A finished feature updates these in the same change:
 - TODO.md, which only holds open work;
 - [doc/](doc/README.md), for anything a program sees (R-DOC-7), every
   example run: each page keeps its `# Title` and its
-  `[Contents](README.md)` line, links within `doc/` are relative `.md`
-  links, and a link out of `doc/` is a full URL, as the docs site reads
-  `doc/` alone;
+  `[Contents](README.md)` line, links to this repository's files are
+  relative (the docs site points those outside `doc/` at GitHub, at the
+  same tag), links to Turborel's manual are GitHub addresses,
+  `user/01-installing.md` keeps its name, and `doc/` holds no images;
 - README.md, if what the driver is or needs changes.
 
 No document gives timings or speedups; numbers go in a commit message.

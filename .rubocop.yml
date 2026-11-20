@@ -14,7 +14,7 @@ AllCops:
   Exclude:
     - "vendor/**/*"
     - "pkg/**/*"
-    - "doc/api/**/*"
+    - "api/**/*"
     - "coverage/**/*"
     - ".claude/**/*"
 

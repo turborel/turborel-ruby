@@ -4,7 +4,7 @@
 # What the tasks build: the gem, coverage, the API reference, YARD's cache.
 /pkg/
 /coverage/
-/doc/api/
+/api/
 /.yardoc/
 # Steep's and RuboCop's caches.
 /.steep/

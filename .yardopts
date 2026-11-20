@@ -1,4 +1,4 @@
---output-dir doc/api
+--output-dir api
 --readme README.md
 --no-private
 --hide-api private
