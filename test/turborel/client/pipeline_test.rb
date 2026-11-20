@@ -150,6 +150,31 @@ module Turborel
 
         assert_equal ["A", "SAVEPOINT TURBOREL_PIPELINE_1", "RELEASE SAVEPOINT TURBOREL_PIPELINE_1"], texts
       end
+
+      # Verifies: [CLIENT Pipelines] run fails, giving no outcome, if a
+      # skipping batch's requests cannot be undone: the failure of its
+      # ROLLBACK TO SAVEPOINT.
+      def test_skip_that_cannot_be_undone
+        connection, server = scripted do |peer, frames|
+          5.times { frames << peer.frame }
+          peer.complete
+          peer.complete
+          peer.error(-201, "23000", "duplicate")
+          peer.complete
+          peer.complete
+          frames << peer.frame
+          peer.error(-913, "40001", "the savepoint is gone")
+        end
+        refused = assert_fails([-913, "40001"]) do
+          connection.pipeline.on_error(:skip).query("A").query("B").query("C").run
+        end
+
+        assert_equal "the savepoint is gone", refused.message
+        connection.terminate
+
+        assert_equal "ROLLBACK TO SAVEPOINT TURBOREL_PIPELINE_2",
+                     Protocol::Reader.new(server.join.fetch(5).last, "query").str
+      end
     end
   end
 end

@@ -43,9 +43,11 @@ module Turborel
       # Verifies: [CLIENT Pools] a bounded set of connections: get an idle
       # one or make one while fewer than max are made, else wait, failing
       # with 08001 past wait; a connection given back as it is released,
-      # reset by Reset, autocommit off, then the reset statements.
+      # reset by Reset, autocommit off, then the reset statements, run after
+      # Reset as the zone the program set is put back and the reset's own
+      # kept.
       def test_a_pool
-        pool = Pool.new(settings, config(max: 2, wait: 0.5, reset: ["SET SCHEMA 'ANN'"]))
+        pool = Pool.new(settings, config(max: 2, wait: 0.5, reset: ["SET TIME ZONE INTERVAL '+03:00' HOUR TO MINUTE"]))
         first = pool.get
         second = pool.get
 
@@ -59,7 +61,7 @@ module Turborel
         assert_equal [2, 1], pool.counts
         assert_fails(MISUSED) { first.connection }
         pool.get do |c|
-          assert_equal ["+00:00", false], [c.setting("SESSION.TIME_ZONE"), c.autocommit]
+          assert_equal ["+03:00", false], [c.setting("SESSION.TIME_ZONE"), c.autocommit]
         end
         second.release
 
@@ -220,8 +222,10 @@ module Turborel
         pool.instance_variable_get(:@idle).first.first.instance_variable_get(:@stream).close
 
         pool.get { |c| assert_equal [[1]], c.query("VALUES 1").rows }
-        failing = Pool.new(-> { raise Error.connection_failure("down") }, config(max: 1))
-        assert_fails { failing.get }
+        failing = Pool.new(-> { raise Error.of(-104, "28000", "the source's own") }, config(max: 1))
+        own = assert_fails([-104, "28000"]) { failing.get }
+
+        assert_equal "the source's own", own.message
         assert_equal [0, 0], failing.counts
         plain = -> { Client.connect_to(tcp, user: "ann", mechanism: Trust.new, offer: Offers.none) }
         many = Pool.new(plain, config(max: 1))
