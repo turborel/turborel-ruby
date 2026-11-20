@@ -33,9 +33,21 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Every check
+      # The checks of `rake verify`, a step each, so a failure names its
+      # check.
+      - name: RuboCop
+        run: bundle exec rake rubocop
+      - name: Rules
+        run: bundle exec rake rules
+      - name: Steep
+        run: bundle exec rake steep
+      - name: RBS
+        run: bundle exec rake rbs
+      - name: YARD
+        run: bundle exec rake doc
+      - name: Tests
         timeout-minutes: 30
-        run: bundle exec rake verify
+        run: bundle exec rake test
 
   coverage:
     runs-on: ubuntu-latest
