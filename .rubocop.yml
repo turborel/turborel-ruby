@@ -18,6 +18,11 @@ AllCops:
     - "coverage/**/*"
     - ".claude/**/*"
 
+# Lines end with LF on every platform, as .gitattributes checks them out;
+# the cop's default, native, would ask for CRLF on Windows.
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
 # R-STYLE-3: one quoting, as the Ruby community's most common style has it.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
