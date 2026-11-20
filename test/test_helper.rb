@@ -71,7 +71,7 @@ module GithubAnnotations
     super
     return unless ENV["GITHUB_ACTIONS"]
 
-    failures.each do |failure|
+    failures.grep_v(Minitest::Skip).each do |failure|
       text = "#{self.class}##{name}: #{failure.message}"[0, MAX_MESSAGE].gsub("%", "%25").gsub(/\r?\n/, "%0A")
       $stdout.puts "::error title=#{RUBY_PLATFORM} #{RUBY_VERSION}::#{text}"
     end

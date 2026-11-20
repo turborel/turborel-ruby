@@ -66,12 +66,15 @@ module Turborel
       end
 
       # Verifies: [CLIENT Timeouts] a write that waits past the timeout, as to
-      # a server that reads nothing, loses the connection.
+      # a server that reads nothing, loses the connection. Windows takes a
+      # whole write while its send buffer has room, however large, so the
+      # writes go on until one must wait.
       def test_writes_time_out
         client, server = pair
         stream = Stream.new(client, timeout: 0.05)
+        block = "x" * (16 * 1024 * 1024)
 
-        assert_fails { stream.write_all("x" * (64 * 1024 * 1024)) }
+        assert_fails { 16.times { stream.write_all(block) } }
       ensure
         [client, server].each { |io| io&.close }
       end
