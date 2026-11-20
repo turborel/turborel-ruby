@@ -121,8 +121,14 @@ module ActiveRecord
 
           client = @raw_connection.client
           rows = result.values.map { |row| row.map { |value| Values.read(value, client) } }
-          ActiveRecord::Result.new(result.fields.map(&:to_s), rows, affected_rows: result.cmd_tuples)
+          ActiveRecord::Result.new(result.fields.map(&:to_s), rows, column_types(result),
+                                   affected_rows: result.cmd_tuples)
         end
+
+        # The type of each column of +result+, in order, by the type it was
+        # declared with, where the server told it, so INTEGER is an integer
+        # and NUMERIC(10,0) a decimal [PROTOCOL Declared types].
+        def column_types(result) = result.columns.map { |column| lookup_cast_type(column.type_written) }
 
         # The rows +result+'s statement affected.
         def affected_rows(result) = result.cmd_tuples

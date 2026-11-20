@@ -174,6 +174,33 @@ module Turborel
         assert_fails { reply(frame("T", writer.str("A").to_s)) }
         assert_fails { reply(frame("C", writer.bytes("").u8(0).to_s)) }
       end
+
+      # Verifies: [PROTOCOL Values and fields] whether a reply is its
+      # request's last, as reply.rs ends_request says: a Description, Rows,
+      # a Notice or a Status not; a Complete as its head's tag 5 says, read
+      # even where the rest is not, one whose head is not whole the last;
+      # any other reply the last.
+      def test_where_a_request_ends
+        head = Writer.new.u32(0).str("00000").flag(true).u8(4).u64(9).u8(5)
+        bad = head.to_s + Writer.new.u8(17).u32(1).bytes("\x01".b).to_s
+
+        assert_equal([false, false, false, false], %w[D B N T].map { Replies.ends_request?(_1.ord, "") })
+        assert_equal [false, true, true], [Replies.ends_request?(Replies::COMPLETE, bad),
+                                           Replies.ends_request?(Replies::COMPLETE, "\x00"),
+                                           Replies.ends_request?("G".ord, "")]
+        assert_equal [9, true, true],
+                     Replies.completed_head(Replies::COMPLETE, bad).to_h.values_at(:position, :more, :active)
+        assert_nil Replies.completed_head("D".ord, "")
+      end
+
+      # Verifies: [PROTOCOL Declared types] declared types not one for each
+      # column refused as malformed.
+      def test_declared_types_one_for_each_column
+        column = Writer.new.u32(1).flag(true).str("K").u8(14).flag(false)
+        declared = Writer.new.u8(19).u32(2).str("BOOLEAN").str("BOOLEAN").str("BOOLEAN").str("BOOLEAN")
+
+        assert_fails { Replies.decode("D".ord, column.to_s + declared.to_s) }
+      end
     end
   end
 end

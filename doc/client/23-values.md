@@ -24,7 +24,8 @@ Turborel::Xml.new(text:)
 Turborel::Uuid.new(octets:)
 Turborel::Extension.new(name:, text:, bytes:)
 Turborel::DataType.new(kind:, params:)
-Turborel::Column.new(name:, type:, not_null:)
+Turborel::Column.new(name:, type:, not_null:, declared: nil)   # type_written, type_name
+Turborel::Declared.new(name:, written:)
 Turborel::Parameter.new(varying:, type:)
 ```
 
@@ -47,6 +48,13 @@ at its own scale wherever it is given.
 
 What the server describes of a result's columns and a statement's
 parameters is a `Column` and a `Parameter`, each with its `DataType`.
+A column's `declared` type, a `Declared`, is told where the server
+grants `declared-types`, which a connection asks for unless told: its
+`name`, as the Information Schema's DATA_TYPE gives it, and the type
+`written` as SQL writes it, so an INTEGER column, whose values are an
+exact number's of precision 10, is told apart from a NUMERIC(10,0) one.
+`type_written` and `type_name` give it, or, where it was not told, the
+type its tag says, as NUMERIC(10,0) and NUMERIC.
 
 A program receives values and passes them so through the low-level
 client, as [Statements and Cursors](22-statements.md) tells, through the

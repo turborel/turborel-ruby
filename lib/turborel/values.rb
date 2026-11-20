@@ -118,8 +118,35 @@ module Turborel
   DataType = Data.define(:kind, :params)
 
   # A column of a result [PROTOCOL Composite fields]: its +name+, +nil+ if
-  # unnamed, its DataType, and whether it is known +not_null+.
-  Column = Data.define(:name, :type, :not_null)
+  # unnamed, its DataType, whether it is known +not_null+, and the type it
+  # was +declared+ with, a Declared, where the server told it, granted
+  # declared-types [PROTOCOL Declared types].
+  Column = Data.define(:name, :type, :not_null, :declared)
+
+  # The type a column was declared with [PROTOCOL Declared types]: its
+  # +name+, as the Information Schema's DATA_TYPE gives it, as INTEGER or
+  # USER-DEFINED, and the whole type +written+ as SQL writes it, as
+  # DECIMAL(9,2).
+  Declared = Data.define(:name, :written)
+
+  # A column's declared type, kept apart from its DataType.
+  class Column
+    # A column, of no declared type unless one is given.
+    def initialize(name:, type:, not_null:, declared: nil) = super
+
+    # Its type as SQL writes it: as it was declared, where the server told
+    # it, else as its DataType says [CLIENT Prepared statements].
+    #
+    # @return [String]
+    def type_written = declared ? declared.written : Text::Types.written(type)
+
+    # Its type's name, as the Information Schema's DATA_TYPE gives it: as
+    # it was declared, where the server told it, as INTEGER, else as its
+    # DataType says, as NUMERIC.
+    #
+    # @return [String]
+    def type_name = declared ? declared.name : Text::Types.name(type)
+  end
 
   # A dynamic parameter of a prepared statement [PROTOCOL Composite
   # fields]: its DataType, and whether the server gave it CHARACTER

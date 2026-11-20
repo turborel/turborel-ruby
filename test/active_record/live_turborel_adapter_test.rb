@@ -69,7 +69,6 @@ module ActiveRecord
       # created, read with each type as ActiveRecord casts it, found,
       # updated and destroyed.
       def test_models
-        load File.expand_path("../../lib/turborel/registration.rb", __dir__)
         ActiveRecord::Base.establish_connection(adapter: "turborel",
                                                 url: "turborel://ann@127.0.0.1:#{server.port}/?tls_mode=disable")
         ada = Author.create!(name: "Ada", bio: "notes", score: 1.5, born: Date.new(1815, 12, 10), wakes: "07:30:01.5",
@@ -277,6 +276,39 @@ module ActiveRecord
 
         assert_instance_of StatementInvalid, translated
         lost_transaction
+      end
+
+      # Verifies: [DESIGN] D2 a column's type changed by SET DATA TYPE, with
+      # its default and nullability; NOT NULL set, its nulls given a value
+      # first, and dropped; a table renamed by RENAME TO, its indexes named
+      # after it renamed too.
+      def test_columns_and_tables_changed
+        Book.create!(title: "Notes")
+        connection.change_column :ar_books, :title, :string, limit: 40
+        connection.change_column :ar_books, :pages, :integer, limit: 4, default: 3, null: true
+        connection.change_column_null :ar_books, :editor_id, false, 0
+        connection.change_column_null :ar_books, :pages, true
+        columns = connection.columns(:ar_books).to_h { [_1.name, _1] }
+
+        assert_equal ["CHARACTER VARYING(40)", "INTEGER", "3", false, true],
+                     [columns["title"].sql_type, columns["pages"].sql_type, columns["pages"].default,
+                      columns["editor_id"].null, columns["pages"].null]
+        assert_equal [[0]], connection.select_rows('SELECT "editor_id" FROM "ar_books"')
+        connection.rename_table :ar_books, :ar_volumes
+
+        assert_equal [false, true], [connection.table_exists?(:ar_books), connection.table_exists?(:ar_volumes)]
+        assert_includes connection.indexes(:ar_volumes).map(&:name), "index_ar_volumes_on_title"
+        connection.rename_table :ar_volumes, :ar_books, _uses_legacy_table_name: true
+      end
+
+      # Verifies: [DESIGN] D2 a result's column types those the server
+      # declared, INTEGER an integer, a DECIMAL of a scale a decimal.
+      def test_result_column_types
+        connection.execute('CREATE TABLE "ar_typed" ("i" INTEGER, "n" NUMERIC(10,0), "d" DECIMAL(9,2))')
+        types = connection.select_all('SELECT "i", "n", "d" FROM "ar_typed"').column_types
+
+        assert_equal([Type::Integer, Type::DecimalWithoutScale, Type::Decimal], %w[i n d].map { types.fetch(_1).class })
+        connection.drop_table :ar_typed
       end
 
       private

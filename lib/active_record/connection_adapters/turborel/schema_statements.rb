@@ -132,6 +132,48 @@ module ActiveRecord
           rename_column_indexes(table_name, column_name, new_column_name)
         end
 
+        # Renames the table +table_name+ +new_name+, by ALTER TABLE RENAME TO,
+        # and the indexes named after it.
+        #
+        # @return [void]
+        def rename_table(table_name, new_name, **options)
+          validate_table_length!(new_name) unless options[:_uses_legacy_table_name]
+          clear_cache!
+          [table_name, new_name].each { |name| schema_cache.clear_data_source_cache!(name.to_s) }
+          execute "ALTER TABLE #{quote_table_name(table_name)} RENAME TO #{quote_table_name(new_name)}"
+          rename_table_indexes(table_name, new_name, **options)
+        end
+
+        # Gives the column +column_name+ the type +type+, by SET DATA TYPE, a
+        # longer or more precise one of its kind; then its default and its
+        # nullability, if +options+ name them, an ALTER TABLE each.
+        #
+        # @return [void]
+        def change_column(table_name, column_name, type, **options)
+          clear_cache!
+          sql_type = type_to_sql(type, **options.slice(:limit, :precision, :scale))
+          execute "ALTER TABLE #{quote_table_name(table_name)} ALTER COLUMN #{quote_column_name(column_name)} " \
+                  "SET DATA TYPE #{sql_type}"
+          change_column_default(table_name, column_name, options[:default]) if options.key?(:default)
+          change_column_null(table_name, column_name, options[:null]) if options.key?(:null)
+        end
+
+        # Gives the column +column_name+ a NOT NULL constraint, unless +null+,
+        # its nulls set to +default+ first if given; or drops it.
+        #
+        # @return [void]
+        def change_column_null(table_name, column_name, null, default = nil)
+          validate_change_column_null_argument!(null)
+          clear_cache!
+          table = quote_table_name(table_name)
+          column = quote_column_name(column_name)
+          unless null || default.nil?
+            value = quote_default_expression(default, column_for(table_name, column_name))
+            execute "UPDATE #{table} SET #{column} = #{value} WHERE #{column} IS NULL"
+          end
+          execute "ALTER TABLE #{table} ALTER COLUMN #{column} #{null ? "DROP" : "SET"} NOT NULL"
+        end
+
         # Sets or drops the default of the column +column_name+.
         #
         # @return [void]

@@ -44,8 +44,8 @@ Appendix A writes it: a time as a TIMESTAMP of its wall clock in
 ActiveRecord's default time zone, a date as a DATE, a time of day as a
 TIME, a decimal exactly. Bound to a `?` mark, a value is cast to the
 mark's type, as ISO/IEC 9075:1992 §17.9 GR5 says, so a string longer
-than its column is cut to the column's length; written as a literal, it
-fails as too long. A literal of a datetime is typed, `DATE
+than its column is cut to the column's length, the statement warning
+01004; written as a literal, it fails as too long. A literal of a datetime is typed, `DATE
 '2024-01-02'`, and of a binary string written `X'00ff'`. Names are
 written in double quotes, so a table or column is named in the case
 ActiveRecord gives it; SQL a program writes itself quotes them too, as
@@ -64,11 +64,18 @@ their types, nullability and defaults, primary keys, indexes and foreign
 keys. A migration's ALTER TABLE takes one action each; a column or
 table is dropped RESTRICT, or CASCADE where `force: :cascade` asks; a
 unique index is a UNIQUE constraint, and renaming an index makes it
-again under the new name. Turborel's ALTER TABLE changes no column's
-type or nullability and renames no table, so `change_column`,
-`change_column_null` and `rename_table` raise `NotImplementedError`; and
-a query `lock`ed, `SELECT ... FOR UPDATE`, fails, as the cursor of a
-direct query is read-only.
+again under the new name. `change_column` gives a column a longer or
+more precise type of its kind by SET DATA TYPE, then its default and
+nullability where asked; `change_column_null` sets or drops its NOT
+NULL, its nulls given the default first where one is given; and
+`rename_table` renames a table by RENAME TO, the indexes named after it
+too. A query `lock`ed, `SELECT ... FOR UPDATE`, fails, as the cursor of
+a direct query is read-only.
+
+A result's column types are those the server declared, as the
+connection asks for them: an INTEGER column an integer, a NUMERIC(10,0)
+one a decimal of no scale, as `select_all(...).column_types` gives
+them.
 
 The types, ActiveRecord's to Turborel's:
 

@@ -55,5 +55,17 @@ module Turborel
       assert_fails(MISUSED) { result.column_values(-1) }
       assert_fails(MISUSED) { result.field_values("AGE") }
     end
+
+    # Verifies: [DESIGN] D2 a column of no declared type named and written
+    # as its data type's tag says; one declared, as it was declared.
+    def test_types_by_their_tags
+      exact = Column.new(name: "N", type: DataType.new(kind: :exact, params: { precision: 10, scale: 0 }),
+                         not_null: true)
+      told = exact.with(declared: Declared.new(name: "INTEGER", written: "INTEGER"))
+      result = Result.new(Client::Rows.new(columns: [exact, told], rows: []))
+
+      assert_equal [%w[NUMERIC INTEGER], "NUMERIC(10,0)", "INTEGER"],
+                   [result.ftypes, result.type_written(0), result.type_written(1)]
+    end
   end
 end

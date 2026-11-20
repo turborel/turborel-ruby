@@ -9,6 +9,9 @@ module Turborel
 
     def initialize: (Client::Rows | Client::Completion outcome) -> void
     def fields: () -> Array[String?]
+    def ftypes: () -> Array[String]
+    def ftype: (Integer column) -> String
+    def type_written: (Integer column) -> String
     def ntuples: () -> Integer
     def nfields: () -> Integer
     def cmd_tuples: () -> Integer?

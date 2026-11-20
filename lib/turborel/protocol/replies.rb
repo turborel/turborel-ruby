@@ -148,11 +148,30 @@ module Turborel
       #   columns
       def self.prepared(reader)
         Prepared.new(statement: reader.u32, parameters: reader.counted { Fields.parameter(reader) },
-                     columns: reader.counted { Fields.column(reader) })
+                     columns: declared(reader, reader.counted { Fields.column(reader) }))
       end
 
       # @return [Description] a list of columns
-      def self.description(reader) = Description.new(columns: reader.counted { Fields.column(reader) })
+      def self.description(reader)
+        Description.new(columns: declared(reader, reader.counted { Fields.column(reader) }))
+      end
+
+      # +columns+, each given its declared type where the tail's tag 19
+      # tells them, one for each column, in order [PROTOCOL Declared types].
+      #
+      # @param reader [Reader]
+      # @param columns [Array<Column>]
+      # @return [Array<Column>]
+      def self.declared(reader, columns)
+        told = columns
+        Tail.new(reader, [Tail::DECLARED]).each_tag do
+          types = reader.counted { Declared.new(name: reader.str, written: reader.str) }
+          raise reader.corrupt("its declared types are not one for each column") unless types.size == columns.size
+
+          told = columns.zip(types).map { |column, type| column.with(declared: type) }
+        end
+        told
+      end
 
       # @return [Rows] a list of rows
       def self.rows(reader) = Rows.new(rows: reader.counted { ValueReader.row_values(reader) })

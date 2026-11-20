@@ -119,5 +119,34 @@ module Turborel
         assert_fails { c.exec_params("VALUES 1", []) }
       end
     end
+
+    # Verifies: [DESIGN] D2 a value bound to a ? mark longer than the mark's
+    # type cut to it, as a cast does, with warning 01004, string data, right
+    # truncation.
+    def test_a_value_cut_warns
+      plain do |c|
+        c.exec("CREATE TABLE CUT (S VARCHAR(5))")
+        cut = c.exec_params("INSERT INTO CUT VALUES (?)", ["abcdefgh"])
+
+        assert_equal ["01004", [["abcde"]]], [cut.sqlstate, c.exec("SELECT S FROM CUT").values]
+        c.exec("ROLLBACK")
+      end
+    end
+
+    # Verifies: [DESIGN] D2 a result's column types by the type each was
+    # declared with: its name as DATA_TYPE gives it, and as SQL writes it.
+    def test_declared_types
+      plain do |c|
+        c.exec("CREATE TABLE TYPED (I INTEGER, N NUMERIC(5), D DECIMAL(9,2), F FLOAT(20), S VARCHAR(10))")
+        result = c.exec("SELECT I, N, D, F, S FROM TYPED")
+
+        assert_equal ["INTEGER", "NUMERIC", "DECIMAL", "FLOAT", "CHARACTER VARYING"], result.ftypes
+        assert_equal(["INTEGER", "NUMERIC(5,0)", "DECIMAL(9,2)", "FLOAT(24)", "CHARACTER VARYING(10)"],
+                     (0...5).map { result.type_written(_1) })
+        assert_equal "INTEGER", c.prepare("typed", "SELECT I FROM TYPED").ftype(0)
+        assert_fails(MISUSED) { result.ftype(5) }
+        c.exec("ROLLBACK")
+      end
+    end
   end
 end

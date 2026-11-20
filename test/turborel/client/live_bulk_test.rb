@@ -25,8 +25,8 @@ module Turborel
           writer = c.create_lob(:binary)
           1024.times { writer.write(("\x07" * 4096).b) }
           note = c.create_lob(:character).tap { |w| w << ("é" * 40_000) << "x" }.finish
-          c.execute(c.prepare("INSERT INTO SCANS VALUES (1, ?, ?)"), [writer.finish, note])
-          c.query("INSERT INTO SCANS VALUES (2, X'0102', 'short')")
+          c.execute(c.prepare("INSERT INTO SCANS VALUES (1, ?, ?), (2, ?, ?)"),
+                    [writer.finish, note, "\x01\x02".b, "short"])
           c.query("COMMIT")
           rows = c.query("SELECT IMAGE, NOTE FROM SCANS ORDER BY ID").rows
           image, text = rows.first
@@ -122,6 +122,21 @@ module Turborel
 
           assert_equal c.query(sql).rows, rows
           assert_equal 7, columns.size
+        end
+      end
+
+      # Verifies: [PROTOCOL Lob 'L'] a character large object's octets
+      # checked as UTF-8 as each Append comes: one that is not refused by
+      # its Append (22021), every later one refused too.
+      def test_appends_checked_as_utf8
+        connect do |c|
+          writer = c.create_lob(:character)
+          writer << "fine"
+          writer.flush
+
+          assert_fails([-301, "22021"]) { c.lob_append(writer.instance_variable_get(:@locator), "\xFF".b) }
+          assert_fails([-301, "22021"]) { c.lob_append(writer.instance_variable_get(:@locator), "more") }
+          c.query("ROLLBACK")
         end
       end
     end

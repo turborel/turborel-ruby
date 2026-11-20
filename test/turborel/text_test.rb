@@ -122,5 +122,30 @@ module Turborel
                    "that is not finite>",
                    Text.of(Json.new(value: Float::NAN))
     end
+
+    # Turborel's types as SQL writes them, where no declared type is told.
+    class TextTypesTest < Minitest::Test
+      def type(kind, **params) = DataType.new(kind:, params:)
+
+      # Verifies: [CLIENT Prepared statements] the type its tag says, as
+      # turborel writes it: an interval of one field, SECOND's with its
+      # fraction; a character large object counted in octets; an XML type of
+      # a schema of no namespace and an element; a plug-in's type by its name.
+      def test_types_as_written
+        second = type(:interval, start: :second, finish: :second, leading: 2, fraction: 3)
+        day = type(:interval, start: :day, finish: :day, leading: 4, fraction: 0)
+        schema = { schema: "S", name: "PO", namespace: "", element: 'or"der' }
+
+        assert_equal ["INTERVAL SECOND(2, 3)", "INTERVAL DAY(4)", "CHARACTER LARGE OBJECT(8 OCTETS)",
+                      "BINARY LARGE OBJECT(8)", %(XML(DOCUMENT(XMLSCHEMA ID S.PO NO NAMESPACE ELEMENT "or""der"))),
+                      "ST_GEOMETRY", "ST_GEOMETRY", "INTERVAL"],
+                     [Text::Types.written(second), Text::Types.written(day),
+                      Text::Types.written(type(:clob, length: 8, units: :octets)),
+                      Text::Types.written(type(:blob, length: 8, units: :octets)),
+                      Text::Types.written(type(:xml, primary: :document, secondary: :xmlschema, schema:)),
+                      Text::Types.written(type(:extension, name: "ST_GEOMETRY", params: [])),
+                      Text::Types.name(type(:extension, name: "ST_GEOMETRY", params: [])), Text::Types.name(second)]
+      end
+    end
   end
 end

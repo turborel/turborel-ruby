@@ -11,7 +11,7 @@ protocol, `doc/client/05-protocol.md`; the client library,
 `doc/client/02-library.md`; and its settings, pipelines and pools,
 `doc/client/02-library-connections.md`. Each section here is one of
 theirs, and each row cites its heading as the tests cite it (RULES.md
-D6). The headings are those of Turborel's main at e97e0aa4. Last come
+D6). The headings are those of Turborel's main at 045e42a9. Last come
 the rows of this driver's standard API (RULES.md D2).
 
 **Done** means the driver's code for the row exists and is tested by
@@ -56,10 +56,10 @@ The same in every driver; the status of each row is in its table.
 
 | Part | Rows |
 |---|---|
-| The protocol | 247 |
-| The client library | 94 |
+| The protocol | 257 |
+| The client library | 95 |
 | Settings, pipelines and pools | 82 |
-| All but the standard API | 423 |
+| All but the standard API | 434 |
 
 ---
 
@@ -200,6 +200,15 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-JSON-102 | Limits: arrays and objects nest at most 128 deep, a document is at most 256 MiB; a damaged document or another version refused (SQLCODE -916 at the server) | `[PROTOCOL Values]` | done |
 | P-JSON-103 | An exact number written in the narrowest of its three nodes, and a decimal keeping the scale it was written with: 1.50 is units 150, scale 2 | `[PROTOCOL Values]` | done |
 
+### Declared types
+
+| ID | Row | Citation | Status |
+|---|---|---|---|
+| P-DECL-1 | Granted `declared-types`, a Prepared or Description of one column or more ends with tail 19, in the columns' order; not granted, the columns alone, byte for byte as before | `[PROTOCOL Declared types]` | done |
+| P-DECL-2 | Each column's name as the Information Schema's DATA_TYPE gives it, and its whole type as SQL writes it | `[PROTOCOL Declared types]` | done |
+| P-DECL-3 | The page's table: SMALLINT, INTEGER, BIGINT, DECIMAL(9,2), NUMERIC(5) as NUMERIC(5,0), REAL, DOUBLE PRECISION, FLOAT(20) as FLOAT(24), a distinct type as USER-DEFINED with its name, INTEGER ARRAY[3] as ARRAY | `[PROTOCOL Declared types]` | done |
+| P-DECL-4 | Values written by their own tags whether or not it is granted; the tag tells how to read a value, the declared type what the column shows | `[PROTOCOL Declared types]` | done |
+
 ### Composite fields
 
 | ID | Row | Citation | Status |
@@ -231,6 +240,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-TAIL-16 | 16 generated, a list of strings, on Complete | `[PROTOCOL The tail]` | done |
 | P-TAIL-17 | 17 conditions, a list of failures as bytes, on Complete | `[PROTOCOL The tail]` | done |
 | P-TAIL-18 | 18 time, total, queued and locks, each `u64`, on Complete | `[PROTOCOL The tail]` | done |
+| P-TAIL-19 | 19 declared: a count `u32`, then each column's type name and its type as SQL writes it, strings, on Prepared and Description | `[PROTOCOL The tail]` | done |
 | P-TAIL-100 | Tags in increasing order; a tag the message does not take, or one not past the last, fails the connection | `[PROTOCOL The tail]` | done |
 | P-TAIL-101 | A field written only where its capability was granted; a message with an empty tail is its first form exactly | `[PROTOCOL The tail]` | done |
 | P-TAIL-102 | At most 32 attributes, a name of 1 to 64 bytes, a value of at most 1024; more fails the connection | `[PROTOCOL The tail]` | done |
@@ -283,6 +293,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-CAP-17 | `fetch-ends` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-18 | `conditions` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-19 | No request or tail field of a capability not granted is sent | `[PROTOCOL Capabilities]` | done |
+| P-CAP-20 | `declared-types`: a Prepared and a Description carry each column's declared type, tail 19 | `[PROTOCOL Capabilities]` | done |
 
 ### Requests
 
@@ -357,7 +368,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 |---|---|---|---|
 | P-LOB-1 | 0 read: locator, from, count, characters flag; answered by a Lob reply of data | `[PROTOCOL Lob 'L']` | done |
 | P-LOB-2 | 1 create: kind; answered by a Lob reply of a locator | `[PROTOCOL Lob 'L']` | done |
-| P-LOB-3 | 2 append: locator, bytes, a character free to split between appends; answered by Complete | `[PROTOCOL Lob 'L']` | done |
+| P-LOB-3 | 2 append: locator, bytes, a character free to split between appends; answered by Complete. A character LOB's octets checked as UTF-8 as each Append comes: one that is not refused with 22021 by its Append, every later Append and its use refused; one ending within a character refused, 22021, where used | `[PROTOCOL Lob 'L']` | done |
 | P-LOB-4 | 3 free: locator; answered by Complete | `[PROTOCOL Lob 'L']` | done |
 | P-LOB-5 | 4 hold: locator, kept past its transaction's commit; answered by Complete | `[PROTOCOL Lob 'L']` | done |
 
@@ -504,10 +515,10 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-STATUS-5 | READ_ONLY, YES or NO | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-6 | SERVER_VERSION | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-7 | SERVER_READ_ONLY, YES or NO (gap G2) | `[PROTOCOL Status 'T']` | done |
-| P-STATUS-8 | CATALOG (gap G2) | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-8 | CATALOG, the catalog's name, an identifier of 1 to 128 characters, never empty (gap G2) | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-9 | OWNER, YES or NO (gap G2) | `[PROTOCOL Status 'T']` | done |
 | P-STATUS-10 | Every setting a session may set for itself, SESSION.TIME_ZONE and TRANSACTION.ISOLATION among them | `[PROTOCOL Status 'T']` | done |
-| P-STATUS-11 | At login before Ready, and after Reset or ChangeUser before the reply that ends it, one of each name in the page's table, in its order, then the session's own settings; after a statement only what it changed, before its completion; CATALOG empty if null | `[PROTOCOL Status 'T']` | done |
+| P-STATUS-11 | At login before Ready, and after Reset or ChangeUser before the reply that ends it, one of each name in the page's table, in its order, then the session's own settings; after a statement only what it changed, before its completion | `[PROTOCOL Status 'T']` | done |
 
 ### Pong 'G'
 
@@ -536,6 +547,15 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-ERRN-4 | SQLSTATE 01T01, Reset or ChangeUser rolled back the transaction, a Notice of severity NOTICE | `[PROTOCOL Errors and notices]` | done |
 | P-ERRN-5 | SQLSTATE TBR01, SQLCODE -920, a replica that had not applied REPLICATION.READ_AFTER's position in time | `[PROTOCOL Errors and notices]` | done |
 | P-ERRN-6 | A malformed message, a request not granted, a frame too long or a request out of turn fails the connection (SQLCODE -919, SQLSTATE 08006) | `[PROTOCOL Errors and notices]` | done |
+
+### Sample frames
+
+| ID | Row | Citation | Status |
+|---|---|---|---|
+| P-FRAMES-1 | Every line of `05-protocol-frames.tsv`, at a pinned commit, read as the page lays it out: direction, name, needs, hex, means | `[PROTOCOL Sample frames]` | done |
+| P-FRAMES-2 | Every server frame decoded to what its meaning says, with the capabilities it needs granted | `[PROTOCOL Sample frames]` | done |
+| P-FRAMES-3 | Every client frame the driver can send encoded byte for byte as the file holds it | `[PROTOCOL Sample frames]` | done |
+| P-FRAMES-4 | A compressed frame's sample inflated to the frame its meaning names | `[PROTOCOL Sample frames]` | done |
 
 ### A worked example
 
@@ -608,6 +628,7 @@ From `doc/client/02-library.md`, The Client Library.
 | C-PREP-4 | Open a cursor and take its first rows, fetch the next batch, close it | `[CLIENT Prepared statements]` | done |
 | C-PREP-5 | Deallocate | `[CLIENT Prepared statements]` | done |
 | C-PREP-6 | A prepared statement valid across transactions | `[CLIENT Prepared statements]` | done |
+| C-PREP-7 | A column's declared type, its name and as SQL writes it, granted `declared-types`, which connecting asks for; the type written gives the declared type where told, else the type its tag says | `[CLIENT Prepared statements]` | done |
 
 ### Large objects
 

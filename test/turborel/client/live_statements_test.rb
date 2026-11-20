@@ -297,6 +297,38 @@ module Turborel
         assert_fails([-301, "2200W"]) { connection.fetch(failing) }
         refute_predicate connection, :in_transaction?
       end
+
+      # Verifies: [PROTOCOL Declared types] granted declared-types, a
+      # Description and a Prepared tell each column's declared type, its
+      # name and as SQL writes it, the values written by their own tags; not
+      # granted, the columns alone, typed by their tags.
+      # Verifies: [PROTOCOL Capabilities] declared-types, granted where
+      # asked, as every connection asks it by default.
+      # Verifies: [PROTOCOL The tail] tag 19, declared, on a Prepared and a
+      # Description.
+      # Verifies: [CLIENT Prepared statements] a column's declared type, its
+      # type written as declared where told, else as its tag says.
+      def test_declared_types
+        connect do |c|
+          c.query("CREATE TABLE DECL (I INTEGER, M NUMERIC(5), F FLOAT(20))")
+          c.query("INSERT INTO DECL VALUES (1, 2, 3)")
+          rows = c.query("SELECT I, M, F FROM DECL")
+          prepared = c.prepare("SELECT I FROM DECL")
+
+          assert c.granted?(Protocol::Capabilities::DECLARED_TYPES)
+          assert_equal([%w[INTEGER INTEGER], ["NUMERIC", "NUMERIC(5,0)"], ["FLOAT", "FLOAT(24)"]],
+                       rows.columns.map { [_1.declared.name, _1.type_written] })
+          assert_equal [[1, 2, 3.0], "INTEGER"], [rows.rows.first, prepared.columns.first.type_name]
+          c.query("COMMIT")
+        end
+        connect(offer: without(Protocol::Capabilities::DECLARED_TYPES)) do |c|
+          columns = c.query("SELECT I, M FROM DECL").columns
+
+          assert_equal([[nil, "NUMERIC(10,0)"], [nil, "NUMERIC(5,0)"]], columns.map { [_1.declared, _1.type_written] })
+          c.query("DROP TABLE DECL CASCADE")
+          c.query("COMMIT")
+        end
+      end
     end
   end
 end

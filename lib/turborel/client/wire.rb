@@ -68,7 +68,7 @@ module Turborel
         reply = receive(answer)
         raise failed(reply.failure) if reply.is_a?(Protocol::Replies::ErrorReply)
         unless kinds.include?(reply.class)
-          raise lose("the server sent #{reply.class.name&.split("::")&.last} out of turn")
+          raise lose("the server sent #{reply.class.name.to_s.split("::").last} out of turn")
         end
 
         reply

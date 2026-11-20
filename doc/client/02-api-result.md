@@ -9,7 +9,7 @@
 ## SYNOPSIS
 
 ```ruby
-result.columns   result.fields   result.nfields
+result.columns   result.fields   result.nfields   result.ftypes   result.ftype(column)   result.type_written(column)
 result.values    result.ntuples  result.each { |row| ... }  result[index]
 result.getvalue(row, column)   result.column_values(column)   result.field_values(name)
 result.completion   result.cmd_tuples   result.sqlstate
@@ -24,7 +24,11 @@ of a value for each column, as Appendix A maps it; `each`, or
 values; `result[index]`, one row so; `getvalue`, one value;
 `column_values` and `field_values`, one column's values, by its place or
 its name, the first column so named. A column with no name, as an
-expression's, is named `nil`.
+expression's, is named `nil`. `ftypes` gives each column's type's
+name as the Information Schema's DATA_TYPE gives it, and `ftype` one
+column's: as it was declared, INTEGER or DECIMAL, where the server told
+it, else as its data type's tag says, NUMERIC; `type_written` the type
+as SQL writes it, as DECIMAL(9,2).
 
 Another statement's result has no columns and no rows, and its
 `completion`, the low-level client's `Completion`. `cmd_tuples` gives

@@ -123,7 +123,19 @@ module Turborel
     attr_reader name: String?
     attr_reader type: DataType
     attr_reader not_null: bool
-    def self.new: (name: String?, type: DataType, not_null: bool) -> instance
+    attr_reader declared: Declared?
+    def self.new: (name: String?, type: DataType, not_null: bool, ?declared: Declared?) -> instance
+    def initialize: (name: String?, type: DataType, not_null: bool, ?declared: Declared?) -> void
+    def with: (?name: String?, ?type: DataType, ?not_null: bool, ?declared: Declared?) -> Column
+    def type_written: () -> String
+    def type_name: () -> String
+  end
+
+  # A column's declared type.
+  class Declared < Data
+    attr_reader name: String
+    attr_reader written: String
+    def self.new: (name: String, written: String) -> instance
   end
 
   # A dynamic parameter.

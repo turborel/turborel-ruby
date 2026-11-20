@@ -106,12 +106,8 @@ module ActiveRecord
           pool["b"] = :second
 
           assert_equal [false, :second], [pool.key?("a"), pool["b"]]
-          support = Object.send(:remove_const, :ActiveSupport)
-          begin
-            load File.expand_path("../../lib/turborel/registration.rb", __dir__)
-          ensure
-            Object.const_set(:ActiveSupport, support)
-          end
+          assert_nil ::Turborel::Registration.register(nil)
+          ::Turborel::Registration.register(ActiveSupport)
 
           assert_equal "ActiveRecord::ConnectionAdapters::TurborelAdapter",
                        ActiveRecord::ConnectionAdapters.instance_variable_get(:@adapters).fetch("turborel").first

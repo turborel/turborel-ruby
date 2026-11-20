@@ -37,6 +37,24 @@ module Turborel
     # @return [Array<String>] the columns' names, in order
     def fields = columns.map(&:name)
 
+    # @return [Array<String>] each column's type's name, as the
+    #   Information Schema's DATA_TYPE gives it: as it was declared, as
+    #   INTEGER or DECIMAL, where the server told it, else as its data
+    #   type's tag says, as NUMERIC
+    def ftypes = columns.map(&:type_name)
+
+    # @param column [Integer]
+    # @return [String] the type's name of the column at +column+, as ftypes
+    #   gives it
+    # @raise [Error] SQLSTATE TB910 of a column the result lacks
+    def ftype(column) = columns.fetch(column) { raise outside("column", column) }.type_name
+
+    # @param column [Integer]
+    # @return [String] the type of the column at +column+ as SQL writes it,
+    #   as it was declared where the server told it, as DECIMAL(9,2)
+    # @raise [Error] SQLSTATE TB910 of a column the result lacks
+    def type_written(column) = columns.fetch(column) { raise outside("column", column) }.type_written
+
     # @return [Integer] how many rows the query gave
     def ntuples = values.size
 

@@ -1,0 +1,36 @@
+module Turborel
+  module Text
+    # A data type as SQL writes it.
+    module Types
+      NAMES: Hash[Symbol, String]
+      WRITERS: Hash[Symbol, Symbol]
+      MOMENTS: Hash[Symbol, [String, bool]]
+      DATA_TYPES: Hash[Symbol, String]
+
+      def self.written: (DataType type) -> String
+      def self.name: (DataType type) -> String
+
+      private
+
+      def self.lengthed: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.lob: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.octets?: (Hash[Symbol, untyped] params) -> bool
+      def self.sized: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.exact: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.approximate: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.decfloat: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.named: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.moment: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.interval: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.qualifier: (Hash[Symbol, untyped] params) -> String
+      def self.array: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.multiset: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.row: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.structured: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.reference: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.xml: (DataType type, Hash[Symbol, untyped] params) -> String
+      def self.according: (Hash[Symbol, untyped] schema) -> String
+      def self.extension: (DataType type, Hash[Symbol, untyped] params) -> String
+    end
+  end
+end

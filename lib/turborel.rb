@@ -8,6 +8,7 @@ require_relative "turborel/version"
 
 require_relative "turborel/text"
 require_relative "turborel/text/json"
+require_relative "turborel/text/types"
 require_relative "turborel/xml/nodes"
 
 require_relative "turborel/protocol/frame"

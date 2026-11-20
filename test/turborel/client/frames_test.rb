@@ -23,7 +23,8 @@ module Turborel
       # cannot take leaves its frame read whole and the stream in step: the
       # request fails with the value's error, TB916, not of class 08, once
       # the rest of its replies are read past to the last, a Notice among
-      # them taken; the next request takes its own replies.
+      # them taken, another that cannot be taken passed over; the next
+      # request takes its own replies.
       # Verifies: [CLIENT Running statements] the connection goes on.
       def test_a_value_not_taken_fails_its_request_alone
         server = FakeServer.new do |peer|
@@ -33,6 +34,7 @@ module Turborel
           peer.reply("D", truth_column)
           peer.reply("B", truth_rows(2))
           peer.notice("01000", "noted")
+          peer.reply("B", truth_rows(3))
           peer.reply("B", truth_rows(1))
           peer.complete
           peer.frame

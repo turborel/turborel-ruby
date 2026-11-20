@@ -46,7 +46,7 @@ is freed or a rollback ends it.
 |---|---|---|
 | 0F001 | -301 | A locator no longer valid |
 | 22000 | -301 | `free_lob` or `hold_lob` of a value held whole, or `read_lob` of one neither held nor located |
-| 22021 | -301 | A CLOB written whose octets are not UTF-8 |
+| 22021 | -301 | A CLOB written whose octets are not UTF-8: by the server, refused by the Append that sends them, and every later Append and its use; one ending within a character, where it is used |
 | 22001 | -301 | A value longer than its column |
 | TB910 | -910 | A kind other than `:character` and `:binary` |
 | 08006 | -919 | The server sending less of a value than its length, or a reply out of turn |

@@ -13,6 +13,7 @@ module Turborel
       GENERATED: Integer
       CONDITIONS: Integer
       TIME: Integer
+      DECLARED: Integer
       MAX_ATTRIBUTES: Integer
       MAX_ATTRIBUTE_NAME: Integer
       MAX_ATTRIBUTE_VALUE: Integer
