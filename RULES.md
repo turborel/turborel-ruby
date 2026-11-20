@@ -445,17 +445,25 @@ rule here, the rule is kept:
   `deallocate` of a name no statement is prepared under gives SQLCODE
   -921, SQLSTATE 26000, as Turborel's own EXECUTE does
   ([Appendix B](doc/appendix/b-errors.md)).
-- Where turborel-client reads a reply's value with the decoder of a
-  stored one, it fails a malformed value as a stored one: a truth value
-  or a string's units byte other than 0 or 1, a JSON value damaged, or a
-  condition of a Complete that cannot be read, with SQLCODE -916, and a
-  JSON value nested past 128 with -900, the connection kept, though the
-  replies after it then come out of turn. The page fails a connection on
-  a malformed message ([PROTOCOL Frames], [PROTOCOL Errors and
-  notices]), and the driver follows it: each is SQLCODE -919, SQLSTATE
-  08006, the connection lost. So too a value of a tag the page's table
-  does not list, as 5, 7, 10, 12, 18 and 19, which turborel-client reads
-  by its type's decoder and the server never sends.
+- Where turborel-client is inconsistent, the driver keeps the rule
+  every Turborel driver keeps, so all behave alike:
+  - A reply's value that cannot be decoded loses the connection,
+    SQLCODE -919, SQLSTATE 08006: a character's or a large object's
+    units byte other than 0 or 1, a truth byte other than 0 or 1, a
+    damaged JSON document, one nested past 128 or longer than 256 MiB,
+    and a malformed condition in Complete's tag 17. turborel-client
+    gives some of these -916 or -900 and keeps a connection whose reply
+    is left unread, out of step; the page fails a connection on a
+    malformed message ([PROTOCOL Frames], [PROTOCOL Errors and
+    notices]).
+  - Value tags 18 and 19, the large objects' stored form, never sent,
+    are refused as malformed, -919, 08006, though turborel-protocol's
+    reader takes them. Tags 5, 7, 10 and 12, of CHARACTER VARYING,
+    BINARY VARYING and the datetimes WITH TIME ZONE, are read as its
+    reader reads them, as tags 1, 6, 9 and 11.
+  - Connection and query attributes past their bounds are refused
+    before they are sent, -919, 08006, the connection kept, where
+    turborel-client sends them and the server fails the connection.
 - During a copy the driver refuses, before sending it, every request
   but CopyData, CopyEnd and Ping, Terminate among them (TB910), where
   turborel-client's copy borrows the connection and so sends none.

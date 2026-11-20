@@ -36,6 +36,13 @@ and parameters, are in the second table.
 A value of a subclass is written as its class's. A value of any other
 class fails with SQLSTATE 22000, before anything is sent.
 
+The server writes no other tag. A value of tag 5, 7, 10 or 12, of
+CHARACTER VARYING, BINARY VARYING, TIME WITH TIME ZONE or TIMESTAMP
+WITH TIME ZONE, is read as tag 1, 6, 9 or 11 is, as turborel-protocol's
+reader reads it; one of tag 18 or 19, a large object's stored form, or
+of any other tag, is malformed, and loses the connection, SQLSTATE
+08006, as a value that cannot be decoded does.
+
 The bounds of each:
 
 - **Exact numbers** carry units, an `i128`, and a scale, a `u32`: the

@@ -24,7 +24,7 @@ module Turborel
       ENCODERS: Hash[Module, Symbol]
 
       def self.encode: (untyped value, ?most: Integer) -> String
-      def self.decode: (String bytes) -> json
+      def self.decode: (String bytes, ?most: Integer) -> json
       def self.node: (Writer writer, untyped value, Integer depth) -> void
       def self.null: (Writer writer, nil _value, Integer _depth) -> void
       def self.truth: (Writer writer, bool value, Integer _depth) -> void

@@ -163,6 +163,18 @@ module Turborel
                      value(writer.u8(25).bytes(JsonBinary.encode({ "a" => [1, nil] })).to_s)
         [5, 7, 10, 12, 18, 19, 28].each { |tag| assert_fails { value(writer.u8(tag).to_s) } }
       end
+
+      # Verifies: [PROTOCOL Values] the tags of CHARACTER VARYING, BINARY
+      # VARYING and the datetimes WITH TIME ZONE read as turborel-protocol's
+      # reader reads them, as tags 1, 6, 9 and 11; the large objects' stored
+      # tags, 18 and 19, refused, losing the connection (RULES.md D8).
+      def test_tags_the_page_does_not_list
+        datetime = writer.u8(1).u8(6).u32(60).u64(5).to_s
+
+        assert_equal ["ab", "\x01".b], [value(writer.u8(5).str("ab").to_s), value(writer.u8(7).bytes("\x01").to_s)]
+        assert_equal(%i[time timestamp], [10, 12].map { |tag| value(writer.u8(tag).raw(datetime).to_s).moment })
+        [18, 19].each { |tag| assert_fails { value(writer.u8(tag).u8(0).bytes("x").to_s) } }
+      end
     end
   end
 end

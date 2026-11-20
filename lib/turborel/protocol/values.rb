@@ -63,6 +63,22 @@ module Turborel
       UUID = 27
       # The moment of each datetime tag, and back.
       MOMENTS = { DATE => :date, TIME => :time, TIMESTAMP => :timestamp }.freeze
+      # Tags of data types the page's table of values does not list, which
+      # turborel-protocol's reader takes as values by their type's own
+      # decoder, as the server never writes them: CHARACTER VARYING's, read
+      # as tag 1's; BINARY VARYING's, as 6's; TIME and TIMESTAMP WITH TIME
+      # ZONE's, as 9's and 11's. Tags 18 and 19, the large objects' stored
+      # form, are refused, as every Turborel driver refuses them (RULES.md
+      # D8).
+      VARYING = 5
+      # (see VARYING)
+      BINARY_VARYING = 7
+      # (see VARYING)
+      TIME_ZONED = 10
+      # (see VARYING)
+      TIMESTAMP_ZONED = 12
+      # The moment of each datetime tag read.
+      READ_MOMENTS = MOMENTS.merge(TIME_ZONED => :time, TIMESTAMP_ZONED => :timestamp).freeze
       # A large object's kind byte, and back [PROTOCOL Values].
       LOB_KINDS = { 0 => :character, 1 => :binary }.freeze
       # The octets of a UUID.
@@ -101,7 +117,8 @@ module Turborel
         TIMESTAMP => :datetime, INTERVAL => :interval, BOOLEAN => :boolean, DECFLOAT => :decfloat,
         ARRAY => :array, ROW => :row, LOB_WHOLE => :lob_whole, LOB_LOCATOR => :lob_locator,
         MULTISET => :multiset, STRUCTURED => :structured, REFERENCE => :reference, JSON => :json,
-        XML => :xml, UUID => :uuid
+        XML => :xml, UUID => :uuid, VARYING => :character, BINARY_VARYING => :binary,
+        TIME_ZONED => :datetime, TIMESTAMP_ZONED => :datetime
       }.freeze
 
       # Whether +coefficient+ and +exponent+ are a DECFLOAT in its one

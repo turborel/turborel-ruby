@@ -60,7 +60,7 @@ module Turborel
         zoned = reader.u8 == 1
         precision = reader.u8
         zone = displacement(reader)
-        Datetime.new(moment: Values::MOMENTS.fetch(tag), utc: reader.i64, zone:, zoned:, precision:)
+        Datetime.new(moment: Values::READ_MOMENTS.fetch(tag), utc: reader.i64, zone:, zoned:, precision:)
       end
 
       # @return [Interval] its qualifier, as the INTERVAL type writes it,

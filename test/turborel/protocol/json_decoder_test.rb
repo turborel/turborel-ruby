@@ -94,7 +94,9 @@ module Turborel
       end
 
       # Verifies: [PROTOCOL JSON values] arrays and objects nest at most 128
-      # deep, as turborel bounds them.
+      # deep, and a document is at most 256 MiB, as turborel bounds them;
+      # one read past either a connection failure, as every Turborel driver
+      # fails it (RULES.md D8).
       def test_nesting_is_bounded
         deep = nil
         128.times { deep = [deep] }
@@ -106,6 +108,7 @@ module Turborel
         refused = assert_fails { JsonBinary.decode(too_deep) }
 
         assert_match(/nest too deep/, refused.message)
+        assert_fails { JsonBinary.decode(JsonBinary.encode([1, 2]), most: 4) }
       end
     end
   end

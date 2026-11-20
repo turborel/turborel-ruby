@@ -25,6 +25,11 @@ module Turborel
       XML: Integer
       UUID: Integer
       MOMENTS: Hash[Integer, Symbol]
+      VARYING: Integer
+      BINARY_VARYING: Integer
+      TIME_ZONED: Integer
+      TIMESTAMP_ZONED: Integer
+      READ_MOMENTS: Hash[Integer, Symbol]
       LOB_KINDS: Hash[Integer, Symbol]
       UUID_OCTETS: Integer
       MAX_MULTISET_CARDINALITY: Integer
