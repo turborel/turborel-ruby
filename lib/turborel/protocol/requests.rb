@@ -132,7 +132,7 @@ module Turborel
       # @return [String] the frame of Lob's create
       def self.lob_create(kind)
         byte = Values::LOB_KINDS.key(kind)
-        raise Error.unsupported("#{kind.inspect} is no kind of large object") unless byte
+        raise Error.misused("#{kind.inspect} is no kind of large object") unless byte
 
         lob(Writer.new.u8(LOB_CREATE).u8(byte))
       end
@@ -149,7 +149,7 @@ module Turborel
       # @param key [String] the 16 bytes Ready gave
       # @return [String] the frame of Cancel
       def self.cancel(key)
-        raise Error.out_of_range("a cancel key is 16 bytes") unless key.bytesize == KEY_BYTES
+        raise Error.misused("a cancel key is 16 bytes") unless key.bytesize == KEY_BYTES
 
         Frame.encode(CANCEL, key.b)
       end

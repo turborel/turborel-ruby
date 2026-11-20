@@ -87,7 +87,7 @@ module Turborel
         assert_equal hex("4C 0A000000 02 07000000 01000000 41"), Requests.lob_append(7, "A")
         assert_equal hex("4C 05000000 03 07000000"), Requests.lob_free(7)
         assert_equal hex("4C 05000000 04 07000000"), Requests.lob_hold(7)
-        assert_fails(UNSUPPORTED) { Requests.lob_create(:text) }
+        assert_fails(MISUSED) { Requests.lob_create(:text) }
       end
 
       # Verifies: [PROTOCOL Cancel 'Z'] Cancel is the key alone, 16 bytes with
@@ -96,7 +96,7 @@ module Turborel
         key = "\x07".b * 16
 
         assert_equal hex("5A 10000000") + key, Requests.cancel(key)
-        assert_fails(OUT_OF_RANGE) { Requests.cancel("\x07" * 15) }
+        assert_fails(MISUSED) { Requests.cancel("\x07" * 15) }
         assert_equal hex("58 00000000"), Requests.terminate
         assert_equal hex("57 00000000"), Requests.reset
       end

@@ -42,7 +42,7 @@ module Turborel
       # longer is refused, the bound taken lower here.
       def test_a_document_is_bounded
         assert_equal 14, JsonBinary.encode("x" * 8, most: 14).bytesize
-        assert_fails(OUT_OF_RANGE) { JsonBinary.encode("x" * 9, most: 14) }
+        assert_fails(BEYOND) { JsonBinary.encode("x" * 9, most: 14) }
         assert_equal 1 << 28, JsonBinary::MAX_DOCUMENT_OCTETS
       end
 
@@ -76,7 +76,7 @@ module Turborel
 
         assert_equal hex("01 09 02 0100000000000000 C4FF 01 03"), JsonBinary.encode(stamp)
         assert_fails(OUT_OF_RANGE) { JsonBinary.encode(DecFloat.new(coefficient: 10, exponent: 0)) }
-        assert_fails(UNSUPPORTED) { JsonBinary.encode(stamp.with(moment: :week)) }
+        assert_fails(DATA_EXCEPTION) { JsonBinary.encode(stamp.with(moment: :week)) }
       end
 
       # Verifies: [PROTOCOL Values] 10 an array: count u32, size u32, each
@@ -102,13 +102,13 @@ module Turborel
 
       # Verifies: [PROTOCOL Values] a value no JSON item holds, a key that is
       # not a string, or arrays nested deeper than 128 are refused before
-      # they are sent (SQLSTATE 07006).
+      # they are sent (SQLSTATE 22000, 0A000 nested too deep).
       def test_values_no_item_holds_are_refused
-        assert_fails(UNSUPPORTED) { JsonBinary.encode(Object.new) }
-        assert_fails(UNSUPPORTED) { JsonBinary.encode({ 1 => 2 }) }
+        assert_fails(DATA_EXCEPTION) { JsonBinary.encode(Object.new) }
+        assert_fails(DATA_EXCEPTION) { JsonBinary.encode({ 1 => 2 }) }
         deep = nil
         130.times { deep = [deep] }
-        assert_fails(UNSUPPORTED) { JsonBinary.encode(deep) }
+        assert_fails(BEYOND) { JsonBinary.encode(deep) }
       end
     end
   end

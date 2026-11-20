@@ -430,6 +430,12 @@ rule here, the rule is kept:
 - RuboCop's default method length is 10 lines; R-SIZE-1's 50 is used,
   while RuboCop's complexity limits, stricter than R-SIZE-5's, are
   kept.
+- Where turborel-client has no case of its own, as for a Ruby value of
+  a class the protocol does not carry, the driver gives the codes every
+  Turborel driver gives: SQLSTATE 22000, SQLCODE -301, for a value the
+  protocol cannot carry; 0A000, -900, for what is past Turborel's
+  limits; TB910, -910, for an argument none of those a method takes
+  ([Appendix B](doc/appendix/b-errors.md)).
 
 ### This driver's own
 

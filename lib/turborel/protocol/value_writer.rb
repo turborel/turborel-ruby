@@ -31,13 +31,14 @@ module Turborel
       # @param value [Object] a Ruby value
       # @param depth [Integer] how deep within arrays and rows it is
       # @return [void]
-      # @raise [Error] SQLSTATE 07006 of a value of no class the driver
-      #   sends, or one nested too deep; 22003 of a number out of range
+      # @raise [Error] SQLSTATE 22000 of a value of no class the driver
+      #   sends; 0A000 of one nested too deep; 22003 of a number out of
+      #   range
       def self.write(writer, value, depth = 0)
-        raise Error.unsupported("a value's arrays and rows are nested too deep") if depth > Reader::MAX_NESTING
+        raise Error.beyond("a value's arrays and rows are nested too deep") if depth > Reader::MAX_NESTING
 
         klass = value.class.ancestors.find { |ancestor| WRITERS.key?(ancestor) }
-        raise Error.unsupported("a value of #{value.class} cannot be sent") unless klass
+        raise Error.data_exception("a value of #{value.class} cannot be sent") unless klass
 
         send(WRITERS.fetch(klass), writer, value, depth)
       end
@@ -112,7 +113,7 @@ module Turborel
       # @return [void]
       def self.datetime(writer, value, _depth)
         tag = Values::MOMENTS.key(value.moment)
-        raise Error.unsupported("#{value.moment.inspect} is no moment of a datetime") unless tag
+        raise Error.data_exception("#{value.moment.inspect} is no moment of a datetime") unless tag
 
         writer.u8(tag).flag(value.zoned).u8(value.precision)
         writer.u32(zone_field(value.zone)).i64(value.utc)
@@ -134,7 +135,7 @@ module Turborel
         writer.u8(Values::INTERVAL)
         [value.start, value.finish].each do |field|
           number = Types::FIELDS.index(field)
-          raise Error.unsupported("#{field.inspect} is no field of an interval") unless number
+          raise Error.data_exception("#{field.inspect} is no field of an interval") unless number
 
           writer.u32(number)
         end
@@ -155,7 +156,7 @@ module Turborel
       # @return [void]
       def self.lob(writer, value, _depth)
         kind = Values::LOB_KINDS.key(value.kind)
-        raise Error.unsupported("#{value.kind.inspect} is no kind of large object") unless kind
+        raise Error.data_exception("#{value.kind.inspect} is no kind of large object") unless kind
 
         data = value.data
         return writer.u8(Values::LOB_WHOLE).u8(kind).bytes(lob_octets(value.kind, data)) if data

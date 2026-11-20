@@ -83,22 +83,24 @@ module Turborel
 
         assert_equal hex("0B 01 06 48030000 0080C6A47E8D0300"), bytes(stamp)
         assert_fails(OUT_OF_RANGE) { bytes(stamp.with(zone: 2**15)) }
-        assert_fails(UNSUPPORTED) { bytes(stamp.with(moment: :week)) }
+        assert_fails(DATA_EXCEPTION) { bytes(stamp.with(moment: :week)) }
       end
 
       # Verifies: [PROTOCOL Values] a value of no class the driver sends, a
       # malformed one, or one nested deeper than 16 is refused before it is
-      # sent (SQLSTATE 07006, or 22003 of a number).
+      # sent (SQLSTATE 22000, 22003 of a number, 0A000 nested too deep).
       def test_values_that_cannot_be_sent_are_refused
-        assert_fails(UNSUPPORTED) { bytes(Object.new) }
-        assert_fails(UNSUPPORTED) { bytes(:symbol) }
-        assert_fails(UNSUPPORTED) { bytes(Interval.new(start: :week, finish: :day, leading: 2, fraction: 0, units: 0)) }
-        assert_fails(UNSUPPORTED) { bytes(Lob.new(kind: :text, data: "", locator: nil, octets: 0, characters: 0)) }
+        assert_fails(DATA_EXCEPTION) { bytes(Object.new) }
+        assert_fails(DATA_EXCEPTION) { bytes(:symbol) }
+        assert_fails(DATA_EXCEPTION) do
+          bytes(Interval.new(start: :week, finish: :day, leading: 2, fraction: 0, units: 0))
+        end
+        assert_fails(DATA_EXCEPTION) { bytes(Lob.new(kind: :text, data: "", locator: nil, octets: 0, characters: 0)) }
         assert_fails(OUT_OF_RANGE) { bytes(DecFloat.new(coefficient: 10, exponent: 0)) }
         assert_fails(OUT_OF_RANGE) { bytes(Uuid.new(octets: "\x00".b * 15)) }
         nested = nil
         17.times { nested = [nested] }
-        assert_fails(UNSUPPORTED) { bytes(nested) }
+        assert_fails(BEYOND) { bytes(nested) }
       end
 
       # Verifies: [PROTOCOL Values] a value of a subclass of a class the

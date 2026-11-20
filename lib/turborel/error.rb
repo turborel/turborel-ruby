@@ -18,11 +18,17 @@ module Turborel
     # SQLSTATE of a string with a character its encoding cannot hold:
     # character not in repertoire.
     NOT_IN_REPERTOIRE_SQLSTATE = "22021"
-    # SQLCODE of a dynamic SQL error, as turborel numbers its exceptions.
-    DYNAMIC_SQL_SQLCODE = -921
-    # SQLSTATE of a parameter of no type the driver can send: restricted
-    # data type attribute violation.
-    RESTRICTED_TYPE_SQLSTATE = "07006"
+    # SQLSTATE of a data exception of no more specific state: a value the
+    # protocol cannot carry.
+    DATA_EXCEPTION_SQLSTATE = "22000"
+    # SQLCODE of what is past turborel's limits, as turborel numbers it.
+    BEYOND_SQLCODE = -900
+    # SQLSTATE of what is past turborel's limits: feature not supported.
+    FEATURE_NOT_SUPPORTED_SQLSTATE = "0A000"
+    # SQLCODE of the program's misuse of the driver, turborel's API code.
+    MISUSED_SQLCODE = -910
+    # SQLSTATE of the program's misuse of the driver.
+    MISUSED_SQLSTATE = "TB910"
 
     # @return [Failure] what went wrong
     attr_reader :failure
@@ -90,13 +96,33 @@ module Turborel
       of(DATA_EXCEPTION_SQLCODE, NOT_IN_REPERTOIRE_SQLSTATE, message)
     end
 
-    # A value of no type the driver can send (SQLCODE -921, SQLSTATE
-    # 07006).
+    # A value the protocol cannot carry: of no class the driver sends, or
+    # of a field none of the protocol's (SQLCODE -301, SQLSTATE 22000).
     #
     # @param message [String] what went wrong, in plain words
     # @return [Error]
-    def self.unsupported(message)
-      of(DYNAMIC_SQL_SQLCODE, RESTRICTED_TYPE_SQLSTATE, message)
+    def self.data_exception(message)
+      of(DATA_EXCEPTION_SQLCODE, DATA_EXCEPTION_SQLSTATE, message)
+    end
+
+    # What is past turborel's limits: values nested too deep, a JSON
+    # document too long, too many attributes or too long a one (SQLCODE
+    # -900, SQLSTATE 0A000), as turborel's own code says.
+    #
+    # @param message [String] what went wrong, in plain words
+    # @return [Error]
+    def self.beyond(message)
+      of(BEYOND_SQLCODE, FEATURE_NOT_SUPPORTED_SQLSTATE, message)
+    end
+
+    # The program's misuse of the driver, where turborel-client has no
+    # case of its own: an argument none of those a method takes (SQLCODE
+    # -910, SQLSTATE TB910).
+    #
+    # @param message [String] what went wrong, in plain words
+    # @return [Error]
+    def self.misused(message)
+      of(MISUSED_SQLCODE, MISUSED_SQLSTATE, message)
     end
   end
 end

@@ -81,7 +81,7 @@ module Turborel
         required = Scram.new("pencil", binding: :require)
         nonce = required.initial.split("r=").last
         assert_fails([-919, "28000"]) { required.answer("r=#{nonce}x,s=QQ==,i=1") }
-        assert_fails(UNSUPPORTED) { Scram.new("p", binding: :maybe) }
+        assert_fails(MISUSED) { Scram.new("p", binding: :maybe) }
       end
 
       # Verifies: [CLIENT Connecting] SCRAM is refused over plain TCP unless

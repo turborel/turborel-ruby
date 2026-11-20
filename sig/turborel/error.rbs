@@ -7,8 +7,11 @@ module Turborel
     DATA_EXCEPTION_SQLCODE: Integer
     OUT_OF_RANGE_SQLSTATE: String
     NOT_IN_REPERTOIRE_SQLSTATE: String
-    DYNAMIC_SQL_SQLCODE: Integer
-    RESTRICTED_TYPE_SQLSTATE: String
+    DATA_EXCEPTION_SQLSTATE: String
+    BEYOND_SQLCODE: Integer
+    FEATURE_NOT_SUPPORTED_SQLSTATE: String
+    MISUSED_SQLCODE: Integer
+    MISUSED_SQLSTATE: String
 
     attr_reader failure: Failure
 
@@ -24,6 +27,8 @@ module Turborel
     def self.connection_failure: (String message) -> Error
     def self.out_of_range: (String message) -> Error
     def self.not_in_repertoire: (String message) -> Error
-    def self.unsupported: (String message) -> Error
+    def self.data_exception: (String message) -> Error
+    def self.beyond: (String message) -> Error
+    def self.misused: (String message) -> Error
   end
 end

@@ -24,10 +24,10 @@ module Turborel
       #   SERVER.SCRAM_WITHOUT_TLS is ON
       # @param binding [Symbol] one of BINDINGS
       # @param cache [KeyCache, nil] where its keys are kept
-      # @raise [Error] SQLSTATE 07006 of a binding not among BINDINGS
+      # @raise [Error] SQLSTATE TB910 of a binding not among BINDINGS
       def initialize(password, clear: false, binding: :prefer, cache: nil)
         super()
-        raise Error.unsupported("#{binding.inspect} is no channel binding") unless BINDINGS.include?(binding)
+        raise Error.misused("#{binding.inspect} is no channel binding") unless BINDINGS.include?(binding)
 
         @password = password
         @clear = clear

@@ -38,8 +38,12 @@ module Turborel
     CONNECTION_FAILURE = [Error::CONNECTION_FAILURE_SQLCODE, Error::CONNECTION_FAILURE_SQLSTATE].freeze
     # SQLCODE and SQLSTATE of a number out of range.
     OUT_OF_RANGE = [Error::DATA_EXCEPTION_SQLCODE, Error::OUT_OF_RANGE_SQLSTATE].freeze
-    # SQLCODE and SQLSTATE of a value of no type the driver sends.
-    UNSUPPORTED = [Error::DYNAMIC_SQL_SQLCODE, Error::RESTRICTED_TYPE_SQLSTATE].freeze
+    # SQLCODE and SQLSTATE of a value the protocol cannot carry.
+    DATA_EXCEPTION = [Error::DATA_EXCEPTION_SQLCODE, Error::DATA_EXCEPTION_SQLSTATE].freeze
+    # SQLCODE and SQLSTATE of what is past turborel's limits.
+    BEYOND = [Error::BEYOND_SQLCODE, Error::FEATURE_NOT_SUPPORTED_SQLSTATE].freeze
+    # SQLCODE and SQLSTATE of the program's misuse of the driver.
+    MISUSED = [Error::MISUSED_SQLCODE, Error::MISUSED_SQLSTATE].freeze
 
     # Asserts the block raises a Turborel::Error of +condition+, a pair of
     # SQLCODE and SQLSTATE, and gives it.

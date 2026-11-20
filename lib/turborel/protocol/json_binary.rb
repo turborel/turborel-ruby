@@ -69,14 +69,14 @@ module Turborel
       # @param value [Object] a Ruby value of JSON
       # @param most [Integer] the longest form taken, 256 MiB but in tests
       # @return [String] binary
-      # @raise [Error] SQLSTATE 07006 of a value no JSON item holds, or
-      #   one nested too deep; 22003 of a number out of range, or a form
+      # @raise [Error] SQLSTATE 22000 of a value no JSON item holds; 22003
+      #   of a number out of range; 0A000 of one nested too deep, or a form
       #   longer than 256 MiB
       def self.encode(value, most: MAX_DOCUMENT_OCTETS)
         document = Writer.new.u8(FORMAT_VERSION)
         node(document, value, 0)
         bytes = document.to_s
-        raise Error.out_of_range("a JSON value's stored form is longer than #{most} octets") if bytes.bytesize > most
+        raise Error.beyond("a JSON value's stored form is longer than #{most} octets") if bytes.bytesize > most
 
         bytes
       end
@@ -95,10 +95,10 @@ module Turborel
       # @param depth [Integer]
       # @return [void]
       def self.node(writer, value, depth)
-        raise Error.unsupported("a JSON value's arrays and objects nest too deep") if depth > MAX_NESTING
+        raise Error.beyond("a JSON value's arrays and objects nest too deep") if depth > MAX_NESTING
 
         klass = value.class.ancestors.find { |ancestor| ENCODERS.key?(ancestor) }
-        raise Error.unsupported("no JSON item holds a value of #{value.class}") unless klass
+        raise Error.data_exception("no JSON item holds a value of #{value.class}") unless klass
 
         send(ENCODERS.fetch(klass), writer, value, depth)
       end
@@ -160,7 +160,7 @@ module Turborel
       # @return [void]
       def self.datetime(writer, value, _depth)
         moment = MOMENTS.key(value.moment)
-        raise Error.unsupported("#{value.moment.inspect} is no moment of a datetime") unless moment
+        raise Error.data_exception("#{value.moment.inspect} is no moment of a datetime") unless moment
 
         writer.u8(DATETIME).u8(moment).i64(value.utc).i16(value.zone).flag(value.zoned).u8(value.precision)
       end
@@ -198,10 +198,10 @@ module Turborel
       end
 
       # @return [String] +key+, a String or a Symbol, as a member's key
-      # @raise [Error] SQLSTATE 07006 of another
+      # @raise [Error] SQLSTATE 22000 of another
       def self.key_text(key)
         unless key.is_a?(String) || key.is_a?(Symbol)
-          raise Error.unsupported("a JSON member's key is a #{key.class}, not a String")
+          raise Error.data_exception("a JSON member's key is a #{key.class}, not a String")
         end
 
         key.to_s

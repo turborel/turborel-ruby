@@ -55,7 +55,8 @@ and the low-level client, is told with them, at milestones M3 and M7.
 
 | SQLSTATE | SQLCODE | When |
 |---|---|---|
-| 07006 | -921 | A value of a class the driver does not send, a datetime's moment, an interval's field or a large object's kind that is none of the protocol's, or values nested deeper than 16 (128 within a JSON value) |
+| 22000 | -301 | A value of a class the driver does not send, or a datetime's moment, an interval's field or a large object's kind that is none of the protocol's |
+| 0A000 | -900 | Values nested deeper than 16, 128 within a JSON value, or a JSON value's stored form longer than 256 MiB |
 | 22003 | -301 | A number out of the range of its field: an `Integer` or `BigDecimal` whose units do not fit an `i128`, a NaN or infinite `BigDecimal`, a displacement that does not fit an `i16`, a DECFLOAT not in its one form, a UUID not of 16 octets |
 | 22021 | -301 | A string that cannot be written as UTF-8 |
 | 08006 | -919 | A value received that is malformed: a tag no value has, a body cut short, a DECFLOAT value not in its one form, damaged JSON |

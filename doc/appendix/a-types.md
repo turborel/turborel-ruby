@@ -34,7 +34,7 @@ and parameters, are in the second table.
 | 27 | UUID | `Turborel::Uuid`, its 16 octets | `Turborel::Uuid` |
 
 A value of a subclass is written as its class's. A value of any other
-class fails with SQLSTATE 07006, before anything is sent.
+class fails with SQLSTATE 22000, before anything is sent.
 
 The bounds of each:
 

@@ -61,7 +61,7 @@ gives its hits and misses. A cache may be shared by threads.
 | 28000 | -919 | A password or SCRAM over plain TCP, before anything is sent; credentials the server refuses; a SCRAM server that does not prove it knows the verifier, or an exchange that `binding: :require` cannot bind |
 | 08004 | -919 | The server refuses the connection, as one past its SERVER.MAX_CONNECTIONS |
 | 08006 | -919 | A server that cannot be reached, a failed TLS handshake, a wait past its timeout, a reply too long or malformed, a closed connection |
-| 07006 | -921 | A channel binding not among `:prefer`, `:disable` and `:require` |
+| TB910 | -910 | A channel binding not among `:prefer`, `:disable` and `:require` |
 
 ## EXAMPLES
 

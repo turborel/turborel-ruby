@@ -24,11 +24,15 @@ module Turborel
     end
 
     # Verifies: [PROTOCOL Errors and notices] the driver's own failures carry
-    # turborel's conditions: a connection failure -919 and 08006.
+    # turborel's conditions: a connection failure -919 and 08006, a value
+    # the protocol cannot carry -301 and 22000, what is past turborel's
+    # limits -900 and 0A000, misuse -910 and TB910.
     def test_driver_failures_carry_their_conditions
       assert_equal CONNECTION_FAILURE, [Error.connection_failure("x").sqlcode, Error.connection_failure("x").sqlstate]
       assert_equal OUT_OF_RANGE, [Error.out_of_range("x").sqlcode, Error.out_of_range("x").sqlstate]
-      assert_equal UNSUPPORTED, [Error.unsupported("x").sqlcode, Error.unsupported("x").sqlstate]
+      assert_equal DATA_EXCEPTION, [Error.data_exception("x").sqlcode, Error.data_exception("x").sqlstate]
+      assert_equal BEYOND, [Error.beyond("x").sqlcode, Error.beyond("x").sqlstate]
+      assert_equal MISUSED, [Error.misused("x").sqlcode, Error.misused("x").sqlstate]
       assert_equal "22021", Error.not_in_repertoire("x").sqlstate
       assert_nil Error.of(-1, "XX000", "m").diagnostics
     end
