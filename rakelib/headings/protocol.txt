@@ -1,4 +1,4 @@
-# The headings of Turborel's doc/client/05-protocol.md at b40bd830, one a line,
+# The headings of Turborel's doc/client/05-protocol.md at a413b841, one a line,
 # as [PROTOCOL <heading>] cites them (RULES.md D6).
 The Native Protocol
 Frames

@@ -197,10 +197,6 @@ module Turborel
         connect do |c|
           assert_equal TABLE, c.settings.keys.first(TABLE.size)
           assert_operator c.settings.size, :>, TABLE.size
-          # turboreld at b40bd830 tells the first statement after login
-          # what it told at login again, its held statuses begun empty
-          # (server/src/native.rs); the page's rule holds from the second.
-          c.query("VALUES 1")
           told = statuses_of(c)
           c.query("VALUES 1")
 
