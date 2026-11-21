@@ -300,8 +300,10 @@ module Turborel
 
       # Verifies: [PROTOCOL Declared types] granted declared-types, a
       # Description and a Prepared tell each column's declared type, its
-      # name and as SQL writes it, the values written by their own tags; not
-      # granted, the columns alone, typed by their tags.
+      # name and as SQL writes it, the values written by their own tags: a
+      # VALUES of casts, and a UNION of one number type, keeping it, one of
+      # INTEGER and SMALLINT NUMERIC; not granted, the columns alone, typed
+      # by their tags.
       # Verifies: [PROTOCOL Capabilities] declared-types, granted where
       # asked, as every connection asks it by default.
       # Verifies: [PROTOCOL The tail] tag 19, declared, on a Prepared and a
@@ -319,6 +321,12 @@ module Turborel
           assert_equal([%w[INTEGER INTEGER], ["NUMERIC", "NUMERIC(5,0)"], ["FLOAT", "FLOAT(24)"]],
                        rows.columns.map { [_1.declared.name, _1.type_written] })
           assert_equal [[1, 2, 3.0], "INTEGER"], [rows.rows.first, prepared.columns.first.type_name]
+          declared = ->(sql) { c.query(sql).columns.map(&:type_written) }
+
+          assert_equal [%w[INTEGER SMALLINT], ["INTEGER"], ["NUMERIC(10,0)"]],
+                       [declared.call("VALUES (CAST(1 AS INTEGER), CAST(2 AS SMALLINT))"),
+                        declared.call("SELECT I FROM DECL UNION SELECT I FROM DECL"),
+                        declared.call("SELECT I FROM DECL UNION SELECT CAST(1 AS SMALLINT) FROM DECL")]
           c.query("COMMIT")
         end
         connect(offer: without(Protocol::Capabilities::DECLARED_TYPES)) do |c|

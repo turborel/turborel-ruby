@@ -122,13 +122,20 @@ module Turborel
 
     # Verifies: [DESIGN] D2 a value bound to a ? mark longer than the mark's
     # type cut to it, as a cast does, with warning 01004, string data, right
-    # truncation.
+    # truncation: of an INSERT, and of a query comparing a column with it,
+    # with ORDER BY or without.
     def test_a_value_cut_warns
       plain do |c|
         c.exec("CREATE TABLE CUT (S VARCHAR(5))")
         cut = c.exec_params("INSERT INTO CUT VALUES (?)", ["abcdefgh"])
 
         assert_equal ["01004", [["abcde"]]], [cut.sqlstate, c.exec("SELECT S FROM CUT").values]
+        ["", " ORDER BY S"].each do |order|
+          c.prepare("cut", "SELECT S FROM CUT WHERE S = ?#{order}")
+          rows = c.exec_prepared("cut", ["abcdefgh"]).values
+
+          assert_equal [[["abcde"]], "01004"], [rows, c.client.warning], order
+        end
         c.exec("ROLLBACK")
       end
     end
