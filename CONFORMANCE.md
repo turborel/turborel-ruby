@@ -56,10 +56,10 @@ The same in every driver; the status of each row is in its table.
 
 | Part | Rows |
 |---|---|
-| The protocol | 257 |
+| The protocol | 258 |
 | The client library | 95 |
 | Settings, pipelines and pools | 82 |
-| All but the standard API | 434 |
+| All but the standard API | 435 |
 
 ---
 
@@ -325,6 +325,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-QUERY-4 | `ends`: committed as the statement succeeds, rolled back as it fails, the reply saying no transaction is active; a failing commit's Error in place of the Complete | `[PROTOCOL Query 'Q']` | done |
 | P-QUERY-5 | A result that sent a locator keeps its transaction | `[PROTOCOL Query 'Q']` | done |
 | P-QUERY-6 | With tag 2, several statements run one by one, `ends` applying to each, tag 5 on each Complete but the last, the first failure's Error ending the replies; text of no statement, one Complete | `[PROTOCOL Query 'Q']` | done |
+| P-QUERY-7 | A statement that fails before its first batch is sent is answered by its Error alone, with no Description or Rows; its notices and Status still come, as do an earlier pipelined request's replies. Once a batch has gone, Rows stream and an Error may follow them (D42) | `[PROTOCOL Query 'Q']` | done |
 
 ### Prepare 'P'
 

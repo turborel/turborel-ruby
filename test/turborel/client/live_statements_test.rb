@@ -356,6 +356,24 @@ module Turborel
           c.query("ROLLBACK")
         end
       end
+
+      # Verifies: [PROTOCOL Query 'Q'] a statement that fails before its
+      # first batch is sent answered by its Error alone, no Description or
+      # Rows before it; the connection goes on.
+      def test_a_failure_before_the_first_batch
+        connect do |c|
+          c.query("CREATE TABLE ZERO (N INTEGER)")
+          c.query("INSERT INTO ZERO VALUES (0)")
+          kinds = []
+          c.singleton_class.prepend(Module.new do
+            define_method(:next_reply) { |*answer| super(*answer).tap { |reply| kinds << reply.class } }
+          end)
+          assert_fails([-301, "22012"]) { c.query("SELECT 1 / N FROM ZERO") }
+          assert_equal [Protocol::Replies::ErrorReply], kinds
+          assert_equal [[0]], c.query("SELECT N FROM ZERO").rows
+          c.query("ROLLBACK")
+        end
+      end
     end
   end
 end
