@@ -311,6 +311,19 @@ module ActiveRecord
         connection.drop_table :ar_typed
       end
 
+      # Verifies: [DESIGN] D2 a decimal column of 38 digits, Turborel's most,
+      # made, read back as declared and holding a value of 38 digits exactly.
+      def test_decimals_of_38_digits
+        connection.create_table(:ar_wide, force: true) { |t| t.decimal :amount, precision: 38, scale: 10 }
+        wide = Class.new(ActiveRecord::Base) { self.table_name = "ar_wide" }
+        amount = BigDecimal("1234567890123456789012345678.9012345678")
+        wide.create!(amount:)
+
+        assert_equal [38, 10, amount], [wide.columns_hash["amount"].precision, wide.columns_hash["amount"].scale,
+                                        wide.first.amount]
+        connection.drop_table :ar_wide
+      end
+
       private
 
       # What test_schema_changed made, undone.

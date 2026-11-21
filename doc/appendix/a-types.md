@@ -49,11 +49,14 @@ The bounds of each:
 
 - **Exact numbers** carry units, an `i128`, and a scale, a `u32`: the
   number is the units divided by ten to the scale. Every such number is
-  read exactly, the whole of the `i128` and every scale. A `BigDecimal`
-  is written at the least scale that holds it, so 1.50 is written as 15
-  at scale 1, the same number; one whose units at that scale do not fit
-  an `i128`, or that is NaN or infinite, fails with SQLSTATE 22003. A
-  `Turborel::Decimal` is written at its own `units` and `scale`.
+  read exactly, the whole of the `i128` and every scale. A Turborel
+  number holds at most 38 digits, which the driver passes and reads
+  exactly; the server refuses one of more with SQLSTATE 22003. A
+  `BigDecimal` is written at the least scale that holds it, so 1.50 is
+  written as 15 at scale 1, the same number; one whose units at that
+  scale do not fit an `i128`, or that is NaN or infinite, fails with
+  SQLSTATE 22003. A `Turborel::Decimal` is written at its own `units`
+  and `scale`.
 - **Datetimes**: `moment` is `:date`, `:time` or `:timestamp`; `utc` the
   instant, an `i64`: of a timestamp, microseconds in UTC from
   0001-01-01 00:00:00; of a date, the instant of its midnight; of a time,

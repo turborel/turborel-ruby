@@ -337,6 +337,25 @@ module Turborel
           c.query("COMMIT")
         end
       end
+
+      # Verifies: [PROTOCOL Values] an exact number of 38 digits, Turborel's
+      # most, passed as a parameter and read as a result exactly, an Integer
+      # and a BigDecimal alike; one of 39 digits refused by the server, 22003;
+      # a quotient of Turborel's scale, 1/3 as 0.333333.
+      def test_exact_numbers_of_38_digits
+        connect do |c|
+          c.query("CREATE TABLE WIDE (I NUMERIC(38), D DECIMAL(38,10))")
+          whole = (10**38) - 1
+          fraction = BigDecimal("1234567890123456789012345678.9012345678")
+          c.execute(c.prepare("INSERT INTO WIDE VALUES (?, ?)"), [whole, fraction])
+
+          assert_equal [[whole, fraction]], c.query("SELECT I, D FROM WIDE").rows
+          assert_equal [[whole]], c.execute(c.prepare("VALUES CAST(? AS NUMERIC(38))"), [whole]).rows
+          assert_fails([-301, "22003"]) { c.execute(c.prepare("INSERT INTO WIDE (I) VALUES (?)"), [10**38]) }
+          assert_equal [[BigDecimal("0.333333")]], c.query("VALUES CAST(1 AS INTEGER) / 3").rows
+          c.query("ROLLBACK")
+        end
+      end
     end
   end
 end
