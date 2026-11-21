@@ -1,7 +1,7 @@
 # Builds and checks the gem, run by hand only, and publishes nothing
 # (VERSIONING.md, RULES.md R-PROC-7). The gem is kept as the run's
-# artifact. Its publishing step is written but disabled: the owner
-# enables it once every turborel driver is done.
+# artifact. Its publishing step is written but disabled: the maintainers
+# enable it once every turborel driver is done.
 name: release
 
 on:
@@ -35,7 +35,7 @@ jobs:
           name: turborel-gem
           path: pkg/turborel-*.gem
           if-no-files-found: error
-      # Disabled until the owner enables it, by removing `if: false` and
+      # Disabled until the maintainers enable it, by removing `if: false` and
       # adding the RUBYGEMS_API_KEY secret, once every driver is done.
       - name: Publish to RubyGems
         if: false

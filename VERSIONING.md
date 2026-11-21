@@ -63,11 +63,11 @@ refuses the connection (SQLSTATE 08004).
 ## Publishing
 
 Nothing is published to RubyGems, and no release is tagged, until
-every Turborel driver is done. Then the owner publishes them together,
+every Turborel driver is done. Then the maintainers publish them together,
 each to its language's registry. Until then, build from source, as
 [README.md](README.md) says.
 
-A release is published by the owner alone, from a clean checkout of a
+A release is published by a maintainer, from a clean checkout of a
 pushed commit that has passed `bundle exec rake verify` and
 `bundle exec rake coverage` in CI on every platform:
 
@@ -77,7 +77,7 @@ pushed commit that has passed `bundle exec rake verify` and
    package and checks it, and keeps what it built as the run's
    artifacts. It publishes nothing.
 3. The workflow's last step, which tags the release and publishes it, is
-   written but disabled until the owner enables it and gives it what the
+   written but disabled until a maintainer enables it and gives it what the
    registry needs to accept the release. Every package carries
    `LICENSE`.
 

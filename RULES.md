@@ -376,7 +376,7 @@ is 0.0.0, as Turborel's is, and speaks protocol version 1.
 
 The number is written once, in `Turborel::VERSION`, in `lib/turborel/version.rb`. Nothing is
 published, and no release is tagged, until every Turborel driver is
-done; then the owner publishes them together (VERSIONING.md).
+done; then the maintainers publish them together (VERSIONING.md).
 
 #### D6. Tests and code cite Turborel's documents by their headings
 
