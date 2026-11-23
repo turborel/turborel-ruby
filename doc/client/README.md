@@ -2,7 +2,7 @@
 
 The standard API, then the low-level client beneath it, a page for each main interface or module, to look a thing up.
 
-[The documentation set](../README.md)
+[Turborel Ruby Driver Documentation](../README.md)
 
 ## Contents
 

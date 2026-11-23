@@ -2,7 +2,7 @@
 
 For anyone who writes a Ruby program against Turborel: installing the driver, connecting, running statements and moving data, chapter by chapter, read in order.
 
-[The documentation set](../README.md)
+[Turborel Ruby Driver Documentation](../README.md)
 
 ## Contents
 

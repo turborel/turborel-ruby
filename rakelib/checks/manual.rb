@@ -18,7 +18,7 @@ module Checks
     # A chapter's line after its title.
     CONTENTS = "[Contents](README.md)"
     # A volume's line back to the set.
-    SET = "[The documentation set](../README.md)"
+    SET = "[Turborel Ruby Driver Documentation](../README.md)"
     # An image, in Markdown or HTML.
     IMAGE = /!\[|<img\b/i
 
