@@ -21,11 +21,14 @@ module Turborel
       def at_end?: () -> bool
       def read_to_end: (Integer limit) -> String
       def close: () -> void
+      def bounded?: () -> bool
+      def arrives_within?: (Numeric? seconds) -> bool
 
       private
 
       def fill: (Integer count) -> void
       def next_chunk: (Integer wanted) -> String?
+      def first_chunk: (Numeric? seconds) -> (String | :later | nil)
       def written: (String bytes) -> Integer
       def wait: (Symbol why) -> void
       def guarded: [T] (String what) { () -> T } -> T

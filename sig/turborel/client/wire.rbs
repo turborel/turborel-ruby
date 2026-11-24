@@ -8,6 +8,7 @@ module Turborel
       @compress_from: Integer?
       @settings: Hash[String, String]
       @notices: Array[Protocol::Replies::Notice]
+      @events_kept: Array[Debug::Event]?
       @notice_handler: (^(Protocol::Replies::Notice) -> untyped)?
       @active: bool
       @warning: String?
@@ -38,6 +39,7 @@ module Turborel
       def receive: (?Symbol answer) -> Protocol::Replies::reply
       def took: (Protocol::Replies::reply reply) -> Protocol::Replies::reply?
       def notice: (Protocol::Replies::Notice notice) -> void
+      def events_kept: () -> Array[Debug::Event]
       def noted: (Protocol::Replies::reply reply) -> Protocol::Replies::reply
       def completed: (Protocol::Replies::Complete complete) -> void
       def next_reply: (?Symbol answer) -> Protocol::Replies::reply

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # Each group needs only those above it as it loads.
+require_relative "turborel/debug"
 require_relative "turborel/error"
 require_relative "turborel/failure"
 require_relative "turborel/values"
@@ -20,6 +21,7 @@ require_relative "turborel/protocol/json_binary"
 require_relative "turborel/protocol/types"
 require_relative "turborel/protocol/values"
 
+require_relative "turborel/protocol/debug_fields"
 require_relative "turborel/protocol/fields"
 require_relative "turborel/protocol/json_decoder"
 require_relative "turborel/protocol/value_reader"
@@ -42,6 +44,7 @@ require_relative "turborel/client/tls"
 
 require_relative "turborel/client/canceller"
 require_relative "turborel/client/copy"
+require_relative "turborel/client/debugging"
 require_relative "turborel/client/export"
 require_relative "turborel/client/key_cache"
 require_relative "turborel/client/lob_streams"

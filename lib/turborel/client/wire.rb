@@ -5,8 +5,8 @@ module Turborel
     # A connection's frames: each request sent, compressed past its
     # threshold once compression is granted, and each reply read and
     # decoded, inflated if it came compressed, each Notice and Status before
-    # a statement's reply taken on the way, and what each reply says of the
-    # session noted [PROTOCOL Requests].
+    # a statement's reply taken on the way, each debugger's Event kept,
+    # and what each reply says of the session noted [PROTOCOL Requests].
     #
     # @api private
     module Wire
@@ -127,16 +127,21 @@ module Turborel
         end
       end
 
-      # +reply+, unless a Notice or a Status, which is taken; a reply of a
-      # statement, what it says noted.
+      # +reply+, unless a Notice, a Status or a debugger's Event, which is
+      # taken, the Event kept for debug_wait; a reply of a statement, what
+      # it says noted.
       def took(reply)
         case reply
         when Protocol::Replies::Notice then notice(reply)
         when Protocol::Replies::Status then @settings[reply.name] = reply.value
+        when Debug::Event then events_kept << reply
         else return noted(reply)
         end
         nil
       end
+
+      # The debugger's Events kept, not yet waited for.
+      def events_kept = @events_kept ||= []
 
       # Takes +notice+: to the handler, or kept, the last KEPT_NOTICES.
       def notice(notice)

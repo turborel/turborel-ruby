@@ -86,6 +86,30 @@ module Turborel
         @buffer.byteslice(0, limit) || "".b
       end
 
+      # Whether it can be bounded: not a named pipe, nor a stream given to
+      # open.
+      #
+      # @return [Boolean]
+      def bounded? = @bounded
+
+      # Whether the server begins to send within +seconds+, without limit
+      # if +nil+: what it sent buffered, nothing of it taken. A stream that
+      # cannot be bounded waits without limit.
+      #
+      # @param seconds [Numeric, nil]
+      # @return [Boolean]
+      # @raise [Error] a connection failure if the server closes
+      def arrives_within?(seconds)
+        return true unless @buffer.empty?
+
+        chunk = @bounded ? first_chunk(seconds) : guarded("receive") { next_chunk(CHUNK) }
+        return false if chunk == :later
+        raise Error.connection_failure("cannot receive: the server closed the connection") unless chunk
+
+        @buffer << chunk
+        true
+      end
+
       # Closes it, whatever the system says.
       #
       # @return [void]
@@ -123,6 +147,21 @@ module Turborel
         end
       rescue EOFError
         nil
+      end
+
+      # The first bytes the server sends within +seconds+: +:later+ if none
+      # came, +nil+ once it has closed.
+      def first_chunk(seconds)
+        guarded("receive") do
+          chunk = @io.read_nonblock(CHUNK, exception: false)
+          while chunk.is_a?(Symbol)
+            socket = @io.to_io
+            return :later unless chunk == :wait_writable ? socket.wait_writable(seconds) : socket.wait_readable(seconds)
+
+            chunk = @io.read_nonblock(CHUNK, exception: false)
+          end
+          chunk
+        end
       end
 
       # The bytes of +bytes+ written now, waiting while none can be.

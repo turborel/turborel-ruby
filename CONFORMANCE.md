@@ -11,7 +11,7 @@ protocol, `doc/client/05-protocol.md`; the client library,
 `doc/client/02-library.md`; and its settings, pipelines and pools,
 `doc/client/02-library-connections.md`. Each section here is one of
 theirs, and each row cites its heading as the tests cite it (RULES.md
-D6). The headings are those of Turborel's main at 1afa44c2. Last come
+D6). The headings are those of Turborel's main at 5863fe65. Last come
 the rows of this driver's standard API (RULES.md D2).
 
 **Done** means the driver's code for the row exists and is tested by
@@ -56,10 +56,10 @@ The same in every driver; the status of each row is in its table.
 
 | Part | Rows |
 |---|---|
-| The protocol | 263 |
-| The client library | 96 |
+| The protocol | 270 |
+| The client library | 101 |
 | Settings, pipelines and pools | 82 |
-| All but the standard API | 441 |
+| All but the standard API | 453 |
 
 ---
 
@@ -218,6 +218,17 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-CALLED-3 | A Prepared of another statement, or of a procedure written in Rust, has no tail 20, and each of its parameters is IN | `[PROTOCOL Parameter modes]` | done |
 | P-CALLED-4 | A mode of another code, or a position of 0, fails the connection (SQLCODE -919, SQLSTATE 08006) | `[PROTOCOL Parameter modes]` | done |
 
+### Debugger
+
+| ID | Row | Citation | Status |
+|---|---|---|---|
+| P-DEBUG-1 | Granted `debugger` *(extension)*, Debug 'V' is sent: identify, attach a connection ID u64, detach, break (kind, schema, name, line, optional condition), clear a number, breakpoints, resume an action, interrupt, stack | `[PROTOCOL Debug 'V']` | done |
+| P-DEBUG-2 | Debugged 'V' read: a connection ID, a breakpoint, a count of breakpoints, or a stack (paused flag, then the pause); Attach, Detach, Clear, Resume and Interrupt answered by a Complete | `[PROTOCOL Debug 'V']` | done |
+| P-DEBUG-3 | Event 'W' read wherever a reply is read, only between requests and never ending one: paused (reason, breakpoint number, frames outermost first), timed out, cancelled, ended | `[PROTOCOL Debug 'V']` | done |
+| P-DEBUG-4 | A frame read whole: origin (kind, schema, specific name, schema, name) if it has one, visible flag, place, line and column if given, parameters and variables (name, type as SQL writes it, value), cursors (name, open flag, query) | `[PROTOCOL Debug 'V']` | done |
+| P-DEBUG-5 | Refusals keep the session: an ID not seen 08003; a breakpoint in a routine without DEBUG 42000 (SQLCODE -104); an action the target's state does not allow TBD01 (SQLCODE -910) | `[PROTOCOL Debug 'V']` | done |
+| P-DEBUG-6 | The 18 debugger samples of the sample-frames file decoded and encoded to what their meanings say | `[PROTOCOL Debug 'V']` | done |
+
 ### Composite fields
 
 | ID | Row | Citation | Status |
@@ -304,6 +315,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-CAP-19 | No request or tail field of a capability not granted is sent | `[PROTOCOL Capabilities]` | done |
 | P-CAP-20 | `declared-types`: a Prepared and a Description carry each column's declared type, tail 19 | `[PROTOCOL Capabilities]` | done |
 | P-CAP-21 | `parameter-modes`: a Prepared of a CALL carries its procedure and each ?'s mode and position, tail 20 | `[PROTOCOL Capabilities]` | done |
+| P-CAP-22 | `debugger` *(extension)*: the request Debug, its answer Debugged, and the Event sent unasked | `[PROTOCOL Capabilities]` | done |
 
 ### Requests
 
@@ -641,6 +653,16 @@ From `doc/client/02-library.md`, The Client Library.
 | C-PREP-6 | A prepared statement valid across transactions | `[CLIENT Prepared statements]` | done |
 | C-PREP-7 | A column's declared type, its name and as SQL writes it, granted `declared-types`, which connecting asks for; the type written gives the declared type where told, else the type its tag says | `[CLIENT Prepared statements]` | done |
 | C-PREP-8 | A prepared CALL's parameters each with its mode (IN, INOUT, OUT) and ordinal position, granted `parameter-modes`, which connecting asks for; an OUT parameter is described, given no value, and read back from the CALL's result | `[CLIENT Prepared statements]` | done |
+
+### Debugging routines
+
+| ID | Row | Citation | Status |
+|---|---|---|---|
+| C-DEBUG-1 | A connection's debugging ID (identify), and another connection attached to its session and detached | `[CLIENT Debugging routines]` | done |
+| C-DEBUG-2 | Breakpoints set at a line of a procedure, function or trigger, with an optional condition; cleared; listed | `[CLIENT Debugging routines]` | done |
+| C-DEBUG-3 | The target's next event waited for with a time limit: a pause with its call stack, a timeout, a cancel or its end | `[CLIENT Debugging routines]` | done |
+| C-DEBUG-4 | A paused target resumed by a step into, over or out, or to the next breakpoint; a running one interrupted; its pause read again | `[CLIENT Debugging routines]` | done |
+| C-DEBUG-5 | A frame's parameters, variables and cursors given with their names, types and values; a frame not visible gives its origin alone | `[CLIENT Debugging routines]` | done |
 
 ### Large objects
 

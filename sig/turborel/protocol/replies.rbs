@@ -92,8 +92,17 @@ module Turborel
         def self.new: () -> instance
       end
 
+      class Debugged < Data
+        attr_reader what: Symbol
+        attr_reader value: untyped
+        def self.new: (Symbol what, untyped value) -> instance
+                    | (what: Symbol, value: untyped) -> instance
+      end
+
+      Event: singleton(Debug::Event)
+
       type reply = Challenge | Ready | Prepared | Description | Rows | Suspended | Complete | ErrorReply
-                 | LobData | LobLocator | Notice | Status | Pong
+                 | LobData | LobLocator | Notice | Status | Pong | Debugged | Debug::Event
 
       READERS: Hash[Integer, Symbol]
       COMPLETE_TAGS: Array[Integer]
@@ -122,6 +131,8 @@ module Turborel
       def self.notice: (Reader reader) -> Notice
       def self.status: (Reader reader) -> Status
       def self.pong: (Reader _reader) -> Pong
+      def self.debugged: (Reader reader) -> Debugged
+      def self.event: (Reader reader) -> Debug::Event
     end
   end
 end

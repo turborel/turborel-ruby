@@ -27,16 +27,16 @@ turborel-client, does: TCP, Unix sockets and Windows named pipes, TLS,
 SCRAM-SHA-256 and SCRAM-SHA-256-PLUS, prepared statements and cursors,
 large objects, bulk copy, import and export, settings from a URI, the
 environment and service and password files, several servers, pipelines
-and pools.
+and pools, and the routine debugger.
 
 The driver was built in milestones, M0 to M8, and every row of its
 parity matrix, [CONFORMANCE.md](CONFORMANCE.md), is done, checked
 against turborel-client at M8: its low-level client connects, logs in,
 runs statements, prepared statements and cursors, reads and writes
 large objects, copies, imports and exports, connects by settings to one
-of several servers, pipelines requests, pools connections and holds
-named connections as an SQL-agent, and the plain API and the
-ActiveRecord adapter stand on it. [TODO.md](TODO.md) says what waits.
+of several servers, pipelines requests, pools connections, holds
+named connections as an SQL-agent and debugs the routines of another
+session, and the plain API and the ActiveRecord adapter stand on it. [TODO.md](TODO.md) says what waits.
 
 ## Requirements
 

@@ -47,6 +47,8 @@ module Turborel
       COPY_DATA = "J".ord
       # (see HELLO)
       COPY_END = "N".ord
+      # (see HELLO)
+      DEBUG = "V".ord
       # A Lob request's operations [PROTOCOL Requests].
       LOB_READ = 0
       # (see LOB_READ)
@@ -57,6 +59,24 @@ module Turborel
       LOB_FREE = 3
       # (see LOB_READ)
       LOB_HOLD = 4
+      # What a Debug request asks [PROTOCOL Debug 'V'].
+      DEBUG_IDENTIFY = 0
+      # (see DEBUG_IDENTIFY)
+      DEBUG_ATTACH = 1
+      # (see DEBUG_IDENTIFY)
+      DEBUG_DETACH = 2
+      # (see DEBUG_IDENTIFY)
+      DEBUG_BREAK = 3
+      # (see DEBUG_IDENTIFY)
+      DEBUG_CLEAR = 4
+      # (see DEBUG_IDENTIFY)
+      DEBUG_BREAKPOINTS = 5
+      # (see DEBUG_IDENTIFY)
+      DEBUG_RESUME = 6
+      # (see DEBUG_IDENTIFY)
+      DEBUG_INTERRUPT = 7
+      # (see DEBUG_IDENTIFY)
+      DEBUG_STACK = 8
       # What a Describe describes.
       DESCRIBE_STATEMENT = 0
       # (see DESCRIBE_STATEMENT)
@@ -145,6 +165,39 @@ module Turborel
 
       # @return [String] the frame of Lob's hold
       def self.lob_hold(locator) = lob(Writer.new.u8(LOB_HOLD).u32(locator))
+
+      # @return [String] the frame of Debug's identify, stack, breakpoints,
+      #   detach or interrupt: +what+ alone [PROTOCOL Debug 'V']
+      def self.debug(what) = Frame.encode(DEBUG, Writer.new.u8(what).to_s)
+
+      # @return [String] the frame of Debug's attach: a connection's ID u64
+      def self.debug_attach(id) = Frame.encode(DEBUG, Writer.new.u8(DEBUG_ATTACH).u64(id).to_s)
+
+      # Debug's break: kind u8, schema, name, line u32, then the condition
+      # if given, after its flag.
+      #
+      # @param kind [Symbol] +:procedure+, +:function+ or +:trigger+
+      # @param schema [String] empty for the session's default
+      # @param name [String]
+      # @param line [Integer] from 1
+      # @param condition [String, nil]
+      # @return [String] the frame
+      def self.debug_break(kind, schema, name, line, condition)
+        code = Debug::KINDS.fetch(kind) { raise Error.misused("#{kind.inspect} is no kind of routine") }
+        writer = Writer.new.u8(DEBUG_BREAK).u8(code).str(schema).str(name).u32(line).flag(!condition.nil?)
+        writer.str(condition) if condition
+        Frame.encode(DEBUG, writer.to_s)
+      end
+
+      # @return [String] the frame of Debug's clear: a breakpoint's number
+      def self.debug_clear(number) = Frame.encode(DEBUG, Writer.new.u8(DEBUG_CLEAR).u32(number).to_s)
+
+      # @param action [Symbol] +:into+, +:over+, +:out+ or +:continue+
+      # @return [String] the frame of Debug's resume: the action u8
+      def self.debug_resume(action)
+        code = Debug::ACTIONS.fetch(action) { raise Error.misused("#{action.inspect} is no way to go on") }
+        Frame.encode(DEBUG, Writer.new.u8(DEBUG_RESUME).u8(code).to_s)
+      end
 
       # @param key [String] the 16 bytes Ready gave
       # @return [String] the frame of Cancel

@@ -1,0 +1,74 @@
+module Turborel
+  # The routine debugger's values.
+  module Debug
+    KINDS: Hash[Symbol, Integer]
+    ACTIONS: Hash[Symbol, Integer]
+
+    # A breakpoint.
+    class Breakpoint < Data
+      attr_reader number: Integer
+      attr_reader schema: String
+      attr_reader name: String
+      attr_reader line: Integer
+      attr_reader condition: String?
+      def self.new: (number: Integer, schema: String, name: String, line: Integer, condition: String?) -> instance
+    end
+
+    # A pause of the target.
+    class Paused < Data
+      attr_reader reason: Symbol
+      attr_reader breakpoint: Integer?
+      attr_reader frames: Array[Frame]
+      def self.new: (reason: Symbol, breakpoint: Integer?, frames: Array[Frame]) -> instance
+    end
+
+    # A frame of the call stack.
+    class Frame < Data
+      attr_reader origin: Origin?
+      attr_reader visible: bool
+      attr_reader place: Integer?
+      attr_reader line: Integer?
+      attr_reader column: Integer?
+      attr_reader parameters: Array[Named]
+      attr_reader variables: Array[Named]
+      attr_reader cursors: Array[Cursor]
+      def self.new: (origin: Origin?, visible: bool, place: Integer?, line: Integer?, column: Integer?,
+                     parameters: Array[Named], variables: Array[Named], cursors: Array[Cursor]) -> instance
+    end
+
+    # The routine of a frame.
+    class Origin < Data
+      attr_reader kind: Symbol
+      attr_reader specific_schema: String
+      attr_reader specific_name: String
+      attr_reader schema: String
+      attr_reader name: String
+      def self.new: (kind: Symbol, specific_schema: String, specific_name: String, schema: String,
+                     name: String) -> instance
+    end
+
+    # A parameter or variable of a frame.
+    class Named < Data
+      attr_reader name: String
+      attr_reader type: String
+      attr_reader value: untyped
+      def self.new: (name: String, type: String, value: untyped) -> instance
+    end
+
+    # A cursor of a frame.
+    class Cursor < Data
+      attr_reader name: String
+      attr_reader open: bool
+      attr_reader query: String
+      def self.new: (name: String, open: bool, query: String) -> instance
+    end
+
+    # What the debugger hears of its target.
+    class Event < Data
+      attr_reader kind: Symbol
+      attr_reader paused: Paused?
+      def self.new: (kind: Symbol, ?paused: Paused?) -> instance
+      def initialize: (kind: Symbol, ?paused: Paused?) -> void
+    end
+  end
+end

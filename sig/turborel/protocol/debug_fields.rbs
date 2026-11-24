@@ -1,0 +1,20 @@
+module Turborel
+  module Protocol
+    # The fields of Debugged and Event.
+    module DebugFields
+      ANSWERS: Hash[Integer, Symbol]
+      EVENTS: Hash[Integer, Symbol]
+      REASONS: Hash[Integer, Symbol]
+
+      def self.debugged: (Reader reader) -> [Symbol, untyped]
+      def self.event: (Reader reader) -> Debug::Event
+      def self.breakpoint: (Reader reader) -> Debug::Breakpoint
+      def self.pause: (Reader reader) -> Debug::Paused
+      def self.frame: (Reader reader) -> Debug::Frame
+      def self.origin: (Reader reader) -> Debug::Origin
+      def self.named: (Reader reader) -> Debug::Named
+      def self.cursor: (Reader reader) -> Debug::Cursor
+      def self.code: (Reader reader, Hash[Integer, Symbol] codes, String none) -> Symbol
+    end
+  end
+end

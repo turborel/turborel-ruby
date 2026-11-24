@@ -28,6 +28,7 @@ module Turborel
       @commit_position: Integer?
       @completion: Completion?
       @notices: Array[Notice]
+      @events_kept: Array[Debug::Event]?
       @notice_handler: (^(Notice) -> untyped)?
       @query_attributes: Array[[String, String]]
       @copying: Copying?

@@ -53,19 +53,29 @@ module Turborel
       Status = Data.define(:name, :value)
       # The answer to Ping [PROTOCOL Pong 'G'].
       Pong = Data.define
+      # *(extension)* What a Debug request gave back, but a completion
+      # [PROTOCOL Debugged 'V']: +what+, +:connection+, +:breakpoint+,
+      # +:breakpoints+ or +:stack+, and its +value+, a connection's ID, a
+      # Debug::Breakpoint, an Array of them, or a Debug::Paused or +nil+.
+      Debugged = Data.define(:what, :value)
+      # *(extension)* What the debugger hears of its target, unasked
+      # [PROTOCOL Event 'W'].
+      Event = Debug::Event
 
       # The kinds of the replies, and how each body is read: the method of
       # this module [PROTOCOL Replies].
       READERS = {
         "C".ord => :challenge, "R".ord => :ready, "P".ord => :prepared, "D".ord => :description,
         "B".ord => :rows, "S".ord => :suspended, "K".ord => :complete, "E".ord => :error,
-        "L".ord => :lob, "N".ord => :notice, "T".ord => :status, "G".ord => :pong
+        "L".ord => :lob, "N".ord => :notice, "T".ord => :status, "G".ord => :pong, "V".ord => :debugged,
+        "W".ord => :event
       }.freeze
       # The tags a Complete takes [PROTOCOL The tail].
       COMPLETE_TAGS = [Tail::POSITION, Tail::MORE, Tail::ROWS, Tail::GENERATED, Tail::CONDITIONS, Tail::TIME].freeze
       # The kinds of the replies a request has more replies after: a
-      # Description, Rows, a Notice and a Status.
-      GOING_ON = %w[D B N T].map(&:ord).freeze
+      # Description, Rows, a Notice and a Status; and an Event, which never
+      # ends a request's replies [PROTOCOL Event 'W'].
+      GOING_ON = %w[D B N T W].map(&:ord).freeze
       # The kind of a Complete.
       COMPLETE = "K".ord
       # A Lob reply's kinds [PROTOCOL Replies].
@@ -264,6 +274,12 @@ module Turborel
 
       # @return [Pong]
       def self.pong(_reader) = Pong.new
+
+      # @return [Debugged]
+      def self.debugged(reader) = Debugged.new(*DebugFields.debugged(reader))
+
+      # @return [Debug::Event]
+      def self.event(reader) = DebugFields.event(reader)
     end
   end
 end

@@ -15,6 +15,7 @@ module Turborel
       include Copy
       include Export
       include Pipelines
+      include Debugging
 
       # @return [String] the session's authorization identifier, as Ready
       #   told it
@@ -216,13 +217,14 @@ module Turborel
       end
 
       # The end of a terminated session, its replies read a frame at a time
-      # until the server closes: a Notice, a Status or a Pong read past, the
+      # until the server closes: a Notice, a Status, a Pong or a debugger's
+      # Event read past, the
       # failing commit's Error raised; any other reply a connection failure,
       # as the server answers no Terminate.
       def terminated
         until @stream.at_end?
           case next_reply(:one)
-          in Protocol::Replies::Notice | Protocol::Replies::Status | Protocol::Replies::Pong then nil
+          in Protocol::Replies::Notice | Protocol::Replies::Status | Protocol::Replies::Pong | Debug::Event then nil
           in Protocol::Replies::ErrorReply => reply then raise Error, reply.failure
           else raise Error.connection_failure("the server answered Terminate")
           end

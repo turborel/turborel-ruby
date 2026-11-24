@@ -1,5 +1,5 @@
 # The headings of Turborel's doc/client/02-library.md and
-# 02-library-connections.md at 1afa44c2, one a line, as [CLIENT <heading>]
+# 02-library-connections.md at 5863fe65, one a line, as [CLIENT <heading>]
 # cites them (RULES.md D6).
 The Client Library
 Connecting
@@ -13,6 +13,7 @@ Importing
 What a connection asks for
 What the server tells
 Controlling the session
+Debugging routines
 Copying and exporting
 The SQL-agent
 Settings, Pipelines and Pools

@@ -20,7 +20,7 @@ the manuals describe the release they come with.
 
 | Volume | For | |
 |---|---|---|
-| [I. User's Guide](user/README.md) | Anyone who writes a Ruby program against Turborel | Installing, connecting, queries, prepared statements, transactions, large objects, copying, pipelines and pools, settings and errors, chapter by chapter |
+| [I. User's Guide](user/README.md) | Anyone who writes a Ruby program against Turborel | Installing, connecting, queries, prepared statements, transactions, large objects, copying, pipelines and pools, settings, errors and debugging routines, chapter by chapter |
 | [II. API Reference](client/README.md) | The same, looking something up | The standard API, then the low-level client, a page for each main interface or module |
 | [Appendices](appendix/README.md) | Everyone | Types, errors, settings and versions |
 

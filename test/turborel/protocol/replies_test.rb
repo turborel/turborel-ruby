@@ -221,6 +221,22 @@ module Turborel
         assert_equal [nil, [[:in, 1]]], [plain.called, Client::Statement.new(number: 1, parameters: plain.parameters,
                                                                              columns: []).modes]
       end
+
+      # Verifies: [PROTOCOL Debugged 'V'] a Debugged of another answer, an
+      # Event of another kind, a pause for another reason, or a frame's
+      # routine of another kind fails the connection; a step's pause has
+      # no breakpoint, a frame with no origin, place or line none.
+      def test_debugger_codes
+        assert_fails { Replies.decode("V".ord, writer.u8(4).to_s) }
+        assert_fails { Replies.decode("W".ord, writer.u8(4).to_s) }
+        assert_fails { Replies.decode("W".ord, writer.u8(0).u8(2).to_s) }
+        assert_fails { Replies.decode("W".ord, writer.u8(0).u8(1).u32(1).flag(true).u8(3).to_s) }
+        bare = writer.u8(0).u8(1).u32(1).flag(false).flag(false).flag(false).flag(false).u32(0).u32(0).u32(0)
+        paused = Replies.decode("W".ord, bare.to_s).paused
+
+        assert_equal [:step, nil, [nil, false, nil, nil, nil, [], [], []]],
+                     [paused.reason, paused.breakpoint, paused.frames.first.to_h.values]
+      end
     end
   end
 end

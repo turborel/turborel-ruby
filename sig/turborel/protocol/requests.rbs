@@ -21,6 +21,16 @@ module Turborel
       COPY_IN: Integer
       COPY_DATA: Integer
       COPY_END: Integer
+      DEBUG: Integer
+      DEBUG_IDENTIFY: Integer
+      DEBUG_ATTACH: Integer
+      DEBUG_DETACH: Integer
+      DEBUG_BREAK: Integer
+      DEBUG_CLEAR: Integer
+      DEBUG_BREAKPOINTS: Integer
+      DEBUG_RESUME: Integer
+      DEBUG_INTERRUPT: Integer
+      DEBUG_STACK: Integer
       LOB_READ: Integer
       LOB_CREATE: Integer
       LOB_APPEND: Integer
@@ -46,6 +56,11 @@ module Turborel
       def self.lob_append: (Integer locator, String octets) -> String
       def self.lob_free: (Integer locator) -> String
       def self.lob_hold: (Integer locator) -> String
+      def self.debug: (Integer what) -> String
+      def self.debug_attach: (Integer id) -> String
+      def self.debug_break: (Symbol kind, String schema, String name, Integer line, String? condition) -> String
+      def self.debug_clear: (Integer number) -> String
+      def self.debug_resume: (Symbol action) -> String
       def self.cancel: (String key) -> String
       def self.terminate: () -> String
       def self.describe_statement: (Integer statement) -> String

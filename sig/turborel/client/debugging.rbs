@@ -1,0 +1,23 @@
+module Turborel
+  module Client
+    # The routine debugger.
+    module Debugging : Wire
+      def debug_id: () -> Integer
+      def debug_attach: (Integer id) -> void
+      def debug_detach: () -> void
+      def debug_break: (Symbol kind, String name, Integer line, ?schema: String, ?condition: String?) -> Debug::Breakpoint
+      def debug_clear: (Integer number) -> void
+      def debug_breakpoints: () -> Array[Debug::Breakpoint]
+      def debug_resume: (Symbol action) -> void
+      def debug_interrupt: () -> void
+      def debug_stack: () -> Debug::Paused?
+      def debug_wait: (?Numeric? timeout) -> Debug::Event?
+
+      private
+
+      def debugged: (String frame, Symbol what) -> untyped
+      def debug_done: (String frame) -> nil
+      def arrives_within?: (Numeric? timeout) -> bool
+    end
+  end
+end

@@ -5,7 +5,7 @@ require "test_helper"
 module Turborel
   module Protocol
     # Turborel's sample frames, test/fixtures/protocol-frames.tsv, a copy of
-    # its doc/client/05-protocol-frames.tsv at 1afa44c2, byte for byte
+    # its doc/client/05-protocol-frames.tsv at 5863fe65, byte for byte
     # (RULES.md D17).
     class SampleFramesTest < Minitest::Test
       include TestSupport
@@ -42,7 +42,7 @@ module Turborel
       def test_the_file_as_laid_out
         all = samples
 
-        assert_equal 148, all.size
+        assert_equal 166, all.size
         assert_equal all.size, all.map(&:name).uniq.size
         directions = %w[client server]
 
@@ -159,6 +159,7 @@ module Turborel
                      [every.position, every.more, every.rows, every.generated, every.time.to_h.values]
         assert_equal([["01004", true]], decoded("complete-conditions").conditions.map { [_1.sqlstate, _1.active] })
         details
+        debugged
       end
 
       # The frame of each client sample, as the driver encodes it.
@@ -177,7 +178,19 @@ module Turborel
                                           capabilities: []),
           "answer" => Requests.answer("c=biws,r=abc,p=xyz"), "answer-empty" => Requests.answer(""),
           "cancel" => Requests.cancel("\xA5".b * 16)
-        }.merge(statement_frames, other_frames)
+        }.merge(statement_frames, other_frames, debug_frames)
+      end
+
+      # The frames of the debugger.
+      def debug_frames
+        {
+          "debug-identify" => Requests.debug(Requests::DEBUG_IDENTIFY), "debug-attach" => Requests.debug_attach(2),
+          "debug-detach" => Requests.debug(Requests::DEBUG_DETACH),
+          "debug-break" => Requests.debug_break(:procedure, "ANN", "RAISE_PAY", 4, "PCT > 5"),
+          "debug-clear" => Requests.debug_clear(1), "debug-breakpoints" => Requests.debug(Requests::DEBUG_BREAKPOINTS),
+          "debug-resume" => Requests.debug_resume(:over), "debug-interrupt" => Requests.debug(Requests::DEBUG_INTERRUPT),
+          "debug-stack" => Requests.debug(Requests::DEBUG_STACK)
+        }
       end
 
       # The frames of statements.
@@ -263,6 +276,29 @@ module Turborel
         assert_equal [3, 1, %w[S P]], [prepared.statement, prepared.parameters.size, [called.schema, called.name]]
         assert_equal([[:in, 1, "NUMERIC(10,0)"], [:out, 2, "NUMERIC(10,0)"]],
                      called.parameters.map { [_1.mode, _1.ordinal, Text::Types.written(_1.parameter.type)] })
+      end
+
+      # Verifies: [PROTOCOL Debugged 'V'] the samples of Debugged and Event
+      # decoded as their meanings say: a connection's ID, a breakpoint, the
+      # breakpoints, a target running, and a pause at breakpoint 1 of one
+      # frame of ANN.RAISE_PAY at line 4, column 3, PCT 10, N null, cursor
+      # C closed, given again by Event paused; Event timed out, cancelled
+      # and ended.
+      def debugged
+        breakpoint = Debug::Breakpoint.new(number: 1, schema: "ANN", name: "RAISE_PAY", line: 4, condition: nil)
+
+        assert_equal([[:connection, 2], [:breakpoint, breakpoint], [:breakpoints, [breakpoint]], [:stack, nil]],
+                     %w[connection breakpoint breakpoints running].map { decoded("debugged-#{_1}").to_h.values })
+        paused = decoded("debugged-stack").value
+        frame = paused.frames.first
+
+        assert_equal [:breakpoint, 1, 1], [paused.reason, paused.breakpoint, paused.frames.size]
+        assert_equal [:procedure, "ANN", "RAISE_PAY", "ANN", "RAISE_PAY"], frame.origin.to_h.values
+        assert_equal [true, 4, 3], [frame.visible, frame.line, frame.column]
+        assert_equal([%w[PCT INTEGER] + [10], %w[N INTEGER] + [nil], ["C", false, "SELECT ID FROM STAFF"]],
+                     [frame.parameters, frame.variables, frame.cursors].map { _1.first.to_h.values })
+        assert_equal Debug::Event.new(kind: :paused, paused:), decoded("event-paused")
+        assert_equal(%i[timed_out cancelled ended], %w[timed-out cancelled ended].map { decoded("event-#{_1}").kind })
       end
     end
   end
