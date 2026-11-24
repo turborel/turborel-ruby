@@ -25,6 +25,37 @@ module Turborel
         Column.new(name:, type: Types.read(reader), not_null: reader.flag)
       end
 
+      # The modes of a CALL's parameters, by their codes [PROTOCOL Parameter
+      # modes].
+      MODES = { 1 => :in, 2 => :inout, 4 => :out }.freeze
+
+      # Tag 20's body, called: the procedure's specific schema and name,
+      # then each ? in written order, its mode, ordinal position from 1 and
+      # parameter [PROTOCOL Parameter modes].
+      #
+      # @param reader [Reader]
+      # @return [Called]
+      # @raise [Error] a connection failure of a mode of another code, or a
+      #   position of 0
+      def self.called(reader)
+        schema = reader.str
+        name = reader.str
+        Called.new(schema:, name:, parameters: reader.counted { called_parameter(reader) })
+      end
+
+      # A ? of tag 20: its mode, ordinal position and parameter.
+      #
+      # @param reader [Reader]
+      # @return [CalledParameter]
+      def self.called_parameter(reader)
+        code = reader.u8
+        mode = MODES.fetch(code) { raise reader.corrupt("#{code} is no parameter's mode") }
+        ordinal = reader.u32
+        raise reader.corrupt("a parameter's position is 0") if ordinal.zero?
+
+        CalledParameter.new(mode:, ordinal:, parameter: parameter(reader))
+      end
+
       # A parameter: varying flag, then its data type.
       #
       # @param reader [Reader]

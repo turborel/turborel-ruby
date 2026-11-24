@@ -32,7 +32,9 @@ connection.query_attributes  connection.query_attributes = [[name, value], ...]
 connection.ping   connection.reset   connection.change_user(user, mechanism)
 
 Turborel::Client::Rows.new(columns:, rows:)
-Turborel::Client::Statement.new(number:, parameters:, columns:)
+Turborel::Client::Statement.new(number:, parameters:, columns:, called: nil)   # modes
+Turborel::Called.new(schema:, name:, parameters:)          # each a CalledParameter
+Turborel::CalledParameter.new(mode:, ordinal:, parameter:)
 Turborel::Client::Batch.new(rows:, more:)
 Turborel::Client::Ran.new(outcomes:, failure:)
 Turborel::Client::Completion  # sqlcode, sqlstate, active, position, more, rows, generated, conditions, time
@@ -54,7 +56,15 @@ raised instead.
 `prepare` gives a `Statement` numbered by the connection, from 0 up: its
 `parameters` in the order of their `?` marks, a statement's inputs
 alone, and its `columns`, of a query, or of a CALL each `?` of an OUT or
-INOUT parameter. `execute` runs it with a value for each parameter and
+INOUT parameter. Of a CALL of an SQL-invoked procedure, where the
+server grants `parameter-modes`, which a connection asks for unless
+told, its `called` names the procedure by its specific schema and name,
+and every `?` in the order written, OUT ones too, each with the `mode`
+of the parameter whose argument holds it, `:in`, `:inout` or `:out`,
+that parameter's `ordinal` position from 1, and its `Parameter`.
+`modes` gives each `?`'s mode and position: a CALL's as told, another
+statement's each IN at its place. An OUT `?` is given no value; its
+value is a column of the CALL's row. `execute` runs it with a value for each parameter and
 gives a query's `Rows`, a CALL's one row of its output parameters, or
 another statement's `Completion`. `open_cursor` opens a query's cursor
 and gives at most `rows` of its rows, all if 0, as a `Batch` that says

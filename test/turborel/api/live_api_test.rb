@@ -155,5 +155,20 @@ module Turborel
         c.exec("ROLLBACK")
       end
     end
+
+    # Verifies: [DESIGN] D2 the modes of a statement prepared under a name:
+    # a CALL's each ? IN, INOUT or OUT and its parameter's position, an OUT
+    # one given no value and read from the result; another's each IN.
+    def test_parameter_modes
+      plain do |c|
+        c.exec("CREATE PROCEDURE TWICE(IN A INTEGER, OUT B INTEGER) LANGUAGE SQL CONTAINS SQL SET B = A * 2")
+        c.prepare("twice", "CALL TWICE(?, ?)")
+        c.prepare("one", "VALUES CAST(? AS INTEGER)")
+
+        assert_equal [[[:in, 1], [:out, 2]], [[:in, 1]]], [c.modes("twice"), c.modes("one")]
+        assert_equal [[8]], c.exec_prepared("twice", [4]).values
+        c.exec("ROLLBACK")
+      end
+    end
   end
 end

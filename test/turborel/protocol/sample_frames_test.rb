@@ -5,7 +5,7 @@ require "test_helper"
 module Turborel
   module Protocol
     # Turborel's sample frames, test/fixtures/protocol-frames.tsv, a copy of
-    # its doc/client/05-protocol-frames.tsv at 045e42a9, byte for byte
+    # its doc/client/05-protocol-frames.tsv at 1afa44c2, byte for byte
     # (RULES.md D17).
     class SampleFramesTest < Minitest::Test
       include TestSupport
@@ -42,7 +42,7 @@ module Turborel
       def test_the_file_as_laid_out
         all = samples
 
-        assert_equal 147, all.size
+        assert_equal 148, all.size
         assert_equal all.size, all.map(&:name).uniq.size
         directions = %w[client server]
 
@@ -151,7 +151,8 @@ module Turborel
         columns = prepared.columns.map { |column| [column.name, column.type_written, column.not_null] }
 
         assert_equal [1, 2, [["K", "INTEGER", true]]], [prepared.statement, prepared.parameters.size, columns]
-        assert_equal [2, [], []], decoded("prepared-empty").to_h.values
+        assert_equal [2, [], [], nil], decoded("prepared-empty").to_h.values
+        called
         every = decoded("complete-every")
 
         assert_equal [4711, true, 3, %w[7 8], [1500, 20, 300]],
@@ -249,6 +250,19 @@ module Turborel
                      [decoded("lob-data").data, decoded("lob-data-empty").data, decoded("lob-locator").locator]
         assert_equal([%w[CATALOG TURBOREL], ["STATEMENT.TIMEOUT_MS", ""]],
                      %w[status-catalog status-null].map { decoded(_1).to_h.values })
+      end
+
+      # Verifies: [PROTOCOL Parameter modes] the sample of a Prepared of a
+      # CALL: tail 20 names the procedure S.P and each ?, IN of parameter 1
+      # and OUT of parameter 2, each of its type, the OUT one not among the
+      # statement's inputs.
+      def called
+        prepared = decoded("prepared-called")
+        called = prepared.called
+
+        assert_equal [3, 1, %w[S P]], [prepared.statement, prepared.parameters.size, [called.schema, called.name]]
+        assert_equal([[:in, 1, "NUMERIC(10,0)"], [:out, 2, "NUMERIC(10,0)"]],
+                     called.parameters.map { [_1.mode, _1.ordinal, Text::Types.written(_1.parameter.type)] })
       end
     end
   end

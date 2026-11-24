@@ -6,7 +6,11 @@ module Turborel
       DIAGNOSTIC_TAGS: Range[Integer]
 
       def self.column: (Reader reader) -> Column
+      MODES: Hash[Integer, Symbol]
+
       def self.parameter: (Reader reader) -> Parameter
+      def self.called: (Reader reader) -> Called
+      def self.called_parameter: (Reader reader) -> CalledParameter
       def self.failure: (Reader reader) -> Failure
       def self.diagnostics: (Reader reader) -> Diagnostics?
     end

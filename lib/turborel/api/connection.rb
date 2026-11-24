@@ -94,6 +94,17 @@ module Turborel
       Result.new(client.execute(prepared(name), values))
     end
 
+    # Each ? mark of the statement prepared under +name+, in written order:
+    # its mode, +:in+, +:inout+ or +:out+, and the ordinal position of the
+    # parameter whose argument holds it, a CALL's as the server tells them,
+    # another statement's each IN at its place. An OUT one is given no
+    # value; its value comes back as a column of the CALL's result.
+    #
+    # @param name [String]
+    # @return [Array<Array(Symbol, Integer)>]
+    # @raise [Error] SQLSTATE 26000 of a name no statement is prepared under
+    def modes(name) = prepared(name).modes
+
     # Destroys the statement prepared under +name+, as DEALLOCATE PREPARE
     # does.
     #

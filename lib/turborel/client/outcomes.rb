@@ -23,8 +23,30 @@ module Turborel
 
     # A statement the server prepared [CLIENT Prepared statements]: the
     # client's +number+ for it, its +parameters+, each a Parameter in the
-    # order of its ? mark, and its +columns+ of a query, none of another.
-    Statement = Data.define(:number, :parameters, :columns)
+    # order of its ? mark, its inputs alone; its +columns+ of a query, or of
+    # a CALL's OUT and INOUT ? marks, none of another; and of a CALL of an
+    # SQL-invoked procedure, granted parameter-modes, what it +called+, a
+    # Called.
+    Statement = Data.define(:number, :parameters, :columns, :called)
+
+    # A prepared statement's modes.
+    class Statement
+      # A statement, of no procedure called unless told.
+      def initialize(number:, parameters:, columns:, called: nil) = super
+
+      # Each ? mark's mode and the ordinal position of the parameter
+      # whose argument holds it, in written order: a CALL's as the server
+      # told them; of another statement, or one not told, each IN, its
+      # position its place [CLIENT Prepared statements].
+      #
+      # @return [Array<Array(Symbol, Integer)>]
+      def modes
+        told = called
+        return told.parameters.map { |mark| [mark.mode, mark.ordinal] } if told
+
+        parameters.each_index.map { |i| [:in, i + 1] }
+      end
+    end
 
     # Rows of a cursor, and whether it has more, which fetch reads; closed
     # if not [CLIENT Prepared statements].

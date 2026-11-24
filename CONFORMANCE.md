@@ -11,7 +11,7 @@ protocol, `doc/client/05-protocol.md`; the client library,
 `doc/client/02-library.md`; and its settings, pipelines and pools,
 `doc/client/02-library-connections.md`. Each section here is one of
 theirs, and each row cites its heading as the tests cite it (RULES.md
-D6). The headings are those of Turborel's main at 045e42a9. Last come
+D6). The headings are those of Turborel's main at 1afa44c2. Last come
 the rows of this driver's standard API (RULES.md D2).
 
 **Done** means the driver's code for the row exists and is tested by
@@ -56,10 +56,10 @@ The same in every driver; the status of each row is in its table.
 
 | Part | Rows |
 |---|---|
-| The protocol | 258 |
-| The client library | 95 |
+| The protocol | 263 |
+| The client library | 96 |
 | Settings, pipelines and pools | 82 |
-| All but the standard API | 435 |
+| All but the standard API | 441 |
 
 ---
 
@@ -209,6 +209,15 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-DECL-3 | The page's table: SMALLINT, INTEGER, BIGINT, DECIMAL(9,2), NUMERIC(5) as NUMERIC(5,0), REAL, DOUBLE PRECISION, FLOAT(20) as FLOAT(24), a distinct type as USER-DEFINED with its name, INTEGER ARRAY[3] as ARRAY | `[PROTOCOL Declared types]` | done |
 | P-DECL-4 | Values written by their own tags whether or not it is granted; the tag tells how to read a value, the declared type what the column shows | `[PROTOCOL Declared types]` | done |
 
+### Parameter modes
+
+| ID | Row | Citation | Status |
+|---|---|---|---|
+| P-CALLED-1 | Granted `parameter-modes`, a Prepared of a CALL of an SQL-invoked procedure ends with tail 20: the procedure's specific schema and name, then every ? in written order, OUT ones too; not granted, no tail 20 | `[PROTOCOL Parameter modes]` | done |
+| P-CALLED-2 | Each ? carries its parameter's mode (1 IN, 2 INOUT, 4 OUT), its ordinal position from 1, and its type; several ? of one IN argument each carry that parameter's mode and position | `[PROTOCOL Parameter modes]` | done |
+| P-CALLED-3 | A Prepared of another statement, or of a procedure written in Rust, has no tail 20, and each of its parameters is IN | `[PROTOCOL Parameter modes]` | done |
+| P-CALLED-4 | A mode of another code, or a position of 0, fails the connection (SQLCODE -919, SQLSTATE 08006) | `[PROTOCOL Parameter modes]` | done |
+
 ### Composite fields
 
 | ID | Row | Citation | Status |
@@ -294,6 +303,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-CAP-18 | `conditions` | `[PROTOCOL Capabilities]` | done |
 | P-CAP-19 | No request or tail field of a capability not granted is sent | `[PROTOCOL Capabilities]` | done |
 | P-CAP-20 | `declared-types`: a Prepared and a Description carry each column's declared type, tail 19 | `[PROTOCOL Capabilities]` | done |
+| P-CAP-21 | `parameter-modes`: a Prepared of a CALL carries its procedure and each ?'s mode and position, tail 20 | `[PROTOCOL Capabilities]` | done |
 
 ### Requests
 
@@ -630,6 +640,7 @@ From `doc/client/02-library.md`, The Client Library.
 | C-PREP-5 | Deallocate | `[CLIENT Prepared statements]` | done |
 | C-PREP-6 | A prepared statement valid across transactions | `[CLIENT Prepared statements]` | done |
 | C-PREP-7 | A column's declared type, its name and as SQL writes it, granted `declared-types`, which connecting asks for; the type written gives the declared type where told, else the type its tag says | `[CLIENT Prepared statements]` | done |
+| C-PREP-8 | A prepared CALL's parameters each with its mode (IN, INOUT, OUT) and ordinal position, granted `parameter-modes`, which connecting asks for; an OUT parameter is described, given no value, and read back from the CALL's result | `[CLIENT Prepared statements]` | done |
 
 ### Large objects
 

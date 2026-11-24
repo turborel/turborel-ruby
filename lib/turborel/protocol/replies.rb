@@ -17,7 +17,13 @@ module Turborel
       Ready = Data.define(:authorization, :key, :capabilities, :server)
       # A statement prepared or described [PROTOCOL Prepared 'P']: its
       # number, its parameters in the order of their marks, its columns.
-      Prepared = Data.define(:statement, :parameters, :columns)
+      Prepared = Data.define(:statement, :parameters, :columns, :called)
+
+      # A Prepared, of no procedure called unless told.
+      class Prepared
+        # A Prepared, +called+ nil but of a CALL granted parameter-modes.
+        def initialize(statement:, parameters:, columns:, called: nil) = super
+      end
       # The columns of the rows that follow [PROTOCOL Description 'D'].
       Description = Data.define(:columns)
       # A batch of rows, each an Array of values [PROTOCOL Rows 'B'].
@@ -147,8 +153,16 @@ module Turborel
       # @return [Prepared] statement u32, a list of parameters, a list of
       #   columns
       def self.prepared(reader)
-        Prepared.new(statement: reader.u32, parameters: reader.counted { Fields.parameter(reader) },
-                     columns: declared(reader, reader.counted { Fields.column(reader) }))
+        statement = reader.u32
+        parameters = reader.counted { Fields.parameter(reader) }
+        columns = reader.counted { Fields.column(reader) }
+        called = nil #: Called?
+        Tail.new(reader, [Tail::DECLARED, Tail::CALLED]).each_tag do |tag|
+          if tag == Tail::DECLARED then columns = declared_types(reader, columns)
+          else called = Fields.called(reader)
+          end
+        end
+        Prepared.new(statement:, parameters:, columns:, called:)
       end
 
       # @return [Description] a list of columns
@@ -164,13 +178,20 @@ module Turborel
       # @return [Array<Column>]
       def self.declared(reader, columns)
         told = columns
-        Tail.new(reader, [Tail::DECLARED]).each_tag do
-          types = reader.counted { Declared.new(name: reader.str, written: reader.str) }
-          raise reader.corrupt("its declared types are not one for each column") unless types.size == columns.size
-
-          told = columns.zip(types).map { |column, type| column.with(declared: type) }
-        end
+        Tail.new(reader, [Tail::DECLARED]).each_tag { told = declared_types(reader, columns) }
         told
+      end
+
+      # +columns+, each given its declared type as tag 19's body tells it.
+      #
+      # @param reader [Reader]
+      # @param columns [Array<Column>]
+      # @return [Array<Column>]
+      def self.declared_types(reader, columns)
+        types = reader.counted { Declared.new(name: reader.str, written: reader.str) }
+        raise reader.corrupt("its declared types are not one for each column") unless types.size == columns.size
+
+        columns.zip(types).map { |column, type| column.with(declared: type) }
       end
 
       # @return [Rows] a list of rows

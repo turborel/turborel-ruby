@@ -21,7 +21,11 @@ module Turborel
       attr_reader number: Integer
       attr_reader parameters: Array[Parameter]
       attr_reader columns: Array[Column]
-      def self.new: (number: Integer, parameters: Array[Parameter], columns: Array[Column]) -> instance
+      attr_reader called: Called?
+      def self.new: (number: Integer, parameters: Array[Parameter], columns: Array[Column], ?called: Called?) -> instance
+      def initialize: (number: Integer, parameters: Array[Parameter], columns: Array[Column], ?called: Called?) -> void
+      def with: (?number: Integer, ?parameters: Array[Parameter], ?columns: Array[Column], ?called: Called?) -> Statement
+      def modes: () -> Array[[Symbol, Integer]]
     end
 
     # Rows of a cursor.

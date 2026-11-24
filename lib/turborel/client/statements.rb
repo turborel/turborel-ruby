@@ -167,7 +167,8 @@ module Turborel
       # The Statement the server's Prepared describes.
       def prepared
         reply = expect(Protocol::Replies::Prepared)
-        Statement.new(number: reply.statement, parameters: reply.parameters, columns: reply.columns)
+        Statement.new(number: reply.statement, parameters: reply.parameters, columns: reply.columns,
+                      called: reply.called)
       end
 
       # A cursor's Batch.

@@ -36,6 +36,8 @@ module Turborel
       TIME = 18
       # (see ATTRIBUTES)
       DECLARED = 19
+      # (see ATTRIBUTES)
+      CALLED = 20
       # The most attributes a message takes [PROTOCOL The tail].
       MAX_ATTRIBUTES = 32
       # The longest name of an attribute, in bytes [PROTOCOL The tail].

@@ -332,7 +332,39 @@ module Turborel
           assert_equal 2, call.parameters.size
           assert_equal %w[HALF TOTAL], call.columns.map(&:name)
           assert_equal [[5, 13]], c.execute(call, [10, 3]).rows
+          assert_equal ["ANN", [[:in, 1], [:out, 2], [:inout, 3]]], [call.called.schema, call.modes]
+          assert_match(/\ASPLIT/, call.called.name)
           c.query("ROLLBACK")
+        end
+      end
+
+      # Verifies: [PROTOCOL Parameter modes] granted parameter-modes, a
+      # Prepared of a CALL names its procedure and every ?, OUT ones too,
+      # each with its parameter's mode and position, several ? of one IN
+      # argument each that parameter's; another statement, and a CALL not
+      # granted it, calling nothing, each parameter IN.
+      # Verifies: [PROTOCOL Capabilities] parameter-modes, granted where
+      # asked, as every connection asks it by default.
+      # Verifies: [CLIENT Prepared statements] a prepared CALL's parameters
+      # each with its mode and position; an OUT one given no value, read
+      # back from the CALL's result.
+      def test_parameter_modes
+        connect do |c|
+          c.query("CREATE PROCEDURE ADD2(IN A INTEGER, OUT S INTEGER) LANGUAGE SQL CONTAINS SQL SET S = A")
+          call = c.prepare("CALL ADD2(CAST(? AS INTEGER) + CAST(? AS INTEGER), ?)")
+
+          assert c.granted?(Protocol::Capabilities::PARAMETER_MODES)
+          assert_equal [[:in, 1], [:in, 1], [:out, 2]], call.modes
+          assert_equal [[5]], c.execute(call, [2, 3]).rows
+          assert_equal([nil, [[:in, 1]]], c.prepare("VALUES CAST(? AS INTEGER)").then { [_1.called, _1.modes] })
+          c.query("COMMIT")
+        end
+        connect(offer: without(Protocol::Capabilities::PARAMETER_MODES)) do |c|
+          call = c.prepare("CALL ADD2(?, ?)")
+
+          assert_equal [nil, [[:in, 1]]], [call.called, call.modes]
+          c.query("DROP PROCEDURE ADD2 CASCADE")
+          c.query("COMMIT")
         end
       end
 

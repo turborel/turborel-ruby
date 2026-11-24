@@ -131,6 +131,22 @@ module Turborel
     def type_name: () -> String
   end
 
+  # The procedure a prepared CALL calls.
+  class Called < Data
+    attr_reader schema: String
+    attr_reader name: String
+    attr_reader parameters: Array[CalledParameter]
+    def self.new: (schema: String, name: String, parameters: Array[CalledParameter]) -> instance
+  end
+
+  # A ? of a CALL.
+  class CalledParameter < Data
+    attr_reader mode: Symbol
+    attr_reader ordinal: Integer
+    attr_reader parameter: Parameter
+    def self.new: (mode: Symbol, ordinal: Integer, parameter: Parameter) -> instance
+  end
+
   # A column's declared type.
   class Declared < Data
     attr_reader name: String

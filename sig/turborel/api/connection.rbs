@@ -12,6 +12,7 @@ module Turborel
     def exec_params: (String sql, Array[untyped] params) -> Result
     def prepare: (String name, String sql) -> Result
     def exec_prepared: (String name, ?Array[untyped] params) -> Result
+    def modes: (String name) -> Array[[Symbol, Integer]]
     def deallocate: (String name) -> void
     def transaction: [T] () { (Connection connection) -> T } -> T
     def autocommit: () -> bool

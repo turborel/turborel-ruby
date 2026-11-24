@@ -21,6 +21,7 @@ module Turborel
       FETCH_ENDS: String
       CONDITIONS: String
       DECLARED_TYPES: String
+      PARAMETER_MODES: String
       ALL: Array[String]
 
       def self.known: (Array[String] names) -> Array[String]

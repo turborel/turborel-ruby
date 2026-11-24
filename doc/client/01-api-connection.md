@@ -17,6 +17,7 @@ connection.exec(sql)                        # => Result
 connection.exec_params(sql, params)         # => Result
 connection.prepare(name, sql)               # => Result, of no rows
 connection.exec_prepared(name, params = []) # => Result
+connection.modes(name)                      # => [[mode, ordinal], ...]
 connection.deallocate(name)
 connection.transaction { |connection| ... } # => the block's value
 connection.autocommit   connection.autocommit = on   connection.in_transaction?
@@ -36,7 +37,11 @@ parameters, a value of `params` for each, as Appendix A writes it: it is
 prepared, executed and destroyed. `prepare` prepares a statement under a
 name of the program's, destroying one prepared before under the name, as
 PREPARE does; its result has the columns the statement will give and no
-rows. `exec_prepared` executes it with values, and `deallocate` destroys
+rows. `modes` gives each of its `?` marks' mode, `:in`, `:inout` or
+`:out`, and the ordinal position of the parameter whose argument holds
+it: a CALL's as the server tells them, an OUT one given no value and
+read back as a column of the CALL's result; another statement's each IN.
+`exec_prepared` executes it with values, and `deallocate` destroys
 it. Each gives a `Turborel::Result`.
 
 A connection's autocommit is off, as Turborel's is: a statement begins a
@@ -60,7 +65,7 @@ diagnostics.
 |---|---|---|
 | 08001 | -919 | Settings that cannot be read, a name of no setting, or no server kept |
 | 28000 | -919 | A user refused, or a password over plain TCP |
-| 26000 | -921 | `exec_prepared` or `deallocate` of a name no statement is prepared under, as EXECUTE gives it |
+| 26000 | -921 | `exec_prepared`, `modes` or `deallocate` of a name no statement is prepared under, as EXECUTE gives it |
 | TB910 | -910 | Parameters' values that are not an `Array`; `transaction` while a transaction is active |
 | the server's | the server's | A statement's failure |
 

@@ -19,7 +19,9 @@ module Turborel
         attr_reader statement: Integer
         attr_reader parameters: Array[Parameter]
         attr_reader columns: Array[Column]
-        def self.new: (statement: Integer, parameters: Array[Parameter], columns: Array[Column]) -> instance
+        attr_reader called: Called?
+        def self.new: (statement: Integer, parameters: Array[Parameter], columns: Array[Column], ?called: Called?) -> instance
+        def initialize: (statement: Integer, parameters: Array[Parameter], columns: Array[Column], ?called: Called?) -> void
       end
 
       class Description < Data
@@ -103,6 +105,7 @@ module Turborel
       def self.decode: (Integer kind, String body) -> reply
       def self.ends_request?: (Integer kind, String body) -> bool
       def self.declared: (Reader reader, Array[Column] columns) -> Array[Column]
+      def self.declared_types: (Reader reader, Array[Column] columns) -> Array[Column]
       def self.completed_head: (Integer kind, String body) -> Complete?
       def self.head_tail: (Reader reader, Hash[Symbol, untyped] fields) -> void
       def self.challenge: (Reader reader) -> Challenge

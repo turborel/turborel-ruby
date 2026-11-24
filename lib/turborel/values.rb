@@ -129,6 +129,17 @@ module Turborel
   # DECIMAL(9,2).
   Declared = Data.define(:name, :written)
 
+  # The procedure a prepared CALL calls and its ? marks, as the server tells
+  # them, granted parameter-modes [PROTOCOL Parameter modes]: the
+  # procedure's specific +schema+ and +name+, and +parameters+, a
+  # CalledParameter of each ? in written order, OUT ones too.
+  Called = Data.define(:schema, :name, :parameters)
+
+  # A ? of a CALL: the +mode+ of the procedure's parameter whose argument
+  # holds it, +:in+, +:inout+ or +:out+, that parameter's +ordinal+
+  # position from 1, and the ? as a Parameter.
+  CalledParameter = Data.define(:mode, :ordinal, :parameter)
+
   # A column's declared type, kept apart from its DataType.
   class Column
     # A column, of no declared type unless one is given.

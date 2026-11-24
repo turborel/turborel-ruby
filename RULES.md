@@ -69,7 +69,7 @@ Each is told in full in [§7](#7-the-decisions).
 |---|---|
 | `turborel.gemspec`, `Gemfile`, `Gemfile.lock` | the gem, and the development tools locked (D9, D10) |
 | `Rakefile`, `rakelib/` | the checks tool: `verify` and each check, `coverage`, `build` (D4) |
-| `rakelib/headings/` | the headings of Turborel's three documents tests cite, at 045e42a9 (D6) |
+| `rakelib/headings/` | the headings of Turborel's three documents tests cite, at 1afa44c2 (D6) |
 | `Steepfile`, `.rubocop.yml`, `.simplecov`, `.yardopts` | the type checker, the linter and formatter, coverage, the API reference |
 | `lib/turborel.rb` | the gem's root module |
 | `lib/turborel/version.rb` | `Turborel::VERSION` (D5) |
@@ -83,7 +83,7 @@ Each is told in full in [§7](#7-the-decisions).
 | `lib/turborel/text.rb`, `lib/turborel/text/` | values written as Turborel shows them, and a JSON value's text |
 | `lib/turborel/xml/` | an XML value's nodes, parsed from its text |
 | `sig/` | RBS signatures, a file for each of `lib/` but the ActiveRecord adapter's (D11, D16) |
-| `test/` | minitest, a `*_test.rb` for each file of `lib/`, and `test_helper.rb` (D13); `test/support/` the fake server unit tests script; `test/server/` the live tests' server set-up (R-TEST-8); `test/active_record/` the adapter's; `test/fixtures/` Turborel's sample frames, copied at 045e42a9 (D17) |
+| `test/` | minitest, a `*_test.rb` for each file of `lib/`, and `test_helper.rb` (D13); `test/support/` the fake server unit tests script; `test/server/` the live tests' server set-up (R-TEST-8); `test/active_record/` the adapter's; `test/fixtures/` Turborel's sample frames, copied at 1afa44c2 (D17) |
 | `doc/` | the manual |
 
 ---
@@ -550,7 +550,7 @@ Turborel keeps sample frames beside its protocol's page,
 `doc/client/05-protocol-frames.tsv`, made by its protocol's own tests
 from the encoders it uses. The driver's tests read a copy of it,
 `test/fixtures/protocol-frames.tsv`, taken byte for byte at Turborel's
-045e42a9, so every run checks the same frames, and a frame Turborel
+1afa44c2, so every run checks the same frames, and a frame Turborel
 changes is taken in by copying the file again, at a commit named here,
 as the pinned headings are (D6). Reading Turborel's own checkout would
 make the tests depend on one being beside the driver. Every server

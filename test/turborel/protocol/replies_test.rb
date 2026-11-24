@@ -201,6 +201,26 @@ module Turborel
 
         assert_fails { Replies.decode("D".ord, column.to_s + declared.to_s) }
       end
+
+      # Verifies: [PROTOCOL Parameter modes] a Prepared's tail 20: each ? of
+      # mode 1 IN, 2 INOUT or 4 OUT and a position from 1; a mode of another
+      # code, or a position of 0, failing the connection; a Prepared with no
+      # tail 20 calling nothing, each of its parameters IN.
+      def test_parameter_modes
+        param = Writer.new.flag(false).u8(14).to_s
+        called = lambda do |mode, ordinal|
+          body = Writer.new.u32(1).u32(0).u32(0).u8(20).str("S").str("P").u32(1).u8(mode).u32(ordinal).raw(param)
+          Replies.decode("P".ord, body.to_s)
+        end
+
+        assert_equal([[:inout, 2]], called.call(2, 2).called.parameters.map { [_1.mode, _1.ordinal] })
+        assert_fails { called.call(3, 1) }
+        assert_fails { called.call(1, 0) }
+        plain = Replies.decode("P".ord, Writer.new.u32(1).u32(1).raw(param).u32(0).to_s)
+
+        assert_equal [nil, [[:in, 1]]], [plain.called, Client::Statement.new(number: 1, parameters: plain.parameters,
+                                                                             columns: []).modes]
+      end
     end
   end
 end
