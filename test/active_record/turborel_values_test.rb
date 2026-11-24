@@ -93,7 +93,7 @@ module ActiveRecord
                        [kind.call(-301, "22001"), kind.call(-301, "22003"), kind.call(-911, "40001"),
                         kind.call(-911, "40002"), kind.call(-920, "TB920")]
           assert_nil kind.call(-201, "23000", "CHECK C would be violated")
-          assert_nil kind.call(-103, "2A000")
+          assert_nil kind.call(-103, "42000")
         end
 
         # Verifies: [DESIGN] D2 a statement dropped from the pool destroyed

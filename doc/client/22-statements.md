@@ -93,7 +93,7 @@ transaction active after it.
 
 | SQLSTATE | SQLCODE | When |
 |---|---|---|
-| the server's | the server's | A statement that fails, as the server reports it: 07001 values short of the parameters, 24000 a cursor open or not as the call needs, 26000 no such statement, 37000 a statement that cannot be prepared, 2200W a value with no serialization, 40002 a commit that fails |
+| the server's | the server's | A statement that fails, as the server reports it: 07001 values short of the parameters, 24000 a cursor open or not as the call needs, 26000 no such statement, 42000 a statement that cannot be prepared, 2200W a value with no serialization, 40002 a commit that fails |
 | TB920 | -920 | The statement cancelled |
 | 28000 | -919 | A `change_user` refused, which closes the connection |
 | 08006 | -919 | A method needing a capability the server did not grant, before anything is sent, the connection kept; a reply out of turn, malformed or too long, or a closed connection, the connection lost |

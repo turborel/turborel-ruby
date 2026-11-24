@@ -49,14 +49,14 @@ module Turborel
           frames << peer.frame
           peer.complete(100, "02000", active: true)
           frames << peer.frame
-          peer.error(-103, "2A000", "table ANN.NOPE is not defined", active: true)
+          peer.error(-103, "42000", "table ANN.NOPE is not defined", active: true)
         end
         rows = connection.query("SELECT N FROM T")
 
         assert_equal [["N"], [[1], [2], [3]]], [rows.columns.map(&:name), rows.rows]
         assert_predicate connection, :in_transaction?
         assert_equal([100, "02000"], connection.query("DELETE FROM T").then { [_1.sqlcode, _1.sqlstate] })
-        assert_fails([-103, "2A000"]) { connection.query("SELECT * FROM NOPE") }
+        assert_fails([-103, "42000"]) { connection.query("SELECT * FROM NOPE") }
         refute_predicate connection, :lost?
         connection.terminate
 

@@ -36,7 +36,7 @@ conn.terminate
 ```
 
 Values short of the parameters fail, SQLSTATE 07001; a statement that
-cannot be prepared, SQLSTATE 37000; a statement deallocated, SQLSTATE
+cannot be prepared, SQLSTATE 42000; a statement deallocated, SQLSTATE
 26000.
 
 ## Output parameters of a CALL

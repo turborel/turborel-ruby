@@ -12,7 +12,7 @@ module Turborel
     # default server or the connector's user.
     class Agent
       # SQLSTATE of a syntax error or access rule violation.
-      SYNTAX_ERROR = "2A000"
+      SYNTAX_ERROR = "42000"
       # The standard the agent's rules are of.
       STANDARD = "ISO/IEC 9075:1992"
 

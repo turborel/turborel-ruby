@@ -45,7 +45,7 @@ module Turborel
       #
       # @param sql [String]
       # @return [Statement]
-      # @raise [Error] the server's: SQLSTATE 37000 if it is not
+      # @raise [Error] the server's: SQLSTATE 42000 if it is not
       #   preparable; a connection failure
       def prepare(sql)
         number = @next_statement

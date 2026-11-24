@@ -73,7 +73,7 @@ module Turborel
     # @param name [String]
     # @param sql [String]
     # @return [Result] of no rows, its columns those +sql+ will give
-    # @raise [Error] the server's: SQLSTATE 37000 of a statement that
+    # @raise [Error] the server's: SQLSTATE 42000 of a statement that
     #   cannot be prepared
     def prepare(name, sql)
       statement = client.prepare(sql)

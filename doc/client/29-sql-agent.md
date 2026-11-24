@@ -49,7 +49,7 @@ apart from its message.
 | 25000 | -917 | DISCONNECT of a connection whose transaction is active |
 | 28000 | -104 | A user that is no authorization identifier |
 | 2E000 | -919 | A connection name that is no identifier |
-| 2A000 | -101, -102, -103 | A connection statement with a comment that does not end, malformed, or naming by a literal no character string literal is |
+| 42000 | -101, -102, -103 | A connection statement with a comment that does not end, malformed, or naming by a literal no character string literal is |
 | 01002 | 0 | DISCONNECT that met an error ending a connection, a warning |
 
 ## EXAMPLES

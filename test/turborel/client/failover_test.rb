@@ -69,7 +69,7 @@ module Turborel
           connection.terminate
           fake.join
         end
-        alone = server(failure: [-103, "2A000", "no such table"])
+        alone = server(failure: [-103, "42000", "no such table"])
 
         assert_equal "read-write", Role::WORDS.fetch(:read_write)
         connection = settings(at(alone, "read-write")).connect

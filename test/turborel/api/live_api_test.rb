@@ -106,7 +106,7 @@ module Turborel
       plain do |c|
         error = assert_raises(Error) { c.exec("SELECT * FROM NOWHERE") }
 
-        assert_equal [-103, "2A000", "NOWHERE"], [error.sqlcode, error.sqlstate, error.diagnostics.table]
+        assert_equal [-103, "42000", "NOWHERE"], [error.sqlcode, error.sqlstate, error.diagnostics.table]
         assert_fails([-301, "22012"]) { c.exec_params("VALUES 1 / CAST(? AS INTEGER)", [0]) }
         assert_fails(MISUSED) { c.exec_params("VALUES 1", "1") }
         c.prepare("one", "VALUES 1")

@@ -44,7 +44,7 @@ conn.terminate
 [-201, "23000", "PRIMARY KEY ANN.STAFF_PRIMARY1 (ID) of ANN.STAFF would be violated: a row of these values is there"]
 "X3.135-1986 §6.4 GR2"
 ["ERROR", "STAFF", "STAFF_PRIMARY1", "the key (1) is held by another row"]
-["2A000", 17, true]
+["42000", 17, true]
 false
 ```
 

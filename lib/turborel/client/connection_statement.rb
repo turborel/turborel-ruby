@@ -31,7 +31,7 @@ module Turborel
       #
       # @param sql [String]
       # @return [Array, nil]
-      # @raise [Error] SQLCODE -102 or -103, SQLSTATE 2A000, of one that is
+      # @raise [Error] SQLCODE -102 or -103, SQLSTATE 42000, of one that is
       #   malformed; -900, 0A000, of a variable
       def self.parse(sql)
         reader = Reader.new(sql)

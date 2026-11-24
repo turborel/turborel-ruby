@@ -148,7 +148,7 @@ module Turborel
 
           missing = csv(c, "2\n", Dialect.csv, into("NOPE")).first
 
-          assert_equal [-103, "37000"], [missing.sqlcode, missing.sqlstate]
+          assert_equal [-103, "42000"], [missing.sqlcode, missing.sqlstate]
           assert_match(/WAGE/, csv(c, "ID,WAGE\n2,3\n", Dialect.csv.with_header, into("STAFF4")).first.message)
           assert_equal Position.new(record: 0, line: 1),
                        csv(c, "", Dialect.csv.with_header, into("STAFF4")).first.position

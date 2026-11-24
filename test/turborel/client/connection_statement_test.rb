@@ -29,12 +29,12 @@ module Turborel
       # naming by a value no character string literal is, refused; a
       # literal's spaces trimmed; an identifier read as SQL reads one.
       def test_malformed_statements
-        assert_fails([-102, "2A000"]) { parse("CONNECT 'db'") }
-        assert_fails([-102, "2A000"]) { parse("CONNECT TO db") }
-        assert_fails([-102, "2A000"]) { parse("DISCONNECT ALL now") }
+        assert_fails([-102, "42000"]) { parse("CONNECT 'db'") }
+        assert_fails([-102, "42000"]) { parse("CONNECT TO db") }
+        assert_fails([-102, "42000"]) { parse("DISCONNECT ALL now") }
         assert_fails([-900, "0A000"]) { parse("SET CONNECTION :name") }
         assert_equal :other, parse("CONNECT TO ?").at(1)
-        assert_fails([-103, "2A000"]) { ConnectionStatement.text(:other) }
+        assert_fails([-103, "42000"]) { ConnectionStatement.text(:other) }
         assert_equal ["db", nil], [ConnectionStatement.text("  db "), ConnectionStatement.text(nil)]
         assert_equal(["ONE", "two", nil], ["one", "\"two\"", "two words"].map { ConnectionStatement.identifier(_1) })
       end
@@ -49,19 +49,19 @@ module Turborel
         assert_equal %i[disconnect all], parse("-- why\nDISCONNECT ALL")
         assert_equal [:connect, "ab", "one", nil], parse("CONNECT TO N'ab' AS _latin1 'one'")
         assert_equal [:connect, "ab", nil, "u"], parse("CONNECT TO 'a' -- more\n  'b' USER 'u'")
-        assert_fails([-102, "2A000"]) { parse("CONNECT TO 'a' 'b'") }
+        assert_fails([-102, "42000"]) { parse("CONNECT TO 'a' 'b'") }
         others = ["X'00'", "DATE '2024-01-01'", "INTERVAL -'1' DAY TO SECOND(3)", "TRUE", "-1.5E3", "?"]
 
         assert_equal([:other] * 6, others.map { |value| parse("SET CONNECTION #{value}").last })
-        assert_fails([-102, "2A000"]) { parse("SET CONNECTION INTERVAL '1' FORTNIGHT") }
-        assert_fails([-101, "2A000"]) { parse("-- x") }
+        assert_fails([-102, "42000"]) { parse("SET CONNECTION INTERVAL '1' FORTNIGHT") }
+        assert_fails([-101, "42000"]) { parse("-- x") }
       end
 
       # Verifies: [CLIENT The SQL-agent] a bracketed comment or a literal
       # that does not end refused.
       def test_unended
-        assert_fails([-101, "2A000"]) { parse("/* never CONNECT TO 'a'") }
-        assert_fails([-102, "2A000"]) { parse("CONNECT TO 'a") }
+        assert_fails([-101, "42000"]) { parse("/* never CONNECT TO 'a'") }
+        assert_fails([-102, "42000"]) { parse("CONNECT TO 'a") }
       end
     end
   end

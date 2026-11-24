@@ -124,7 +124,7 @@ module Turborel
       # cursor keeps its transaction.
       def test_capabilities_not_asked_for
         connect(offer: Offers.none) do |c|
-          assert_nil assert_fails([-103, "2A000"]) { c.query("SELECT * FROM NOPE") }.failure.diagnostics
+          assert_nil assert_fails([-103, "42000"]) { c.query("SELECT * FROM NOPE") }.failure.diagnostics
           c.query("CREATE TABLE H (ID INTEGER GENERATED ALWAYS AS IDENTITY, V INTEGER)")
           c.query("INSERT INTO H (V) VALUES (1)")
 
@@ -192,7 +192,7 @@ module Turborel
 
         assert_empty connection.take_notices
         assert_fails([-921, "26000"]) { connection.execute(statement) }
-        assert_fails([-103, "2A000"]) { connection.query("SELECT X FROM MODULE.TMP") }
+        assert_fails([-103, "42000"]) { connection.query("SELECT X FROM MODULE.TMP") }
       end
 
       # Verifies: [PROTOCOL Status 'T'] at login, before Ready, one of each

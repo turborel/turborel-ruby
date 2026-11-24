@@ -56,7 +56,7 @@ module Turborel
       # A failure's SQLCODE, SQLSTATE, message, rule, position and
       # diagnostics.
       def failing_statements(connection)
-        missing = assert_fails([-103, "2A000"]) { connection.query("SELECT * FROM NOPE") }
+        missing = assert_fails([-103, "42000"]) { connection.query("SELECT * FROM NOPE") }
 
         assert_equal "table ANN.NOPE is not defined", missing.message
         assert_equal(%w[ERROR ANN NOPE], missing.failure.diagnostics.then { [_1.severity, _1.schema, _1.table] })
@@ -65,7 +65,7 @@ module Turborel
 
         assert_equal "STAFF_PRIMARY1", duplicate.failure.diagnostics.constraint
         assert_equal "the key (1) is held by another row", duplicate.failure.diagnostics.detail
-        refute_nil assert_fails([-102, "2A000"]) { connection.query("SELECT FROM") }.failure.position
+        refute_nil assert_fails([-102, "42000"]) { connection.query("SELECT FROM") }.failure.position
       end
 
       # Verifies: [CLIENT Running statements] a query's rows given to a sink
@@ -200,7 +200,7 @@ module Turborel
         connection.deallocate(insert)
         assert_fails([-921, "26000"]) { connection.execute(insert, [6, "N6"]) }
         assert_fails([-921, "26000"]) { connection.deallocate(insert) }
-        assert_fails([-102, "37000"]) { connection.prepare("SELECT FROM") }
+        assert_fails([-102, "42000"]) { connection.prepare("SELECT FROM") }
         connection.query("ROLLBACK")
       end
 

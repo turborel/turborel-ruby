@@ -140,7 +140,7 @@ module ActiveRecord
         assert_raises(ValueTooLong) { connection.execute(%(INSERT INTO "ar_books" ("title") VALUES ('#{"x" * 30}'))) }
         error = assert_raises(StatementInvalid) { connection.execute("SELECT * FROM nowhere") }
 
-        assert_equal "2A000", error.cause.sqlstate
+        assert_equal "42000", error.cause.sqlstate
       end
 
       # Verifies: [DESIGN] D2 the schema read back: tables, views, columns

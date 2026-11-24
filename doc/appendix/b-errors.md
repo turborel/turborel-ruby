@@ -20,7 +20,7 @@ gives where turborel-client has none.
 | 08006 | -919 | A method needing a capability the server did not grant, or connection or query attributes past their bounds, more than 32 or one too long, before anything is sent; a write to an export's output that failed, its replies read to their end | no |
 | 28000 | -919 | A password or SCRAM over plain TCP; a channel binding required and impossible; a SCRAM server whose final signature is wrong, which does not know the verifier | the connection is not made |
 | 08001 | -919 | No server of the settings could be connected to, or a file they name could not be read; no pooled connection came back within the pool's wait | the connection is not made |
-| 08002, 08003, 08004, 0A001, 25000, 28000, 2E000, 2A000 | as [The SQL-agent](../client/29-sql-agent.md) lists | A connection statement the SQL-agent refuses | no |
+| 08002, 08003, 08004, 0A001, 25000, 28000, 2E000, 42000 | as [The SQL-agent](../client/29-sql-agent.md) lists | A connection statement the SQL-agent refuses | no |
 | 26000 | -921 | The plain API's `exec_prepared` or `deallocate` of a name no statement is prepared under, as EXECUTE gives it | no |
 | TB916 | -916 | A reply's value whose body cannot be taken, in a frame read whole: a truth or units byte other than 0 or 1, a damaged JSON value, a malformed condition, a value of tag 18 or 19; its request fails, the rest of its replies read past | no |
 | 0A000 | -900 | A reply's JSON value nested past 128 or longer than 256 MiB, its request failing as above | no |
@@ -45,8 +45,7 @@ gives where turborel-client has none.
 | 24 | An invalid cursor state: 24000, a cursor open or not as the call needs | no |
 | 26 | An invalid SQL statement name: 26000, no such prepared statement | no |
 | 28 | Invalid authorization: 28000, credentials refused | as the connection is made |
-| 2A | A syntax error or access rule violation | no |
-| 37 | A statement that cannot be prepared: 37000 | no |
+| 42 | A syntax error or access rule violation: 42000, run directly or prepared | no |
 | 40 | A transaction rollback: 40002, a commit that fails | no |
 | TB | Turborel's own: TB920, SQLCODE -920, a statement cancelled; TBR01, a replica that had not applied REPLICATION.READ_AFTER's position in time | no |
 
