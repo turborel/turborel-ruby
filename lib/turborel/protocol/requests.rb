@@ -49,6 +49,8 @@ module Turborel
       COPY_END = "N".ord
       # (see HELLO)
       DEBUG = "V".ord
+      # (see HELLO)
+      COPY_COLUMNS = "O".ord
       # A Lob request's operations [PROTOCOL Requests].
       LOB_READ = 0
       # (see LOB_READ)
@@ -244,6 +246,25 @@ module Turborel
         writer = Writer.new.u32(rows.size)
         rows.each { |row| ValueWriter.row_values(writer, row) }
         Frame.encode(COPY_DATA, writer.to_s)
+      end
+
+      # CopyColumns: rows u32, then a column for each of the copy's, in
+      # order, each its null bits, its ends and its text [PROTOCOL
+      # CopyColumns 'O'].
+      #
+      # @param rows [Integer]
+      # @param columns [Array<Array(String, Array<Integer>, String)>] each
+      #   column's null bits, row 0 the low bit of the first byte; where
+      #   each row's cell ends in its text; and its text, UTF-8
+      # @return [String] the frame
+      def self.copy_columns(rows, columns)
+        writer = Writer.new.u32(rows).u32(columns.size)
+        columns.each do |nulls, ends, text|
+          writer.bytes(nulls).u32(ends.size)
+          ends.each { writer.u32(_1) }
+          writer.bytes(text)
+        end
+        Frame.encode(COPY_COLUMNS, writer.to_s)
       end
 
       # @return [String] the frame of CopyEnd

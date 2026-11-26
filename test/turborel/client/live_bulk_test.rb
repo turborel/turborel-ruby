@@ -105,6 +105,51 @@ module Turborel
         end
       end
 
+      # Verifies: [PROTOCOL CopyColumns 'O'] granted columns, rows by column:
+      # nulls and empty strings kept apart; CopyData and CopyColumns mixed
+      # in one copy, a row of a Float by row, the rows in order; each cell
+      # cast as a character string of CopyData would be.
+      # Verifies: [PROTOCOL Capabilities] columns granted, as every
+      # connection asks it by default.
+      # Verifies: [CLIENT Copying and exporting] a copy by column, by row
+      # where not granted, to the same rows.
+      def test_a_copy_by_column
+        connect do |c|
+          c.query("CREATE TABLE LANES (ID INTEGER, NAME VARCHAR(3), PAY DECIMAL(5,1), OK BOOLEAN)")
+          c.query("COMMIT")
+          rows = [["1", "", "1.5", "TRUE"], ["2", nil, nil, nil], [3, "abc", 2.5, false], ["4", "d", "3", "FALSE"]]
+
+          assert c.granted?(Protocol::Capabilities::COLUMNS)
+          assert_equal 4, c.copy_rows("LANES", %w[ID NAME PAY OK], rows)
+          read = c.query("SELECT ID, NAME, PAY, OK FROM LANES ORDER BY ID").rows
+          connect(offer: without(Protocol::Capabilities::COLUMNS)) do |by_row|
+            by_row.query("DELETE FROM LANES")
+
+            assert_equal 4, by_row.copy_rows("LANES", %w[ID NAME PAY OK], rows)
+            assert_equal read, by_row.query("SELECT ID, NAME, PAY, OK FROM LANES ORDER BY ID").rows
+            by_row.query("ROLLBACK")
+          end
+
+          assert_equal [[1, "", BigDecimal("1.5"), true], [2, nil, nil, nil]], read.first(2)
+          c.query("COMMIT")
+        end
+      end
+
+      # Verifies: [PROTOCOL CopyColumns 'O'] a cell too long failing at
+      # CopyEnd with its row in the detail, never cut, every row undone; a
+      # copy by column abandoned, none inserted.
+      def test_a_copy_by_column_refused_and_abandoned
+        connect do |c|
+          c.query("CREATE TABLE NARROW (ID INTEGER, NAME VARCHAR(3))")
+          c.query("COMMIT")
+          too_long = assert_fails([-301, "22001"]) { c.copy_rows("NARROW", %w[ID NAME], [%w[5 ok], %w[6 long]]) }
+
+          assert_equal "row 2 of the copy", too_long.diagnostics.detail
+          assert_equal 0, c.copy_in("NARROW", %w[ID NAME]) { |copy| copy << %w[7 x] and copy.abandon }
+          assert_equal [[0]], c.query("SELECT COUNT(*) FROM NARROW").rows
+        end
+      end
+
       # Verifies: [CLIENT Copying and exporting] an export as CSV, a header
       # then a record for each row, each value as turborel shows it; as the
       # protocol's own frames, read back with every value as it was.

@@ -50,10 +50,13 @@ module Turborel
       PARAMETER_MODES = "parameter-modes"
       # (see NOTICES)
       DEBUGGER = "debugger"
+      # (see NOTICES)
+      COLUMNS = "columns"
       # Every capability, in the table's order.
       ALL = [NOTICES, STATUS, DIAGNOSTICS, DESCRIBE, CURSORS, PING, RESET, CHANGE_USER, QUERY_ATTRIBUTES,
              CONNECTION_ATTRIBUTES, MULTI_STATEMENT, COMPRESSION, COMMIT_POSITION, COPY, ROW_COUNTS,
-             GENERATED_VALUES, FETCH_ENDS, CONDITIONS, DECLARED_TYPES, PARAMETER_MODES, DEBUGGER].freeze
+             GENERATED_VALUES, FETCH_ENDS, CONDITIONS, DECLARED_TYPES, PARAMETER_MODES, DEBUGGER,
+             COLUMNS].freeze
 
       # The capabilities among +names+ this side knows, in the table's
       # order; others left out, as turborel's Capabilities::of leaves them.

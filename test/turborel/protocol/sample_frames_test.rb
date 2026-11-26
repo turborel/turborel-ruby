@@ -5,7 +5,7 @@ require "test_helper"
 module Turborel
   module Protocol
     # Turborel's sample frames, test/fixtures/protocol-frames.tsv, a copy of
-    # its doc/client/05-protocol-frames.tsv at 5863fe65, byte for byte
+    # its doc/client/05-protocol-frames.tsv at 45cb0d7f, byte for byte
     # (RULES.md D17).
     class SampleFramesTest < Minitest::Test
       include TestSupport
@@ -42,7 +42,7 @@ module Turborel
       def test_the_file_as_laid_out
         all = samples
 
-        assert_equal 166, all.size
+        assert_equal 167, all.size
         assert_equal all.size, all.map(&:name).uniq.size
         directions = %w[client server]
 
@@ -220,6 +220,7 @@ module Turborel
           "copy-in" => Requests.copy_in("S.T", %w[ID NAME], ends: true),
           "copy-in-every-column" => Requests.copy_in("T", [], ends: false),
           "copy-data" => Requests.copy_data([["1", nil], %w[2 b]]),
+          "copy-columns" => Requests.copy_columns(2, [["\x02".b, [1, 1], "1"], ["\x00".b, [1, 1], "b"]]),
           "copy-end" => Requests.copy_end(abandon: false), "copy-end-abandon" => Requests.copy_end(abandon: true)
         }
       end

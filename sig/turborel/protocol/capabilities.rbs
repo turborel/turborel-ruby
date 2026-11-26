@@ -23,6 +23,7 @@ module Turborel
       DECLARED_TYPES: String
       PARAMETER_MODES: String
       DEBUGGER: String
+      COLUMNS: String
       ALL: Array[String]
 
       def self.known: (Array[String] names) -> Array[String]

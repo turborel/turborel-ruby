@@ -25,7 +25,7 @@ Its standard interface is a plain API of connections, results and prepared state
 client built to do all that Turborel's own client library,
 turborel-client, does: TCP, Unix sockets and Windows named pipes, TLS,
 SCRAM-SHA-256 and SCRAM-SHA-256-PLUS, prepared statements and cursors,
-large objects, bulk copy, import and export, settings from a URI, the
+large objects, bulk copy by row or by column, import and export, settings from a URI, the
 environment and service and password files, several servers, pipelines
 and pools, and the routine debugger.
 

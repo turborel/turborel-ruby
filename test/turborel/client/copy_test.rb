@@ -10,8 +10,11 @@ module Turborel
     class CopyTest < Minitest::Test
       include TestSupport
 
-      # Every capability but compression, so frames come as they are.
-      GRANTED = Protocol::Capabilities::ALL - [Protocol::Capabilities::COMPRESSION]
+      # Every capability but compression, so frames come as they are, and
+      # columns, so rows go by row.
+      GRANTED = Protocol::Capabilities::ALL - [Protocol::Capabilities::COMPRESSION, Protocol::Capabilities::COLUMNS]
+      # Those and columns, so rows go by column where they can.
+      BY_COLUMN = GRANTED + [Protocol::Capabilities::COLUMNS]
 
       # A Complete's tail 6 of +rows+.
       def counted(rows) = Protocol::Writer.new.u8(6).u64(rows).to_s
@@ -32,8 +35,8 @@ module Turborel
 
       # Verifies: [PROTOCOL CopyIn 'I'] CopyIn of a table, its columns and
       # ends; rows sent many to a CopyData with no reply; until CopyEnd only
-      # CopyData, CopyEnd and Ping sent, anything else refused before it is
-      # sent (TB910).
+      # CopyData, CopyColumns, CopyEnd and Ping sent, anything else refused
+      # before it is sent (TB910).
       def test_copy_in
         connection, server = scripted do |peer, frames|
           2.times { frames << peer.frame }
@@ -165,6 +168,34 @@ module Turborel
         _, data, = server.join
 
         assert_equal Protocol::Requests.copy_data([[7, "Niklaus"], [9, "Barbara"]]), Protocol::Frame.encode(*data)
+      end
+
+      # Verifies: [PROTOCOL CopyColumns 'O'] granted columns, a run of rows
+      # of as many values, each a character string or null, goes by column: rows, then each column's null bits,
+      # ends and text, a null cell ending where the one before it ends, an
+      # empty string a cell of no text; a row of another value, or of
+      # another count of values, by row in a CopyData between, the order
+      # kept; rows past a chunk in a CopyColumns of their own.
+      # Verifies: [CLIENT Copying and exporting] rows copied by column, each
+      # cell its value's text, where the server grants columns.
+      def test_copy_by_column
+        connection, server = scripted(BY_COLUMN) do |peer, frames|
+          7.times { frames << peer.frame }
+          peer.complete(0, "00000", tail: counted(6))
+        end
+        copy = connection.copy_in("T", %w[A B])
+        copy << ["7", nil] << ["1.5", ""] << [nil, "é"] << [1.5, "x"] << %w[s f] << %w[1 2 3]
+        copy << ["x" * Copy::CHUNK_BYTES, nil]
+
+        assert_equal 6, copy.finish
+        connection.terminate
+        _, first, by_row, second, odd, big, = server.join.map { |kind, body| [kind.chr, body] }
+
+        assert_equal Protocol::Requests.copy_columns(3, [["\x04".b, [1, 4, 4], "71.5"], ["\x01".b, [0, 0, 2], "é".b]]),
+                     Protocol::Frame.encode(first.first.ord, first.last)
+        assert_equal %w[J O J O], [by_row, second, odd, big].map(&:first)
+        assert_equal Protocol::Requests.copy_columns(1, [["\x00".b, [1], "s"], ["\x00".b, [1], "f"]]),
+                     Protocol::Frame.encode(second.first.ord, second.last)
       end
     end
   end

@@ -1,4 +1,4 @@
-# The headings of Turborel's doc/client/05-protocol.md at 5863fe65, one a line,
+# The headings of Turborel's doc/client/05-protocol.md at 45cb0d7f, one a line,
 # as [PROTOCOL <heading>] cites them (RULES.md D6).
 The Native Protocol
 Frames
@@ -30,6 +30,7 @@ Reset 'W'
 ChangeUser 'U'
 CopyIn 'I'
 CopyData 'J'
+CopyColumns 'O'
 CopyEnd 'N'
 Debug 'V'
 Replies

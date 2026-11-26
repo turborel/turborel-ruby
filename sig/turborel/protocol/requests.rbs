@@ -22,6 +22,7 @@ module Turborel
       COPY_DATA: Integer
       COPY_END: Integer
       DEBUG: Integer
+      COPY_COLUMNS: Integer
       DEBUG_IDENTIFY: Integer
       DEBUG_ATTACH: Integer
       DEBUG_DETACH: Integer
@@ -56,6 +57,7 @@ module Turborel
       def self.lob_append: (Integer locator, String octets) -> String
       def self.lob_free: (Integer locator) -> String
       def self.lob_hold: (Integer locator) -> String
+      def self.copy_columns: (Integer rows, Array[[String, Array[Integer], String]] columns) -> String
       def self.debug: (Integer what) -> String
       def self.debug_attach: (Integer id) -> String
       def self.debug_break: (Symbol kind, String schema, String name, Integer line, String? condition) -> String

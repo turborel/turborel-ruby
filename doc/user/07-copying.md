@@ -12,7 +12,11 @@ rows as CSV or as the protocol's own frames.
 of the columns named, in order, or all of them. The copy's `<<` sends a
 row, an `Array` of a value for each column, many rows to a message and
 no reply each; `finish` ends it, giving the rows inserted. Each value is
-assigned to its column as INSERT assigns it. A copy is all or nothing: a
+assigned to its column as INSERT assigns it. Where the server grants
+`columns`, rows of character strings and nulls go by column, the
+faster way for a bulk load, as when every value is text read from a
+file; any other row goes by row, and the rows inserted are the same
+either way. A copy is all or nothing: a
 row refused undoes every row of it, the failure's detail naming the row,
 as `row 3 of the copy`. Within a transaction, a copy that fails is
 undone alone, the transaction going on; under autocommit the copy is its

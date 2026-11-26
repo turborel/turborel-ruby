@@ -11,7 +11,7 @@ protocol, `doc/client/05-protocol.md`; the client library,
 `doc/client/02-library.md`; and its settings, pipelines and pools,
 `doc/client/02-library-connections.md`. Each section here is one of
 theirs, and each row cites its heading as the tests cite it (RULES.md
-D6). The headings are those of Turborel's main at 5863fe65. Last come
+D6). The headings are those of Turborel's main at 45cb0d7f. Last come
 the rows of this driver's standard API (RULES.md D2).
 
 **Done** means the driver's code for the row exists and is tested by
@@ -56,10 +56,10 @@ The same in every driver; the status of each row is in its table.
 
 | Part | Rows |
 |---|---|
-| The protocol | 270 |
-| The client library | 101 |
+| The protocol | 276 |
+| The client library | 102 |
 | Settings, pipelines and pools | 82 |
-| All but the standard API | 453 |
+| All but the standard API | 460 |
 
 ---
 
@@ -316,6 +316,7 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | P-CAP-20 | `declared-types`: a Prepared and a Description carry each column's declared type, tail 19 | `[PROTOCOL Capabilities]` | done |
 | P-CAP-21 | `parameter-modes`: a Prepared of a CALL carries its procedure and each ?'s mode and position, tail 20 | `[PROTOCOL Capabilities]` | done |
 | P-CAP-22 | `debugger` *(extension)*: the request Debug, its answer Debugged, and the Event sent unasked | `[PROTOCOL Capabilities]` | done |
+| P-CAP-23 | `columns` *(extension)*: the request CopyColumns, a copy's rows by column as text, with `copy` | `[PROTOCOL Capabilities]` | done |
 
 ### Requests
 
@@ -441,13 +442,23 @@ they follow Turborel's RULES.md D89 and `src/json/binary.rs`.
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-COPYIN-1 | CopyIn: table, columns (none for every column), ends flag; no reply | `[PROTOCOL CopyIn 'I']` | done |
-| P-COPYIN-2 | Until CopyEnd, only CopyData, CopyEnd and Ping sent | `[PROTOCOL CopyIn 'I']` | done |
+| P-COPYIN-2 | Until CopyEnd, only CopyData, CopyColumns, CopyEnd and Ping sent | `[PROTOCOL CopyIn 'I']` | done |
 
 ### CopyData 'J'
 
 | ID | Row | Citation | Status |
 |---|---|---|---|
 | P-COPYDATA-1 | CopyData: a list of rows, as many at a time as the client likes; no reply | `[PROTOCOL CopyData 'J']` | done |
+
+### CopyColumns 'O'
+
+| ID | Row | Citation | Status |
+|---|---|---|---|
+| P-COPYCOL-1 | CopyColumns, of a client granted `columns` and `copy`: rows u32, then of each of the copy's columns in order its null bits, its ends and its text; no reply | `[PROTOCOL CopyColumns 'O']` | done |
+| P-COPYCOL-2 | Each column `(rows + 7) / 8` bytes of null bits, row 0 the low bit of the first byte, every bit past the last row clear | `[PROTOCOL CopyColumns 'O']` | done |
+| P-COPYCOL-3 | An end for each row, never falling, a null cell's where the cell before it ends, the last the length of the text; a frame of rows has at least one column | `[PROTOCOL CopyColumns 'O']` | done |
+| P-COPYCOL-4 | Each cell taken as its text would be in CopyData, cast and assigned as INSERT assigns, so one too long fails rather than being cut | `[PROTOCOL CopyColumns 'O']` | done |
+| P-COPYCOL-5 | CopyData and CopyColumns mixed in one copy | `[PROTOCOL CopyColumns 'O']` | done |
 
 ### CopyEnd 'N'
 
@@ -756,6 +767,7 @@ From `doc/client/02-library.md`, The Client Library.
 | C-COPY-7 | Importing by copy where the server grants it and no column is a large object | `[CLIENT Copying and exporting]` | done |
 | C-COPY-8 | Export as CSV, a header of the columns' names then a record for each row, as they come | `[CLIENT Copying and exporting]` | done |
 | C-COPY-9 | Export as the protocol's own frames, read back with every value as it was | `[CLIENT Copying and exporting]` | done |
+| C-COPY-10 | Copy rows by column, each cell its text, where the server grants `columns`; by row otherwise | `[CLIENT Copying and exporting]` | done |
 
 ### The SQL-agent
 

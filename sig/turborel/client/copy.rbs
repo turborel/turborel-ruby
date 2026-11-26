@@ -4,6 +4,9 @@ module Turborel
     module Copy : Wire, Session
       CHUNK_BYTES: Integer
 
+      def self.cells: (Array[value] row) -> Array[String?]?
+      def copy_columns: (Lanes lanes) -> void
+
       @autocommit: bool
       @copying: Copying?
 
@@ -22,6 +25,8 @@ module Turborel
       @waiting: Protocol::Writer
       @count: Integer
       @ended: bool
+      @by_column: bool
+      @lanes: Lanes?
 
       def initialize: (Connection connection) -> void
       def <<: (Array[value] row) -> Copying
@@ -31,8 +36,33 @@ module Turborel
 
       private
 
+      def by_column_cells: (Array[value] row) -> Array[String?]?
+      def by_row: (Array[value] row) -> Copying
+      def by_column: (Array[String?] cells) -> Copying
       def flush: () -> void
+      def flush_rows: () -> void
+      def flush_lanes: () -> void
       def ended: (bool abandon) -> Integer
+    end
+
+    # Rows of a copy by column.
+    class Lanes
+      @nulls: Array[String]
+      @ends: Array[Array[Integer]]
+      @texts: Array[String]
+
+      attr_reader rows: Integer
+      attr_reader size: Integer
+
+      def initialize: (Integer width) -> void
+      def width: () -> Integer
+      def <<: (Array[String?] cells) -> void
+      def columns: () -> Array[[String, Array[Integer], String]]
+
+      private
+
+      def add: (Integer index, String? cell) -> void
+      def null: (String nulls, bool null) -> void
     end
   end
 end

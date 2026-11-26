@@ -16,7 +16,8 @@ module Turborel
       # The SQLSTATE class of a completion condition, a warning.
       WARNING_CLASS = "01"
       # The requests sent while a copy is under way.
-      WHILE_COPYING = [Protocol::Requests::COPY_DATA, Protocol::Requests::COPY_END, Protocol::Requests::PING].freeze
+      WHILE_COPYING = [Protocol::Requests::COPY_DATA, Protocol::Requests::COPY_COLUMNS, Protocol::Requests::COPY_END,
+                       Protocol::Requests::PING].freeze
 
       # Whether +failure+ ends the connection it came on: a connection
       # exception, class 08, but 08003, which names another connection; or
@@ -53,7 +54,7 @@ module Turborel
       end
 
       # Refuses +frames+ while a copy is under way unless they are CopyData,
-      # CopyEnd or Ping [PROTOCOL CopyIn 'I'].
+      # CopyColumns, CopyEnd or Ping [PROTOCOL CopyIn 'I'].
       def copying!(frames)
         return unless @copying && !WHILE_COPYING.include?(frames.getbyte(0))
 

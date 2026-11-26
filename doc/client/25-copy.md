@@ -40,7 +40,14 @@ transaction, one that fails is undone alone. `<<` sends a row, an
 about 256 KiB, a row of a value the protocol cannot carry refused whole
 before it is sent and the copy kept; `finish` ends the copy, giving the
 rows inserted;
-`abandon` undoes every row. A copy is all or nothing: a row refused
+`abandon` undoes every row. Where the server grants `columns`, which a
+connection asks for unless told, a run of rows of as many values, each
+a character string or `nil`, goes by column, each cell its text, which
+the server casts to the column's type as it casts the character string
+a row carries, so a cell too long fails rather than being cut. A row of
+any other value goes by row, between them, the rows kept in order, and
+every row goes by row where `columns` is not granted. A row is taken
+the same way whichever way it goes. A copy is all or nothing: a row refused
 undoes every row, its failure's detail naming the row, as `row 7 of the
 copy`. A block's copy finishes as the block ends and is abandoned if it
 raises. Until a copy ends the connection sends only its rows, its end and
@@ -108,7 +115,7 @@ record 2, line 2: SQLCODE -301 (SQLSTATE 22001): a value of 12 characters, not s
 
 ## STANDARD
 
-[PROTOCOL CopyIn 'I'], [PROTOCOL CopyData 'J'] and [PROTOCOL CopyEnd
+[PROTOCOL CopyIn 'I'], [PROTOCOL CopyData 'J'], [PROTOCOL CopyColumns 'O'] and [PROTOCOL CopyEnd
 'N'] of [The Native
 Protocol](https://github.com/turborel/turborel/blob/main/doc/client/05-protocol.md);
 [CLIENT Copying and exporting] and [CLIENT Importing] of [The Client
